@@ -15,7 +15,7 @@ class _NotificationsState extends State<Notifications> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pending Invoices"),
+        title: Text("Notifications"),
       ),
       body: Column(
         children: [
