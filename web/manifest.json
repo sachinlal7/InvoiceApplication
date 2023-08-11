@@ -1,6 +1,6 @@
 {
-    "name": "invoice_application",
-    "short_name": "invoice_application",
+    "name": "invoice_app",
+    "short_name": "invoice_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
