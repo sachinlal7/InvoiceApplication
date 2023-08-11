@@ -214,7 +214,7 @@ class _AddClientsState extends State<AddClients> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => NewClients(
-                                      isEdit: true,
+                                      isEdit: false,
                                     )));
 
                         setState(() {

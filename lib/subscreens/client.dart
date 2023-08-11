@@ -33,7 +33,7 @@ class _NewClientsState extends State<NewClients> {
   TextEditingController custNumController = TextEditingController();
 
   String _selectedValue = '';
-  bool isEdit = true;
+  bool isEdit = false;
   bool isvalid = true;
 
   final formkey = GlobalKey<FormState>();
@@ -210,15 +210,7 @@ class _NewClientsState extends State<NewClients> {
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: GestureDetector(
                               onTap: () {
-                                String Name = customerController.text;
-                                String email = custEmailController.text;
-                                String phone = custNumController.text;
-
-                                if (formkey.currentState!.validate()) {}
-
-                                widget.isEdit
-                                    ? updateData(customerIdValue)
-                                    : submitData();
+                                Navigator.pop(context);
                               },
                               child: Container(
                                 height: 35,
