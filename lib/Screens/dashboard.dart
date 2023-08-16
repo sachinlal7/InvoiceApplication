@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboardInvoice.dart';
-import 'package:invoice_app/Screens/invoice_add.dart';
 import 'package:invoice_app/Screens/notifications.dart';
 import 'package:invoice_app/Screens/recentAcitivities.dart';
 import 'package:invoice_app/Tabs/PendingInvoices.dart';
@@ -8,6 +9,7 @@ import 'package:invoice_app/constants_colors.dart';
 import 'package:invoice_app/subscreens/add_clients.dart';
 import 'package:invoice_app/widgets/navBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -31,11 +33,39 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
+  Future<void> profileGet() async {
+    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final uri = Uri.parse(url);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+    print("response get ${response.statusCode}");
+    print(response.body);
+
+    var data = jsonDecode(response.body);
+    var daata = data['data'];
+    if (daata != null) {
+      businessName = daata['business_name'] ?? null;
+      emailId = daata['email'] ?? null;
+      print('business name $businessName');
+      print(emailId);
+
+      // var prefs = await SharedPreferences.getInstance();
+      // prefs.setString(
+      //     BUSINESS_NAME, businessName ?? ""); // Store empty string if null
+      // var prefss = await SharedPreferences.getInstance();
+      // prefss.setString(EMAIL_ID, emailId ?? ""); // Store empty string if null
+    } // Store empty string if null
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isLogin ? getData() : "";
+    profileGet();
+    businessName = " ";
+    print("dashboard page");
   }
 
   @override
@@ -66,7 +96,7 @@ class _DashBoardState extends State<DashBoard> {
                   icon: Icon(Icons.notifications))
             ],
           ),
-          drawer: NavBar(),
+          drawer: NavBar(businessName: businessName, emailId: emailId),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(

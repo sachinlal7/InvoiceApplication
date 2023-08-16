@@ -24,7 +24,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
         backgroundColor: Color_orange,
         title: Text("Manage Profiles"),
       ),
-      drawer: NavBar(),
+      drawer: NavBar(businessName: businessName, emailId: emailId),
       backgroundColor: Color_green,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -18,7 +18,13 @@ class AddClients extends StatefulWidget {
 }
 
 class _AddClientsState extends State<AddClients> {
+  TextEditingController customerController = TextEditingController();
+
+  TextEditingController custEmailController = TextEditingController();
+
+  TextEditingController custNumController = TextEditingController();
   List data = [];
+  int selectedNameIndex = -1;
 
   bool isLoading = true;
 
@@ -50,195 +56,195 @@ class _AddClientsState extends State<AddClients> {
           onRefresh: fetchCust,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: double.maxFinite,
-                  child: ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        print("ten");
-                        final dataItem = data[index] as Map;
-                        var custIDnew = dataItem['id'].toString();
-                        print(custIDnew);
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    width: double.maxFinite,
+                    child: ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          print("ten");
+                          final dataItem = data[index] as Map;
+                          var custIDnew = dataItem['id'].toString();
+                          print(custIDnew);
 
-                        final person = data[index];
-                        final personId = person["id"];
+                          final person = data[index];
+                          final personId = person["id"];
 
-                        print("id of prsnn $personId");
-                        print("eleven");
+                          print("id of prsnn $personId");
+                          print("eleven");
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Container(
-                            height: 110,
-                            width: double.maxFinite,
-                            color: Color_green,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(12),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text("Customer"),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text("Email"),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text("Phone"),
-                                        ],
-                                      ),
-                                    ],
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Container(
+                              height: 110,
+                              width: double.maxFinite,
+                              color: Color_green,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(12),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text("Customer"),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text("Email"),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text("Phone"),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [Text(dataItem['name'])],
-                                      ),
-                                      Row(
-                                        children: [Text(dataItem['email'])],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(dataItem['phone_number']
-                                              .toString())
-                                        ],
-                                      ),
-                                    ],
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [Text(dataItem['name'])],
+                                        ),
+                                        Row(
+                                          children: [Text(dataItem['email'])],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(dataItem['phone_number']
+                                                .toString())
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: GestureDetector(
-                                          onTap: () async {
-                                            SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            var keyuser =
-                                                prefs.setInt(getUser, personId);
-                                            print(getUser);
-                                            print("twelve $keyuser");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        NewClients(
-                                                          isEdit: true,
-                                                          initialCustomerName:
-                                                              "sachin lal", // Replace with your actual values
-                                                          initialEmail:
-                                                              "sachin@gmail.com",
-                                                          initialPhoneNumber:
-                                                              "9654193562",
-                                                        )));
-                                          },
-                                          child: Container(
-                                            height: 25,
-                                            width: 50,
-                                            decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            child: Center(
-                                                child: Text(
-                                              "Edit",
-                                              style:
-                                                  TextStyle(color: Color_white),
-                                            )),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              var keyuser = prefs.setInt(
+                                                  getUser, personId);
+                                              print(getUser);
+                                              print("twelve $keyuser");
+                                              fetchEditDetails();
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          NewClients(
+                                                            isEdit: true,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              height: 25,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              child: Center(
+                                                  child: Text(
+                                                "Edit",
+                                                style: TextStyle(
+                                                    color: Color_white),
+                                              )),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      IconButton(
-                                          onPressed: () async {
-                                            print(custIDnew);
-                                            SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            var keyuser =
-                                                prefs.setInt(getUser, personId);
-                                            print("eighteen");
-                                            print(keyuser);
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return customDialog(
-                                                      "Deleted Successfully",
-                                                      "Are you sure want to delete ?");
-                                                });
-                                          },
-                                          icon: Icon(Icons.delete))
-                                    ],
-                                  ),
-                                )
-                              ],
+                                        IconButton(
+                                            onPressed: () async {
+                                              print(custIDnew);
+                                              SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              var keyuser = prefs.setInt(
+                                                  getUser, personId);
+                                              print("eighteen");
+                                              print(keyuser);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return customDialog(
+                                                        "Deleted Successfully",
+                                                        "Are you sure want to delete ?");
+                                                  });
+                                            },
+                                            icon: Icon(Icons.delete))
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }),
-                ),
-                Container(
-                  color: Color_blue,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NewClients(
-                                      isEdit: false,
-                                    )));
+                          );
+                        }),
+                  ),
+                  Container(
+                    color: Color_blue,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NewClients(
+                                        isEdit: false,
+                                      )));
 
-                        setState(() {
-                          fetchCust();
-                          isLoading = true;
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Container(
-                          height: 35,
-                          width: double.maxFinite,
-                          color: Color_orange,
-                          child: Center(
-                              child: Text(
-                            "Add Client",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          )),
+                          setState(() {
+                            fetchCust();
+                            isLoading = true;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Container(
+                            height: 35,
+                            width: double.maxFinite,
+                            color: Color_orange,
+                            child: Center(
+                                child: Text(
+                              "Add Client",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            )),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -286,7 +292,7 @@ class _AddClientsState extends State<AddClients> {
     print("SEVENTEEN");
     print(CustKey);
 
-    final url = "http://192.168.1.33:8000/api/customer-delete/$CustKey";
+    final url = "http://192.168.1.31:8000/api/customer-delete/$CustKey";
 
     final uri = Uri.parse(url);
 
@@ -300,6 +306,40 @@ class _AddClientsState extends State<AddClients> {
         // print("filtered data $data");
       });
     } else {}
+  }
+
+  Future<void> fetchEditDetails() async {
+    final url = Base_URL + custlistendpoint;
+
+    final uri = Uri.parse(url);
+    print("seven");
+
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var getTheKey = prefs.getString(ACCESS_KEY);
+    print(authorizationValue);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+    print(response.body);
+    var dataRes = response.body;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      List<Map<String, dynamic>> jsonData = List.from(results);
+
+      List<String> names =
+          jsonData.map((item) => item['name'].toString()).toList();
+      print(names[0]);
+      print(names[1]);
+
+      setState(() {
+        data = results;
+        print("final data $data");
+      });
+    } else {
+      print("error");
+    }
   }
 
   void idOfUser() async {
@@ -374,12 +414,4 @@ class _AddClientsState extends State<AddClients> {
       ),
     );
   }
-
-  // void getidOfUser() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   customerIdValue = prefs.getInt(CUST_ID).toString() ?? "";
-  //   print("fifteen");
-  //   print(customerIdValue);
-  // }
 }

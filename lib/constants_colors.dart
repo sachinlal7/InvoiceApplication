@@ -6,7 +6,7 @@ final Color_green = Color.fromARGB(255, 205, 223, 215);
 final Color_white = Colors.white;
 final Color_blue = Color.fromARGB(255, 11, 138, 211);
 
-final Base_URL = "http://192.168.1.33:8000/api/";
+final Base_URL = "http://192.168.1.31:8000/api/";
 
 final custlistendpoint = "customer-list/";
 
@@ -22,6 +22,11 @@ final getUser = "";
 final custIDnew = "";
 final personId = "";
 final value = "";
+final errorMsg = "";
+final names = "";
+var businessName = "";
+final BUSINESS_NAME = "";
+final EMAIL_ID = "";
 
 final dataItem = "";
 late bool isLogin = true;
@@ -34,6 +39,14 @@ String _CustIDValue = "";
 set customerIdValue(String val) => _CustIDValue = val;
 String get customerIdValue => _CustIDValue;
 
-String _IDValue = "";
-set getUserIdValue(String val) => _IDValue = val;
-String get getUserIdValue => _IDValue;
+int _IDValue = 11;
+set getUserIdValue(int val) => _IDValue = val;
+int get getUserIdValue => _IDValue;
+
+// String _business = "";
+// set businessName(String val) => _business = val;
+// String get businessName => _business;
+
+String _email = "";
+set emailId(String val) => _email = val;
+String get emailId => _email;

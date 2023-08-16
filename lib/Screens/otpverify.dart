@@ -26,10 +26,11 @@ class _OtpVerifyState extends State<OtpVerify> {
       "otp": otpcontroller.text,
       "new_password": newPasswordController.text
     };
-    print(getUserId);
+    print(getUserIdValue);
     print("object first");
 
-    final url = "http://192.168.1.33:8000/api/password/reset/verify/$getUserId";
+    final url =
+        "http://192.168.1.31:8000/api/password/reset/verify/$getUserIdValue";
     final uri = Uri.parse(url);
 
     final response = await http.post(uri, body: body);
@@ -38,18 +39,25 @@ class _OtpVerifyState extends State<OtpVerify> {
       emailcontroller.text = emailcontroller.text;
 
       print('otp verified');
+      Fluttertoast.showToast(
+          msg: "Password reset successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } else {
       print('otp verification failed');
+      Fluttertoast.showToast(
+          msg: "otp verification failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
-
-    Fluttertoast.showToast(
-        msg: "Password reset successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
   }
 
   @override
@@ -90,7 +98,10 @@ class _OtpVerifyState extends State<OtpVerify> {
                         topRight: Radius.circular(5))),
                 child: TextFormField(
                   controller: otpcontroller,
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
                   decoration: InputDecoration(
+                      counterText: "",
                       hintText: "Enter the OTP",
                       contentPadding: EdgeInsets.only(left: 10),
                       border:
@@ -180,8 +191,8 @@ class _OtpVerifyState extends State<OtpVerify> {
 
   void getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var getUserIdValue = prefs.getInt(USER_ID);
+    getUserIdValue = prefs.getInt(USER_ID) ?? 00;
     print("sachin");
-    print(getUserId);
+    print("get user id $getUserIdValue");
   }
 }

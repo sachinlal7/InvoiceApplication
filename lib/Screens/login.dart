@@ -27,12 +27,13 @@ class _LoginState extends State<Login> {
 
   void login(String username, password) async {
     try {
-      var url = Uri.parse("http://192.168.1.33:8000/api/user-login/");
+      var url = Uri.parse("http://192.168.1.31:8000/api/user-login/");
       var response = await http
           .post(url, body: {'username': username, 'password': password});
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print(data);
         final token = data['access'];
         final userId = data['user_id'];
 
@@ -46,6 +47,7 @@ class _LoginState extends State<Login> {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: ((context) => DashBoard())));
           isLogin = true;
+          // profileGet();
         }
 
         isLogin = true;
@@ -82,9 +84,9 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {});
-    userNameController = TextEditingController(text: "sachinlal77");
-    passwordController = TextEditingController(text: "sachin0403");
-
+    userNameController = TextEditingController(text: "sachinlal7");
+    passwordController = TextEditingController(text: "sachin0704");
+    print("login page");
     //  getData();
   }
 
@@ -114,8 +116,8 @@ class _LoginState extends State<Login> {
                   height: 30,
                 ),
                 Container(
-                  height: 55,
-                  width: 370,
+                  height: MediaQuery.of(context).size.height * 0.059,
+                  width: MediaQuery.of(context).size.height * 0.432,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -139,8 +141,8 @@ class _LoginState extends State<Login> {
                 ),
                 SizedBox(height: 0.5),
                 Container(
-                  height: 55,
-                  width: 370,
+                  height: MediaQuery.of(context).size.height * 0.059,
+                  width: MediaQuery.of(context).size.height * 0.432,
                   color: Colors.white,
                   child: TextFormField(
                     obscureText: _obscureText,
@@ -243,17 +245,20 @@ class _LoginState extends State<Login> {
 
     print("fourth");
     print(ACCESS_KEY);
-    // var prefs = await SharedPreferences.getInstance();
-    // var getKey = prefs.getString(ACCESS_KEY);
-    // var getUserId = prefs.getInt(USER_ID);
-
-    // var KeyToken = getKey != null ? getKey : "No access key found";
-    // var keyUser = getUserId != null ? getUserId : "No user id  found";
-
-    // print("key token $KeyToken");
-    // print("get key $getKey");
-
-    // print("key user $keyUser");
-    // print("user key $getUserId");
   }
+
+  // Future<void> profileGet() async {
+  //   final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+  //   final uri = Uri.parse(url);
+  //   final response = await http
+  //       .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+  //   print("response get ${response.statusCode}");
+  //   print(response.body);
+
+  //   var data = jsonDecode(response.body);
+  //   var daata = data['data'];
+  //   // var BusinessName = daata['business_name'];
+  //   // print('business name $BusinessName');
+  // }
 }

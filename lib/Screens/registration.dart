@@ -5,6 +5,7 @@ import 'package:invoice_app/Screens/login.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 import 'dashboard.dart';
 
@@ -26,7 +27,7 @@ class _RegistrationState extends State<Registration> {
 
   void signup(
       String email, password, number, business, username, address) async {
-    var url = Uri.parse("http://192.168.1.33:8000/api/user-registration/");
+    var url = Uri.parse("http://192.168.1.31:8000/api/user-registration/");
 
     var response = await http.post(url, body: {
       "business_name": business,
@@ -36,6 +37,8 @@ class _RegistrationState extends State<Registration> {
       "phone_number": number,
       "address": address
     });
+    print(response.statusCode);
+    print(businessController.text);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -151,19 +154,14 @@ class _RegistrationState extends State<Registration> {
                   width: 370,
                   color: Colors.white,
                   child: TextFormField(
-                    controller: eMailController,
-                    decoration: InputDecoration(
-                        hintText: "Email",
-                        contentPadding: EdgeInsets.only(left: 10),
-                        border:
-                            UnderlineInputBorder(borderSide: BorderSide.none)),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Enter Email";
-                      }
-                      return null;
-                    },
-                  ),
+                      controller: eMailController,
+                      decoration: InputDecoration(
+                          hintText: "Email",
+                          contentPadding: EdgeInsets.only(left: 10),
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
+                      validator:
+                          EmailValidator(errorText: "Enter Correct email")),
                 ),
                 SizedBox(height: 0.5),
                 Container(
@@ -171,6 +169,7 @@ class _RegistrationState extends State<Registration> {
                   width: 370,
                   color: Colors.white,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: phoneNumberController,
                     decoration: InputDecoration(
                         hintText: "Phone No",

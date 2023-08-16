@@ -10,7 +10,10 @@ import '../Screens/manageProfiles.dart';
 import 'settings.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+  final String businessName;
+  final String emailId;
+
+  const NavBar({super.key, required this.businessName, required this.emailId});
 
   @override
   State<NavBar> createState() => _NavBarState();
@@ -27,6 +30,25 @@ class _NavBarState extends State<NavBar> {
     prefs.remove(ACCESS_KEY);
     print("REMOVE ACCESS $ACCESS_KEY");
     prefs.reload();
+  }
+
+  // void getBusinessName() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  //   businessName = prefs.getString(BUSINESS_NAME) ?? "";
+  //   SharedPreferences prefss = await SharedPreferences.getInstance();
+  //   emailId = prefss.getString(EMAIL_ID) ?? "";
+
+  //   print(BUSINESS_NAME);
+  // }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("drawer open");
+    // getBusinessName();
+    print("nav bar page");
   }
 
   @override
@@ -50,8 +72,14 @@ class _NavBarState extends State<NavBar> {
                       ),
                     ),
                   ),
-                  accountName: Text("Quick Bill"),
-                  accountEmail: Text("Mobapps@gmail.com")),
+                  accountName: Text(
+                    businessName,
+                    style: TextStyle(color: Color_white),
+                  ),
+                  accountEmail: Text(
+                    emailId,
+                    style: TextStyle(fontSize: 12),
+                  )),
             ),
             GestureDetector(
               onTap: () {

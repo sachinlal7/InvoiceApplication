@@ -6,6 +6,8 @@ import 'package:invoice_app/Screens/login.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'otpverify.dart';
 
@@ -18,38 +20,51 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   bool isEmailSent = false;
+  String errorMessage = '';
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController otpcontroller = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
 
   Future<void> otpSent() async {
-    final body = {"email": emailcontroller.text};
-    print(emailcontroller.text);
-    final url = "http://192.168.1.33:8000/api/password/reset/email/";
-    final uri = Uri.parse(url);
+    try {
+      final body = {"email": emailcontroller.text};
+      print(emailcontroller.text);
+      final url = "http://192.168.1.31:8000/api/password/reset/email/";
+      final uri = Uri.parse(url);
 
-    final response = await http.post(uri, body: body);
-    var data = jsonDecode(response.body);
-    print(data);
-    final userId = data['user_id'];
-    print(userId);
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setInt(USER_ID, userId);
+      final response = await http.post(uri, body: body);
+      var data = jsonDecode(response.body);
+      // Fluttertoast.showToast(
+      //     msg: data['detail'],
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.CENTER,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.red,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
+      print(data);
+      final userId = data['user_id'];
+      print(userId);
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString(USER_ID, userId);
 
-    print(response.body);
-    print(response.statusCode);
+      print(response.body);
+      print(response.statusCode);
 
-    if (response.statusCode == 200) {
-      emailcontroller.text = " ";
+      if (response.statusCode == 200) {
+        emailcontroller.text = " ";
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => OtpVerify()),
-      // );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => OtpVerify()),
+        // );
 
-      print('otp sent to your email');
-    } else {
-      print('otp sending failed');
+        print('otp sent to your email');
+      } else {
+        print('otp sending failed');
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -90,18 +105,42 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         topRight: Radius.circular(5))),
                 child: TextFormField(
                   controller: emailcontroller,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                      hintText: "Enter your Email",
+                      hintText: "Enter your email",
                       contentPadding: EdgeInsets.only(left: 10),
                       border:
                           UnderlineInputBorder(borderSide: BorderSide.none)),
+                  validator: (value) {
+                    if (value!.isEmpty ||
+                        RegExp(r'^[\w-\.]+@ ([\w-]+ \.)+[\w-]{2,5}')
+                            .hasMatch(value)) {
+                      return "correct email uid";
+                    } else {
+                      return "Enter correct email id";
+                    }
+                  },
                 ),
               ),
               SizedBox(height: 40),
               GestureDetector(
                 onTap: () async {
-                  otpSent().then((value) => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => OtpVerify())));
+                  if (_validateEmail(emailcontroller.text)) {
+                    await otpSent();
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => OtpVerify()));
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "Enter correct email id",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  }
                 },
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.059,
@@ -151,5 +190,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         ),
       ),
     );
+  }
+
+  bool _validateEmail(String email) {
+    final emailValidator = EmailValidator(errorText: "Invalid Email Address");
+    if (emailValidator.isValid(email)) {
+      setState(() {
+        errorMessage = ""; // Clear any existing error message
+      });
+      return true;
+    } else {
+      setState(() {
+        errorMessage = "Invalid Email Address";
+      });
+      return false;
+    }
   }
 }

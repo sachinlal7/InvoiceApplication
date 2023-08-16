@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -9,16 +12,11 @@ import '../constants_colors.dart';
 
 class NewClients extends StatefulWidget {
   final bool isEdit;
-  final String initialCustomerName;
-  final String initialEmail;
-  final String initialPhoneNumber;
+
   final formkey = GlobalKey<FormState>();
 
   NewClients({
     required this.isEdit,
-    this.initialCustomerName = '',
-    this.initialEmail = '',
-    this.initialPhoneNumber = '',
   });
 
   @override
@@ -26,7 +24,7 @@ class NewClients extends StatefulWidget {
 }
 
 class _NewClientsState extends State<NewClients> {
-  TextEditingController customerController = TextEditingController();
+  TextEditingController? customerController = TextEditingController();
 
   TextEditingController custEmailController = TextEditingController();
 
@@ -35,6 +33,7 @@ class _NewClientsState extends State<NewClients> {
   String _selectedValue = '';
   bool isEdit = false;
   bool isvalid = true;
+  List data = [];
 
   final formkey = GlobalKey<FormState>();
 
@@ -42,10 +41,10 @@ class _NewClientsState extends State<NewClients> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.isEdit) {
-      customerController.text = widget.initialCustomerName;
-      custEmailController.text = widget.initialEmail;
-      custNumController.text = widget.initialPhoneNumber;
+
+    fetchEditDetails();
+    if (names.isNotEmpty) {
+      customerController?.text = names[0];
     }
   }
 
@@ -112,16 +111,6 @@ class _NewClientsState extends State<NewClients> {
                                     },
                                   ),
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.symmetric(
-                                //       horizontal: 16.0),
-                                //   child: Text(
-                                //     isvalid
-                                //         ? " "
-                                //         : 'Please correct the errors above',
-                                //     style: TextStyle(color: Colors.red),
-                                //   ),
-                                // ),
                               ],
                             )
                           ],
@@ -229,7 +218,7 @@ class _NewClientsState extends State<NewClients> {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: GestureDetector(
                               onTap: () {
-                                String Name = customerController.text;
+                                String Name = customerController!.text;
                                 String email = custEmailController.text;
                                 String phone = custNumController.text;
 
@@ -265,61 +254,14 @@ class _NewClientsState extends State<NewClients> {
     );
   }
 
-  // Future<String?> submitData() async {
-  //   final customer = customerController.text;
-  //   final custEmail = custEmailController.text;
-  //   final custNum = custNumController.text;
-  //   final body = {
-  //     "name": customerController.text.toString(),
-  //     "email": custEmailController.text.toString(),
-  //     "phone_number": custNumController.text.toString()
-  //   };
-
-  //   final url = "http://192.168.1.31:8000/api/customer/";
-  //   final uri = Uri.parse(url);
-
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var getAccessKey = prefs.getString(ACCESSKEY);
-  //   final headers = {'Authorization': 'Bearer $ACCESSKEY'};
-  //   print("the key is $ACCESSKEY");
-
-  //   final response = await http.post(uri, body: body, headers: headers);
-
-  //   print(response.statusCode);
-  //   print(response.body);
-
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     customerController.text = " ";
-  //     custEmailController.text = " ";
-  //     custNumController.text = " ";
-  //     print(isEdit ? 'success' : 'updated succesfully');
-  //   } else {
-  //     print(isEdit ? 'creation failed' : 'update failed');
-  //   }
-  // }
-
   Future<void> submitData() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var keyget = prefs.getString(ACCESS_KEY);
-
-    // print(keyget);
-
-    // var getUserId = prefs.getInt(USER_ID);
-    // print(USER_ID);
-    // print("get the user id $getUserId");
-    // print("get the key $keyget");
-
     final body = {
-      "name": customerController.text.toString(),
+      "name": customerController!.text.toString(),
       "email": custEmailController.text.toString(),
       "phone_number": custNumController.text.toString()
     };
 
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var CustKey = prefs.get(getUser);
-    // print(" get user id $CustKey");
-
-    final url = "http://192.168.1.33:8000/api/customer/";
+    final url = "http://192.168.1.31:8000/api/customer/";
 
     final uri = Uri.parse(url);
     print(authorizationValue);
@@ -327,7 +269,7 @@ class _NewClientsState extends State<NewClients> {
         body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      customerController.text = value;
+      customerController!.text = value;
       custEmailController.text = custEmailController.text;
       custNumController.text = custNumController.text;
       print('created successfully ');
@@ -341,7 +283,7 @@ class _NewClientsState extends State<NewClients> {
 
   Future<void> updateData(String customerIdValue) async {
     final body = {
-      "name": customerController.text,
+      "name": customerController!.text,
       "email": custEmailController.text,
       "phone_number": custNumController.text
     };
@@ -350,7 +292,7 @@ class _NewClientsState extends State<NewClients> {
     var customerIdValue = prefs.get(getUser);
     print(" get user id $CustKey");
 
-    final url = "http://192.168.1.33:8000/api/customer-edit/$customerIdValue";
+    final url = "http://192.168.1.31:8000/api/customer-edit/$customerIdValue";
     final uri = Uri.parse(url);
     print(authorizationValue);
     print(customerIdValue);
@@ -365,6 +307,44 @@ class _NewClientsState extends State<NewClients> {
     if (mounted) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => AddClients()));
+    }
+  }
+
+  Future<void> fetchEditDetails() async {
+    final url = Base_URL + custlistendpoint;
+
+    final uri = Uri.parse(url);
+    print("seven");
+
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var getTheKey = prefs.getString(ACCESS_KEY);
+    print(authorizationValue);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+    print(response.body);
+    var dataRes = response.body;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      List<Map<String, dynamic>> jsonData = List.from(results);
+
+      List<String> names =
+          jsonData.map((item) => item['name'].toString()).toList();
+      print(names[0]);
+      // print(names[1]);
+
+// Now you have the list of names. You can use this list to show them in your TextField.
+
+      // print("customer id result $custres");
+      // var setTheCustId = prefs.setInt(CUST_ID, custResults);
+      setState(() {
+        data = results;
+        print("final data $data");
+      });
+    } else {
+      print("error");
     }
   }
 
@@ -414,7 +394,7 @@ class _NewClientsState extends State<NewClients> {
                         onPressed: () {
                           updateData(customerIdValue);
 
-                          customerController.clear();
+                          customerController!.clear();
                           custEmailController.clear();
                           custNumController.clear();
                           isLogin = false;
