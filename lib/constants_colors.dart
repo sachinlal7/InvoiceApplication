@@ -28,7 +28,12 @@ var businessName = "";
 final BUSINESS_NAME = "";
 final EMAIL_ID = "";
 
+final personName = "";
+// final personEmail = "";
+
 final dataItem = "";
+
+final name = "";
 late bool isLogin = true;
 String _authValue = "";
 set authorizationValue(String val) => _authValue = val;
@@ -50,3 +55,7 @@ int get getUserIdValue => _IDValue;
 String _email = "";
 set emailId(String val) => _email = val;
 String get emailId => _email;
+
+String _emailPerson = "";
+set personEmail(String val) => _emailPerson = val;
+String get personEmail => _emailPerson;

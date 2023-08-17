@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:invoice_app/Screens/details_page.dart';
+import 'package:invoice_app/model/custModels.dart';
 import 'package:invoice_app/subscreens/client.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice_app/subscreens/clientDetails.dart';
 import 'package:invoice_app/widgets/navBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,16 +31,20 @@ class _AddClientsState extends State<AddClients> {
 
   bool isLoading = true;
 
+  late CustDetails custDetails;
+  bool isDataLoaded = false;
+  String errorMessage = '';
+
+  callAPIandAssignData() async {
+    custDetails = await fetchCust();
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
+    callAPIandAssignData();
     super.initState();
-    print("six");
-    fetchCust();
-    print("eight");
-    // idOfUser();
-    print("SIXTEEN");
-    // getidOfUser();
+    // fetchCust();
+    print("object");
   }
 
   @override
@@ -45,7 +52,8 @@ class _AddClientsState extends State<AddClients> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text("Client Details"),
+        title: Text("Clients"),
+        centerTitle: true,
       ),
       body: Visibility(
         visible: isLoading,
@@ -59,7 +67,6 @@ class _AddClientsState extends State<AddClients> {
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height * 0.8,
@@ -81,104 +88,108 @@ class _AddClientsState extends State<AddClients> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Container(
-                              height: 110,
+                              height: 122,
                               width: double.maxFinite,
                               color: Color_green,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.all(12),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(5),
+                                        width: 48,
+                                        child: Column(
+                                          // mainAxisAlignment:
+                                          //     MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("Customer"),
+                                            Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 15,
+                                                  backgroundImage: AssetImage(
+                                                      "assets/images/person.jpg"),
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.phone_android),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                        Row(
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.all(6),
+                                        width: 140,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          // mainAxisAlignment:
+                                          //     MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("Email"),
+                                            Row(
+                                              children: [Text("Client Name")],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [Text("Client Number")],
+                                            ),
                                           ],
                                         ),
-                                        Row(
-                                          children: [
-                                            Text("Phone"),
-                                          ],
+                                      ),
+                                      Container(
+                                        width: 200,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(dataItem['name']),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(dataItem['phone_number']
+                                                  .toString())
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.all(8),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [Text(dataItem['name'])],
-                                        ),
-                                        Row(
-                                          children: [Text(dataItem['email'])],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(dataItem['phone_number']
-                                                .toString())
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(12.0),
                                           child: GestureDetector(
-                                            onTap: () async {
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              var keyuser = prefs.setInt(
-                                                  getUser, personId);
-                                              print(getUser);
-                                              print("twelve $keyuser");
-                                              fetchEditDetails();
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          NewClients(
-                                                            isEdit: true,
-                                                          )));
-                                            },
-                                            child: Container(
-                                              height: 25,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.blue,
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              child: Center(
-                                                  child: Text(
-                                                "Edit",
-                                                style: TextStyle(
-                                                    color: Color_white),
-                                              )),
-                                            ),
-                                          ),
+                                              onTap: () async {
+                                                SharedPreferences prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                var keyuser = prefs.setInt(
+                                                    getUser, personId);
+                                                print(getUser);
+                                                print("twelve $keyuser");
+                                                fetchEditDetails();
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            NewClients(
+                                                              isEdit: true,
+                                                            )));
+                                              },
+                                              child: Icon(Icons.edit)),
                                         ),
                                         IconButton(
                                             onPressed: () async {
@@ -198,7 +209,21 @@ class _AddClientsState extends State<AddClients> {
                                                         "Are you sure want to delete ?");
                                                   });
                                             },
-                                            icon: Icon(Icons.delete))
+                                            icon: Icon(Icons.delete)),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ClientDetails(
+                                                            custDetail:
+                                                                custDetails
+                                                                        .data[
+                                                                    index],
+                                                          )));
+                                            },
+                                            icon: Icon(Icons.info_outline))
                                       ],
                                     ),
                                   )
@@ -252,7 +277,7 @@ class _AddClientsState extends State<AddClients> {
     );
   }
 
-  Future<void> fetchCust() async {
+  Future<CustDetails> fetchCust() async {
     final url = Base_URL + custlistendpoint;
 
     final uri = Uri.parse(url);
@@ -283,6 +308,7 @@ class _AddClientsState extends State<AddClients> {
       //   print("numbr of cust $custNum");
       // }
     });
+    return custDetails;
   }
 
   Future<void> deletById(String personId) async {

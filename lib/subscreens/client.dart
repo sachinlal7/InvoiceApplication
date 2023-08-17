@@ -10,15 +10,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import '../constants_colors.dart';
 
+//  final bool isEdit;
+// int index ;
+final formkey = GlobalKey<FormState>();
+
 class NewClients extends StatefulWidget {
-  final bool isEdit;
-
-  final formkey = GlobalKey<FormState>();
-
-  NewClients({
-    required this.isEdit,
-  });
-
+  const NewClients({super.key, this.isEdit, this.index});
+  final String? index;
+  final isEdit;
   @override
   State<NewClients> createState() => _NewClientsState();
 }

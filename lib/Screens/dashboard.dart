@@ -22,8 +22,9 @@ class _DashBoardState extends State<DashBoard> {
   void getData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      authorizationValue = prefs.getString(ACCESS_KEY) ?? "";
+      setState(() {
+        authorizationValue = prefs.getString(ACCESS_KEY) ?? "";
+      });
 
       print("fourth");
 
@@ -36,6 +37,7 @@ class _DashBoardState extends State<DashBoard> {
   Future<void> profileGet() async {
     final url = "http://192.168.1.31:8000/api/user-updated-profile/";
     final uri = Uri.parse(url);
+    print(authorizationValue);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
 
@@ -44,25 +46,27 @@ class _DashBoardState extends State<DashBoard> {
 
     var data = jsonDecode(response.body);
     var daata = data['data'];
-    if (daata != null) {
-      businessName = daata['business_name'] ?? null;
-      emailId = daata['email'] ?? null;
-      print('business name $businessName');
-      print(emailId);
+    print(daata);
+    // if (businessName != null) {
+    //   businessName = daata['business_name'] ?? "";
+    //   emailId = daata['email'] ?? null;
+    //   print('business name $businessName');
+    //   print(emailId);
 
-      // var prefs = await SharedPreferences.getInstance();
-      // prefs.setString(
-      //     BUSINESS_NAME, businessName ?? ""); // Store empty string if null
-      // var prefss = await SharedPreferences.getInstance();
-      // prefss.setString(EMAIL_ID, emailId ?? ""); // Store empty string if null
-    } // Store empty string if null
+    //   // var prefs = await SharedPreferences.getInstance();
+    //   // prefs.setString(
+    //   //     BUSINESS_NAME, businessName ?? ""); // Store empty string if null
+    //   // var prefss = await SharedPreferences.getInstance();
+    //   // prefss.setString(EMAIL_ID, emailId ?? ""); // Store empty string if null
+    // } // Store empty string if null
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    isLogin ? getData() : "";
+    getData();
+    // isLogin ? getData() : "";
     profileGet();
     businessName = " ";
     print("dashboard page");

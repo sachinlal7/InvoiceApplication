@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:invoice_app/constants_colors.dart';
 
 import '../widgets/navBar.dart';
+import 'package:http/http.dart' as http;
 
 class ManageProfiles extends StatefulWidget {
   const ManageProfiles({super.key});
@@ -17,12 +20,23 @@ class _ManageProfilesState extends State<ManageProfiles> {
   TextEditingController NameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchProfile();
+    technicalProductsController.text = name.toString();
+    print("name is $name");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color_orange,
         title: Text("Manage Profiles"),
+        centerTitle: true,
       ),
       drawer: NavBar(businessName: businessName, emailId: emailId),
       backgroundColor: Color_green,
@@ -34,8 +48,11 @@ class _ManageProfilesState extends State<ManageProfiles> {
             key: _formkey,
             child: Column(
               children: [
-                SizedBox(
-                  height: 180,
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage("assets/images/person.jpg")),
                 ),
                 // TextFormField(
                 //   decoration: InputDecoration(
@@ -57,7 +74,8 @@ class _ManageProfilesState extends State<ManageProfiles> {
                   child: TextFormField(
                     controller: technicalProductsController,
                     decoration: InputDecoration(
-                        hintText: "Technical Products",
+                        hintText: name.toString(),
+                        labelText: name.toString(),
                         contentPadding: EdgeInsets.only(left: 10),
                         border:
                             UnderlineInputBorder(borderSide: BorderSide.none)),
@@ -173,7 +191,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                     width: MediaQuery.of(context).size.height * 0.70,
                     child: Center(
                         child: Text(
-                      "SIGN UP",
+                      "Update",
                       style: TextStyle(
                           color: Color_white,
                           fontWeight: FontWeight.w400,
@@ -193,5 +211,18 @@ class _ManageProfilesState extends State<ManageProfiles> {
         ),
       ),
     );
+  }
+
+  void fetchProfile() async {
+    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final uri = Uri.parse(url);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.statusCode);
+    print(response.body);
+    var data = jsonDecode(response.body);
+    print(data);
+    var name = data['data']['business_name'];
+    print(name);
   }
 }

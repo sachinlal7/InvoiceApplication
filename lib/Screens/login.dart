@@ -25,6 +25,44 @@ class _LoginState extends State<Login> {
   bool isUserLoggedIn = false;
   bool _obscureText = true;
 
+  // void login(String username, password) async {
+  //   if (userNameController.text.isNotEmpty &&
+  //       passwordController.text.isNotEmpty) {
+  //     var url = Uri.parse("http://192.168.1.31:8000/api/user-login/");
+  //     var response = await http
+  //         .post(url, body: {'username': username, 'password': password});
+  //     if (response.statusCode == 200) {
+  //       var data = jsonDecode(response.body);
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text("Login Successfully")));
+
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       prefs.setString(ACCESS_KEY, data['access']);
+
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => DashBoard()));
+  //     } else {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+  //     }
+  //   } else {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text("value not found")));
+  //   }
+  // }
+
+  // void checkLogin() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? val = prefs.getString("ACCESS_KEY");
+
+  //   if (val != null) {
+  //     Navigator.pushAndRemoveUntil(
+  //         context,
+  //         MaterialPageRoute(builder: ((context) => DashBoard())),
+  //         (route) => false);
+  //   }
+  // }
+
   void login(String username, password) async {
     try {
       var url = Uri.parse("http://192.168.1.31:8000/api/user-login/");
@@ -85,7 +123,7 @@ class _LoginState extends State<Login> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {});
     userNameController = TextEditingController(text: "sachinlal7");
-    passwordController = TextEditingController(text: "sachin0704");
+    passwordController = TextEditingController(text: "sachin123");
     print("login page");
     //  getData();
   }
