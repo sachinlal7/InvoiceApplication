@@ -68,7 +68,7 @@ class _DashBoardState extends State<DashBoard> {
     getData();
     // isLogin ? getData() : "";
     profileGet();
-    businessName = " ";
+
     print("dashboard page");
   }
 
@@ -100,7 +100,8 @@ class _DashBoardState extends State<DashBoard> {
                   icon: Icon(Icons.notifications))
             ],
           ),
-          drawer: NavBar(businessName: businessName, emailId: emailId),
+          drawer:
+              NavBar(businessName: businessName.toString(), emailId: emailId),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(

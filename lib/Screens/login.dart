@@ -118,6 +118,23 @@ class _LoginState extends State<Login> {
     }
   }
 
+  void fetchProfile() async {
+    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final uri = Uri.parse(url);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.statusCode);
+    print(response.body);
+    var data = jsonDecode(response.body);
+    print(data);
+    // businessName = data['data']['business_name'];
+    // businessEmail = data['data']['email'];
+    // UserName = data['data']['username'];
+    // phoneNumber = data['data']['phone_number'];
+    // address = data['data']['address'];
+    // print("fetchedValue is $businessName");
+  }
+
   @override
   void initState() {
     super.initState();
@@ -126,6 +143,7 @@ class _LoginState extends State<Login> {
     passwordController = TextEditingController(text: "sachin123");
     print("login page");
     //  getData();
+    fetchProfile();
   }
 
   @override

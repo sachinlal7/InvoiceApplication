@@ -20,15 +20,21 @@ final getData = "";
 final CustKey = "";
 final getUser = "";
 final custIDnew = "";
-final personId = "";
+var personId = "";
+var personName = "";
 final value = "";
 final errorMsg = "";
 final names = "";
-var businessName = "";
+String? businessName = "";
+var companyName = "";
+
+var businessEmail = "";
+var UserName = "";
+var phoneNumber = "";
+var address = "";
 final BUSINESS_NAME = "";
 final EMAIL_ID = "";
-
-final personName = "";
+var NAME = "";
 // final personEmail = "";
 
 final dataItem = "";

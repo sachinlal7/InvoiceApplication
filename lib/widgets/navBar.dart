@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Screens/homescreen.dart';
@@ -32,6 +34,22 @@ class _NavBarState extends State<NavBar> {
     prefs.reload();
   }
 
+  void fetchProfile() async {
+    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final uri = Uri.parse(url);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.statusCode);
+    print(response.body);
+    var data = jsonDecode(response.body);
+    print(data);
+    businessName = data['data']['business_name'];
+    businessEmail = data['data']['email'];
+    UserName = data['data']['username'];
+    // phoneNumber = data['data']['phone_number'];
+    address = data['data']['address'];
+    print("fetchedValue is $businessName");
+  }
   // void getBusinessName() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -49,6 +67,7 @@ class _NavBarState extends State<NavBar> {
     print("drawer open");
     // getBusinessName();
     print("nav bar page");
+    fetchProfile();
   }
 
   @override
@@ -73,11 +92,11 @@ class _NavBarState extends State<NavBar> {
                     ),
                   ),
                   accountName: Text(
-                    businessName,
+                    businessName!,
                     style: TextStyle(color: Color_white),
                   ),
                   accountEmail: Text(
-                    emailId,
+                    businessEmail,
                     style: TextStyle(fontSize: 12),
                   )),
             ),

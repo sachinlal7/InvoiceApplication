@@ -1,16 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:invoice_app/Screens/details_page.dart';
-import 'package:invoice_app/model/custModels.dart';
 import 'package:invoice_app/subscreens/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:invoice_app/subscreens/clientDetails.dart';
-import 'package:invoice_app/widgets/navBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../Screens/homescreen.dart';
 import '../constants_colors.dart';
 
 class AddClients extends StatefulWidget {
@@ -27,23 +23,14 @@ class _AddClientsState extends State<AddClients> {
 
   TextEditingController custNumController = TextEditingController();
   List data = [];
-  int selectedNameIndex = -1;
 
   bool isLoading = true;
 
-  late CustDetails custDetails;
-  bool isDataLoaded = false;
-  String errorMessage = '';
-
-  callAPIandAssignData() async {
-    custDetails = await fetchCust();
-  }
-
   @override
   void initState() {
-    callAPIandAssignData();
     super.initState();
     // fetchCust();
+    fetchCust();
     print("object");
   }
 
@@ -80,9 +67,11 @@ class _AddClientsState extends State<AddClients> {
                           print(custIDnew);
 
                           final person = data[index];
-                          final personId = person["id"];
+                          personId = person["id"].toString();
+                          personName = person['name'];
 
                           print("id of prsnn $personId");
+                          print("name of prsnn $personName");
                           print("eleven");
 
                           return Padding(
@@ -176,10 +165,11 @@ class _AddClientsState extends State<AddClients> {
                                                 SharedPreferences prefs =
                                                     await SharedPreferences
                                                         .getInstance();
-                                                var keyuser = prefs.setInt(
+                                                var keyuser = prefs.setString(
                                                     getUser, personId);
                                                 print(getUser);
                                                 print("twelve $keyuser");
+
                                                 fetchEditDetails();
                                                 Navigator.push(
                                                     context,
@@ -187,6 +177,8 @@ class _AddClientsState extends State<AddClients> {
                                                         builder: (context) =>
                                                             NewClients(
                                                               isEdit: true,
+                                                              name: dataItem[
+                                                                  'name'],
                                                             )));
                                               },
                                               child: Icon(Icons.edit)),
@@ -197,7 +189,7 @@ class _AddClientsState extends State<AddClients> {
                                               SharedPreferences prefs =
                                                   await SharedPreferences
                                                       .getInstance();
-                                              var keyuser = prefs.setInt(
+                                              var keyuser = prefs.setString(
                                                   getUser, personId);
                                               print("eighteen");
                                               print(keyuser);
@@ -216,12 +208,7 @@ class _AddClientsState extends State<AddClients> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          ClientDetails(
-                                                            custDetail:
-                                                                custDetails
-                                                                        .data[
-                                                                    index],
-                                                          )));
+                                                          ClientDetails()));
                                             },
                                             icon: Icon(Icons.info_outline))
                                       ],
@@ -277,7 +264,7 @@ class _AddClientsState extends State<AddClients> {
     );
   }
 
-  Future<CustDetails> fetchCust() async {
+  Future<void> fetchCust() async {
     final url = Base_URL + custlistendpoint;
 
     final uri = Uri.parse(url);
@@ -292,6 +279,7 @@ class _AddClientsState extends State<AddClients> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;
       var results = json['data'] as List;
+      print(results);
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
@@ -308,7 +296,6 @@ class _AddClientsState extends State<AddClients> {
       //   print("numbr of cust $custNum");
       // }
     });
-    return custDetails;
   }
 
   Future<void> deletById(String personId) async {
@@ -356,8 +343,6 @@ class _AddClientsState extends State<AddClients> {
 
       List<String> names =
           jsonData.map((item) => item['name'].toString()).toList();
-      print(names[0]);
-      print(names[1]);
 
       setState(() {
         data = results;

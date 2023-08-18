@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
@@ -11,12 +10,12 @@ import 'package:form_field_validator/form_field_validator.dart';
 import '../constants_colors.dart';
 
 //  final bool isEdit;
-// int index ;
+final String name = "";
 final formkey = GlobalKey<FormState>();
 
 class NewClients extends StatefulWidget {
-  const NewClients({super.key, this.isEdit, this.index});
-  final String? index;
+  const NewClients({super.key, this.isEdit, this.name});
+  final String? name;
   final isEdit;
   @override
   State<NewClients> createState() => _NewClientsState();
@@ -29,10 +28,10 @@ class _NewClientsState extends State<NewClients> {
 
   TextEditingController custNumController = TextEditingController();
 
-  String _selectedValue = '';
   bool isEdit = false;
   bool isvalid = true;
   List data = [];
+  String name = "";
 
   final formkey = GlobalKey<FormState>();
 
@@ -42,9 +41,10 @@ class _NewClientsState extends State<NewClients> {
     super.initState();
 
     fetchEditDetails();
-    if (names.isNotEmpty) {
-      customerController?.text = names[0];
-    }
+    // if (names.isNotEmpty) {
+    //   customerController?.text = names[0];
+    // }
+    print("the transfrd name $name");
   }
 
   @override
@@ -80,7 +80,7 @@ class _NewClientsState extends State<NewClients> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text("Customer"),
+                            Text(name),
                             SizedBox(
                               width: 50,
                             ),
@@ -92,7 +92,8 @@ class _NewClientsState extends State<NewClients> {
                                   color: Colors.white,
                                   child: TextFormField(
                                     maxLength: 30,
-                                    controller: customerController,
+                                    controller:
+                                        TextEditingController(text: name),
                                     decoration: InputDecoration(
                                         counterText: "",
                                         hintText: " Customer Name",
@@ -217,10 +218,6 @@ class _NewClientsState extends State<NewClients> {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: GestureDetector(
                               onTap: () {
-                                String Name = customerController!.text;
-                                String email = custEmailController.text;
-                                String phone = custNumController.text;
-
                                 if (formkey.currentState!.validate()) {}
 
                                 widget.isEdit
@@ -322,7 +319,6 @@ class _NewClientsState extends State<NewClients> {
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
 
     print(response.body);
-    var dataRes = response.body;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;

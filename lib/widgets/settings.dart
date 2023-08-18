@@ -31,7 +31,7 @@ class _SettingsState extends State<Settings> {
             )
           ],
           title: Center(child: Text("Settings"))),
-      drawer: NavBar(businessName: businessName, emailId: emailId),
+      drawer: NavBar(businessName: businessName.toString(), emailId: emailId),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

@@ -7,11 +7,7 @@ import 'package:invoice_app/model/custModels.dart';
 import 'package:invoice_app/model/cust_list_model.dart';
 
 class ClientDetails extends StatelessWidget {
-  final Datum custDetail;
-  ClientDetails({
-    super.key,
-    required this.custDetail,
-  });
+  ClientDetails({super.key});
 
   bool isLoading = true;
 
@@ -22,7 +18,7 @@ class ClientDetails extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color_green,
       appBar: AppBar(
-        title: Text("${custDetail.name}"),
+        title: Text("fdfdff"),
         centerTitle: true,
       ),
       body: Column(
@@ -49,8 +45,8 @@ class ClientDetails extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text(custDetail.name),
-                  Text(custDetail.email),
+                  Text("snfkjds "),
+                  Text("custDetail"),
                   Text("Phone"),
                   Text("Status")
                 ],
