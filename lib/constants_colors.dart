@@ -9,6 +9,8 @@ final Color_blue = Color.fromARGB(255, 11, 138, 211);
 final Base_URL = "http://192.168.1.31:8000/api/";
 
 final custlistendpoint = "customer-list/";
+final URL_image = "http://192.168.1.31:8000";
+String uploadedImageUrl = URL_image + image;
 
 final ACCESS_KEY = "";
 final token = "";
@@ -27,7 +29,7 @@ final errorMsg = "";
 final names = "";
 String? businessName = "";
 var companyName = "";
-
+var image = "";
 var businessEmail = "";
 var UserName = "";
 var phoneNumber = "";

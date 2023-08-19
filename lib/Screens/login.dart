@@ -143,7 +143,7 @@ class _LoginState extends State<Login> {
     passwordController = TextEditingController(text: "sachin123");
     print("login page");
     //  getData();
-    fetchProfile();
+    // fetchProfile();
   }
 
   @override

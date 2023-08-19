@@ -22,82 +22,85 @@ class _ManageProfilesState extends State<ManageProfiles> {
   TextEditingController NameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController imageController = TextEditingController();
 
-  File? image;
-
-  final picker = ImagePicker();
+  XFile? _image;
+  String message = '';
+  bool loading = false;
   bool showSpinner = false;
+  String fetchedValue = "";
 
-  //we can upload image from camera or from gallery based on parameter
-  Future getImage(ImageSource media) async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      image = File(image!.path);
-      setState(() {});
-    } else {
-      print("no image selected");
-    }
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
 
-    // setState(() {
-    //   image = img;
-    // });
-  }
-
-  void myAlert() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            title: Text('Please choose media to select'),
-            content: Container(
-              height: MediaQuery.of(context).size.height / 6,
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    //if user click this button, user can upload image from gallery
-                    onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.gallery);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.image),
-                        Text('From Gallery'),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    //if user click this button. user can upload image from camera
-                    onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.camera);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.camera),
-                        Text('From Camera'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+    setState(() {
+      _image = image;
+    });
   }
 
   Future<void> uploadImage() async {
-    var uri = Uri.parse("uri");
+    if (_image == null) {
+      setState(() {
+        message = 'No image selected.';
+      });
+      return;
+    }
+
+    // setState(() {
+    //   loading = true;
+    // });
+
+    try {
+      var headers = {
+        "Authorization":
+            "Bearer $authorizationValue", // Replace with actual token
+        "Accept": "application/json",
+      };
+      print("image value $authorizationValue");
+
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('http://192.168.1.31:8000/api/user-updated-profile/'),
+      );
+
+      request.headers.addAll(headers);
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'profile_pic', // Replace with your server's file field name
+        _image!.path,
+      ));
+
+      var response = await request.send();
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          message = 'Image uploaded successfully.';
+        });
+      } else {
+        setState(() {
+          message =
+              'Image upload failed with status code: ${response.statusCode}';
+        });
+      }
+    } catch (error) {
+      setState(() {
+        message = 'Error uploading image: $error';
+      });
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
-  String fetchedValue = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchProfile();
+
     technicalProductsController = TextEditingController(text: businessName);
     EmailController = TextEditingController(text: businessEmail);
     NameController = TextEditingController(text: UserName);
@@ -136,16 +139,12 @@ class _ManageProfilesState extends State<ManageProfiles> {
                               child: SizedBox(
                                 width: 140, // Double the radius for the width
                                 height: 140, // Double the radius for the height
-                                child: image != null
+                                child: _image != null
                                     ? Image.file(
-                                        File(image!.path).absolute,
-                                        fit: BoxFit.cover,
+                                        File(_image!.path),
+                                        height: 200,
                                       )
-                                    : Image(
-                                        image: NetworkImage(
-                                            "http://192.168.1.31:8000/media/Screenshot_1.png"),
-                                        fit: BoxFit.cover,
-                                      ),
+                                    : Container(),
                               ),
                             ),
                           )),
@@ -154,7 +153,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                           right: 15,
                           child: GestureDetector(
                             onTap: () {
-                              myAlert();
+                              pickImage();
                             },
                             child: CircleAvatar(
                               child: Icon(Icons.add_a_photo),
@@ -258,7 +257,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                               borderSide: BorderSide.none)),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Enter Email";
+                          return "Enter Number";
                         }
                         return null;
                       },
@@ -293,7 +292,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      updateProfile();
+                      updateProfile().then((value) => fetchProfile());
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.059,
@@ -332,11 +331,13 @@ class _ManageProfilesState extends State<ManageProfiles> {
     print(response.body);
     var data = jsonDecode(response.body);
     print(data);
+    UserName = data['data']['username'];
     businessName = data['data']['business_name'];
     businessEmail = data['data']['email'];
-    UserName = data['data']['username'];
-    phoneNumber = data['data']['phone_number'].toString();
+
+    phoneNumber = data['data']['phone_number'];
     address = data['data']['address'];
+    image = data['data']['profile_pic'];
     print("fetchedValue is $businessName");
   }
 
@@ -373,68 +374,64 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
   Future<void> updateProfile() async {
     setState(() {
-      showSpinner = true;
+      // showSpinner = true;
     });
 
-    var stream = new http.ByteStream(image!.openRead());
-    stream.cast();
+    if (_image == null) {
+      setState(() {
+        message = 'No image selected.';
+      });
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
 
-    var length = await image!.length();
+    try {
+      var headers = {
+        "Authorization":
+            "Bearer $authorizationValue", // Replace with actual token
+        "Accept": "application/json",
+      };
+      print(authorizationValue);
 
-    final uri = Uri.parse("http://192.168.1.31:8000/api/user-updated-profile/");
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('http://192.168.1.31:8000/api/user-updated-profile/'),
+      );
 
-    final request = http.MultipartRequest('PUT', uri)
-      ..headers['Authorization'] = 'Bearer $authorizationValue';
-    final fields = {
-      "business_name": technicalProductsController.text,
-      "email": EmailController.text,
-      "username": NameController.text,
-      "phone_number": phoneNumberController.text.toString(),
-      "address": addressController.text,
-    };
-    var multiport = new http.MultipartFile('profile_pic', stream, length);
-
-    request.files.add(multiport);
-    var response = await request.send();
-
-    if (image != null) {
-      var stream = new http.ByteStream(image!.openRead());
-      stream.cast();
-      var length = await image!.length();
-      final uri =
-          Uri.parse("http://192.168.1.31:8000/api/user-updated-profile/");
-      final request = http.MultipartRequest('PUT', uri)
-        ..headers['Authorization'] = 'Bearer $authorizationValue';
+      request.headers.addAll(headers);
       final fields = {
         "business_name": technicalProductsController.text,
         "email": EmailController.text,
         "username": NameController.text,
-        "phone_number": phoneNumberController.text.toString(),
+        "phone_number": phoneNumberController.text,
         "address": addressController.text,
       };
-
-      var multiport = new http.MultipartFile('profile_pic', stream, length);
-
-      request.files.add(multiport);
-    }
-
-    try {
+      request.files.add(await http.MultipartFile.fromPath(
+        'profile_pic', // Replace with your server's file field name
+        _image!.path,
+      ));
       var response = await request.send();
+      print(response.statusCode);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Successfully updated');
+      if (response.statusCode == 200) {
+        setState(() {
+          showSpinner = false;
+          uploadedImageUrl = image;
+          message = 'Profile updated successfully.';
+          print(message);
+        });
       } else {
-        print('Update failed');
-      }
-
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DashBoard()),
-        );
+        setState(() {
+          message =
+              'Profile upload failed with status code: ${response.statusCode}';
+        });
       }
     } catch (error) {
-      print('Error updating profile: $error');
+      setState(() {
+        message = 'Error uploading image: $error';
+      });
     }
   }
 }

@@ -34,32 +34,32 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
-  Future<void> profileGet() async {
-    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
-    final uri = Uri.parse(url);
-    print(authorizationValue);
-    final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+  // Future<void> profileGet() async {
+  //   final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+  //   final uri = Uri.parse(url);
+  //   print(authorizationValue);
+  //   final response = await http
+  //       .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
 
-    print("response get ${response.statusCode}");
-    print(response.body);
+  //   print("response get ${response.statusCode}");
+  //   print(response.body);
 
-    var data = jsonDecode(response.body);
-    var daata = data['data'];
-    print(daata);
-    // if (businessName != null) {
-    //   businessName = daata['business_name'] ?? "";
-    //   emailId = daata['email'] ?? null;
-    //   print('business name $businessName');
-    //   print(emailId);
+  //   var data = jsonDecode(response.body);
+  //   var daata = data['data'];
+  //   print(daata);
+  //   // if (businessName != null) {
+  //   //   businessName = daata['business_name'] ?? "";
+  //   //   emailId = daata['email'] ?? null;
+  //   //   print('business name $businessName');
+  //   //   print(emailId);
 
-    //   // var prefs = await SharedPreferences.getInstance();
-    //   // prefs.setString(
-    //   //     BUSINESS_NAME, businessName ?? ""); // Store empty string if null
-    //   // var prefss = await SharedPreferences.getInstance();
-    //   // prefss.setString(EMAIL_ID, emailId ?? ""); // Store empty string if null
-    // } // Store empty string if null
-  }
+  //   //   // var prefs = await SharedPreferences.getInstance();
+  //   //   // prefs.setString(
+  //   //   //     BUSINESS_NAME, businessName ?? ""); // Store empty string if null
+  //   //   // var prefss = await SharedPreferences.getInstance();
+  //   //   // prefss.setString(EMAIL_ID, emailId ?? ""); // Store empty string if null
+  //   // } // Store empty string if null
+  // }
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _DashBoardState extends State<DashBoard> {
     super.initState();
     getData();
     // isLogin ? getData() : "";
-    profileGet();
+    ;
 
     print("dashboard page");
   }

@@ -50,24 +50,19 @@ class _NavBarState extends State<NavBar> {
     address = data['data']['address'];
     print("fetchedValue is $businessName");
   }
-  // void getBusinessName() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   businessName = prefs.getString(BUSINESS_NAME) ?? "";
-  //   SharedPreferences prefss = await SharedPreferences.getInstance();
-  //   emailId = prefss.getString(EMAIL_ID) ?? "";
-
-  //   print(BUSINESS_NAME);
-  // }
 
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
-    print("drawer open");
-    // getBusinessName();
-    print("nav bar page");
-    fetchProfile();
+
+    setState(() {
+      print("setstate again");
+      fetchProfile();
+      ManageProfiles();
+    });
+    setState(() {});
   }
 
   @override
@@ -78,14 +73,18 @@ class _NavBarState extends State<NavBar> {
         child: ListView(
           children: [
             SizedBox(
-              height: 280,
+              height: 250,
               child: UserAccountsDrawerHeader(
                   currentAccountPicture: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
                       child: ClipOval(
                         child: Image(
-                          image: AssetImage("assets/images/person.jpg"),
+                          image:
+                              // NetworkImage(URL_image + image),
+                              NetworkImage(
+                                  "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ.jpg"),
+                          height: 80,
                           fit: BoxFit.fill,
                         ),
                       ),
