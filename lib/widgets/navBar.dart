@@ -23,6 +23,7 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   bool isLogin = false;
+  String profileImageUrl = "";
 
   Future<void> clearUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,7 +36,7 @@ class _NavBarState extends State<NavBar> {
   }
 
   void fetchProfile() async {
-    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final url = Base_URL + updateProfileApi;
     final uri = Uri.parse(url);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
@@ -48,7 +49,18 @@ class _NavBarState extends State<NavBar> {
     UserName = data['data']['username'];
     // phoneNumber = data['data']['phone_number'];
     address = data['data']['address'];
+    image = data['data']['profile_pic'];
+    print(image);
+
+    profileImageUrl = Url_image + image;
+
     print("fetchedValue is $businessName");
+    print(profileImageUrl);
+    final circleAvatar = CircleAvatar(
+      backgroundImage: NetworkImage(profileImageUrl),
+      radius: 40.0,
+    );
+    setState(() {});
   }
 
   @override
@@ -57,16 +69,17 @@ class _NavBarState extends State<NavBar> {
 
     super.initState();
 
-    setState(() {
-      print("setstate again");
-      fetchProfile();
-      ManageProfiles();
-    });
-    setState(() {});
+    fetchProfile();
+
+    print("setstate again");
+    // fetchProfile();
+    debugPrint("object");
+    debugPrint("data");
   }
 
   @override
   Widget build(BuildContext context) {
+    print("build call");
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
@@ -78,16 +91,7 @@ class _NavBarState extends State<NavBar> {
                   currentAccountPicture: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
-                      child: ClipOval(
-                        child: Image(
-                          image:
-                              // NetworkImage(URL_image + image),
-                              NetworkImage(
-                                  "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ.jpg"),
-                          height: 80,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                      backgroundImage: NetworkImage(profileImageUrl),
                     ),
                   ),
                   accountName: Text(
@@ -101,6 +105,7 @@ class _NavBarState extends State<NavBar> {
             ),
             GestureDetector(
               onTap: () {
+                print(URL_image + image);
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => DashBoard()));
                 isLogin = false;
@@ -114,6 +119,7 @@ class _NavBarState extends State<NavBar> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ManageProfiles()));
+                setState(() {});
               },
               child: ListTile(
                 leading: Icon(Icons.person),

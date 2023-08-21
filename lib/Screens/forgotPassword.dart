@@ -29,7 +29,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     try {
       final body = {"email": emailcontroller.text};
       print(emailcontroller.text);
-      final url = "http://192.168.1.31:8000/api/password/reset/email/";
+      final url = Base_URL + forgotPassword;
       final uri = Uri.parse(url);
 
       final response = await http.post(uri, body: body);

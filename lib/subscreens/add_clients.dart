@@ -305,7 +305,7 @@ class _AddClientsState extends State<AddClients> {
     print("SEVENTEEN");
     print(CustKey);
 
-    final url = "http://192.168.1.31:8000/api/customer-delete/$CustKey";
+    final url = Base_URL + customerDeleteApi + "$CustKey";
 
     final uri = Uri.parse(url);
 
@@ -404,6 +404,9 @@ class _AddClientsState extends State<AddClients> {
                                 .then((value) => Navigator.pop(context));
                             isLogin = false;
                             // clearUserData();
+                            setState(() {
+                              fetchCust();
+                            });
 
                             Fluttertoast.showToast(
                                 msg: text,

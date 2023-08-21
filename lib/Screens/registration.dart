@@ -27,7 +27,7 @@ class _RegistrationState extends State<Registration> {
 
   void signup(
       String email, password, number, business, username, address) async {
-    var url = Uri.parse("http://192.168.1.31:8000/api/user-registration/");
+    var url = Uri.parse(Base_URL + userRegistration);
 
     var response = await http.post(url, body: {
       "business_name": business,

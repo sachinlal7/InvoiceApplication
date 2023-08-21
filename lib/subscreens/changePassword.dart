@@ -24,7 +24,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       "confirm_new_password": NewPasswordController.text
     };
 
-    final url = "http://192.168.1.31:8000/api/change-password/";
+    final url = Base_URL + changePassword;
     final uri = Uri.parse(url);
     print("auth value $authorizationValue");
 

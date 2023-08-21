@@ -45,7 +45,7 @@ class ClientDetails extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text("snfkjds "),
+                  Text("sachin "),
                   Text("custDetail"),
                   Text("Phone"),
                   Text("Status")

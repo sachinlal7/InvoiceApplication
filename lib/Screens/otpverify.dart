@@ -29,8 +29,7 @@ class _OtpVerifyState extends State<OtpVerify> {
     print(getUserIdValue);
     print("object first");
 
-    final url =
-        "http://192.168.1.31:8000/api/password/reset/verify/$getUserIdValue";
+    final url = Base_URL + otpVerify + "$getUserIdValue";
     final uri = Uri.parse(url);
 
     final response = await http.post(uri, body: body);

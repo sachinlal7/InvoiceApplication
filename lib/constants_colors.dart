@@ -7,9 +7,28 @@ final Color_white = Colors.white;
 final Color_blue = Color.fromARGB(255, 11, 138, 211);
 
 final Base_URL = "http://192.168.1.31:8000/api/";
+final BASE_URL = "http://69.49.235.253:8035/api/";
 
+final userRegistration = "user-registration/";
+final userLogin = "user-login/";
+final changePassword = "change-password/";
+final updateProfileApi = "user-updated-profile/";
+final resetEmail = "password/reset/email/";
+final otpVerify = "password/reset/verify/";
+final logout = "logout";
+final addCustomer = "customer/";
 final custlistendpoint = "customer-list/";
-final URL_image = "http://192.168.1.31:8000";
+final customerEdit = "customer-edit/8";
+final customerDeleteApi = "customer-delete/";
+final createInvoice = "invoice/";
+final invoiceList = "invoice-list/";
+final editInvoice = "edit-invoice/7";
+final deleteInvoice = "delete-invoice/7";
+final paymentReminders = "send_payment_reminders/";
+final forgotPassword = "forgot-password/";
+
+final Url_image = "http://192.168.1.31:8000";
+final URL_image = "http://69.49.235.253:8035";
 String uploadedImageUrl = URL_image + image;
 
 final ACCESS_KEY = "";
@@ -40,6 +59,7 @@ var NAME = "";
 // final personEmail = "";
 
 final dataItem = "";
+final imageUrl = "";
 
 final name = "";
 late bool isLogin = true;

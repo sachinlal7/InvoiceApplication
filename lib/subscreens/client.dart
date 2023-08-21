@@ -22,7 +22,7 @@ class NewClients extends StatefulWidget {
 }
 
 class _NewClientsState extends State<NewClients> {
-  TextEditingController? customerController = TextEditingController();
+  TextEditingController customerController = TextEditingController();
 
   TextEditingController custEmailController = TextEditingController();
 
@@ -80,9 +80,9 @@ class _NewClientsState extends State<NewClients> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(name),
+                            Text("Client Name"),
                             SizedBox(
-                              width: 50,
+                              width: 2,
                             ),
                             Column(
                               children: [
@@ -92,8 +92,7 @@ class _NewClientsState extends State<NewClients> {
                                   color: Colors.white,
                                   child: TextFormField(
                                     maxLength: 30,
-                                    controller:
-                                        TextEditingController(text: name),
+                                    controller: customerController,
                                     decoration: InputDecoration(
                                         counterText: "",
                                         hintText: " Customer Name",
@@ -252,7 +251,7 @@ class _NewClientsState extends State<NewClients> {
 
   Future<void> submitData() async {
     final body = {
-      "name": customerController!.text.toString(),
+      "name": customerController.text.toString(),
       "email": custEmailController.text.toString(),
       "phone_number": custNumController.text.toString()
     };
@@ -279,7 +278,7 @@ class _NewClientsState extends State<NewClients> {
 
   Future<void> updateData(String customerIdValue) async {
     final body = {
-      "name": customerController!.text,
+      "name": customerController.text,
       "email": custEmailController.text,
       "phone_number": custNumController.text
     };
@@ -327,7 +326,7 @@ class _NewClientsState extends State<NewClients> {
 
       List<String> names =
           jsonData.map((item) => item['name'].toString()).toList();
-      print(names[0]);
+      // print(names[0]);
       // print(names[1]);
 
 // Now you have the list of names. You can use this list to show them in your TextField.
@@ -389,7 +388,7 @@ class _NewClientsState extends State<NewClients> {
                         onPressed: () {
                           updateData(customerIdValue);
 
-                          customerController!.clear();
+                          customerController.clear();
                           custEmailController.clear();
                           custNumController.clear();
                           isLogin = false;

@@ -61,7 +61,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
       var request = http.MultipartRequest(
         'PUT',
-        Uri.parse('http://192.168.1.31:8000/api/user-updated-profile/'),
+        Uri.parse(Base_URL + updateProfileApi),
       );
 
       request.headers.addAll(headers);
@@ -95,6 +95,8 @@ class _ManageProfilesState extends State<ManageProfiles> {
     }
   }
 
+  String profileImageUrl = "";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -104,12 +106,13 @@ class _ManageProfilesState extends State<ManageProfiles> {
     technicalProductsController = TextEditingController(text: businessName);
     EmailController = TextEditingController(text: businessEmail);
     NameController = TextEditingController(text: UserName);
-    phoneNumberController = TextEditingController(text: phoneNumber);
+    phoneNumberController = TextEditingController(text: phoneNumber.toString());
     addressController = TextEditingController(text: address);
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("profile build");
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
       child: Scaffold(
@@ -132,22 +135,26 @@ class _ManageProfilesState extends State<ManageProfiles> {
                     clipBehavior: Clip.none,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: CircleAvatar(
-                            radius: 70,
-                            child: ClipOval(
-                              child: SizedBox(
-                                width: 140, // Double the radius for the width
-                                height: 140, // Double the radius for the height
-                                child: _image != null
-                                    ? Image.file(
-                                        File(_image!.path),
-                                        height: 200,
-                                      )
-                                    : Container(),
-                              ),
-                            ),
-                          )),
+                        padding: const EdgeInsets.all(12.0),
+                        child: CircleAvatar(
+                          radius: 70,
+                          backgroundImage: NetworkImage(profileImageUrl),
+                        ),
+
+                        //  _image != null
+                        //     ? Image.file(
+                        //         File(_image!.path),
+                        //         height: 200,
+                        //         fit: BoxFit.cover,
+                        //       )
+                        //     : CircleAvatar(
+                        //         backgroundImage: profileImageUrl
+                        //                 .isNotEmpty
+                        //             ? NetworkImage(profileImageUrl)
+                        //             : NetworkImage(
+                        //                 "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg")),
+                      ),
+                      // )),
                       Positioned(
                           bottom: 15,
                           right: 15,
@@ -250,7 +257,10 @@ class _ManageProfilesState extends State<ManageProfiles> {
                     ),
                     child: TextFormField(
                       controller: phoneNumberController,
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
                       decoration: InputDecoration(
+                          counterText: "",
                           hintText: "989962223",
                           contentPadding: EdgeInsets.only(left: 10),
                           border: UnderlineInputBorder(
@@ -323,7 +333,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
   }
 
   void fetchProfile() async {
-    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final url = Base_URL + updateProfileApi;
     final uri = Uri.parse(url);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
@@ -335,10 +345,20 @@ class _ManageProfilesState extends State<ManageProfiles> {
     businessName = data['data']['business_name'];
     businessEmail = data['data']['email'];
 
-    phoneNumber = data['data']['phone_number'];
     address = data['data']['address'];
     image = data['data']['profile_pic'];
+
+    phoneNumber = data['data']['phone_number'];
+    print(phoneNumber);
+
+    profileImageUrl = Url_image + image;
     print("fetchedValue is $businessName");
+
+    final circleAvatar = CircleAvatar(
+      backgroundImage: NetworkImage(profileImageUrl),
+      radius: 40.0,
+    );
+    setState(() {});
   }
 
   // Future<void> updateProfile() async {
@@ -374,50 +394,46 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
   Future<void> updateProfile() async {
     setState(() {
-      // showSpinner = true;
-    });
-
-    if (_image == null) {
-      setState(() {
-        message = 'No image selected.';
-      });
-      return;
-    }
-    setState(() {
       loading = true;
     });
 
     try {
       var headers = {
-        "Authorization":
-            "Bearer $authorizationValue", // Replace with actual token
+        "Authorization": "Bearer $authorizationValue",
         "Accept": "application/json",
+        "Content-Type": "application/json",
       };
-      print(authorizationValue);
 
       var request = http.MultipartRequest(
         'PUT',
-        Uri.parse('http://192.168.1.31:8000/api/user-updated-profile/'),
+        Uri.parse(Base_URL + updateProfileApi),
       );
 
       request.headers.addAll(headers);
+
       final fields = {
         "business_name": technicalProductsController.text,
         "email": EmailController.text,
         "username": NameController.text,
-        "phone_number": phoneNumberController.text,
+        "phone_number": phoneNumberController.text.toString(),
         "address": addressController.text,
       };
-      request.files.add(await http.MultipartFile.fromPath(
-        'profile_pic', // Replace with your server's file field name
-        _image!.path,
-      ));
+
+      request.fields.addAll(fields);
+
+      if (_image != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'profile_pic',
+          _image!.path,
+        ));
+      }
+
       var response = await request.send();
       print(response.statusCode);
 
       if (response.statusCode == 200) {
         setState(() {
-          showSpinner = false;
+          loading = false;
           uploadedImageUrl = image;
           message = 'Profile updated successfully.';
           print(message);
@@ -425,12 +441,14 @@ class _ManageProfilesState extends State<ManageProfiles> {
       } else {
         setState(() {
           message =
-              'Profile upload failed with status code: ${response.statusCode}';
+              'Profile update failed with status code: ${response.statusCode}';
+          print(message);
         });
       }
     } catch (error) {
       setState(() {
-        message = 'Error uploading image: $error';
+        message = 'Error updating profile: $error';
+        print(message);
       });
     }
   }

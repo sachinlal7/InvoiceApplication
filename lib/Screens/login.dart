@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Screens/forgotPassword.dart';
+import 'package:invoice_app/Screens/manageProfiles.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
@@ -65,7 +66,7 @@ class _LoginState extends State<Login> {
 
   void login(String username, password) async {
     try {
-      var url = Uri.parse("http://192.168.1.31:8000/api/user-login/");
+      var url = Uri.parse(Base_URL + userLogin);
       var response = await http
           .post(url, body: {'username': username, 'password': password});
 
@@ -119,7 +120,7 @@ class _LoginState extends State<Login> {
   }
 
   void fetchProfile() async {
-    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    final url = Base_URL + updateProfileApi;
     final uri = Uri.parse(url);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
@@ -236,6 +237,7 @@ class _LoginState extends State<Login> {
                       login(userNameController.text.toString(),
                           passwordController.text.toString());
                     }
+                    ManageProfiles();
                     // Navigator.push(context,
                     //     MaterialPageRoute(builder: (context) => DashBoard()));
                   },
