@@ -162,23 +162,27 @@ class _AddClientsState extends State<AddClients> {
                                           padding: const EdgeInsets.all(12.0),
                                           child: GestureDetector(
                                               onTap: () async {
-                                                SharedPreferences prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-                                                var keyuser = prefs.setString(
-                                                    getUser, personId);
-                                                print(getUser);
-                                                print("twelve $keyuser");
+                                                // SharedPreferences prefs =
+                                                //     await SharedPreferences
+                                                //         .getInstance();
+                                                // var keyuser = prefs.setString(
+                                                //     getUser, personId);
+                                                // print(getUser);
+                                                // print("twelve $keyuser");
 
-                                                fetchEditDetails();
+                                                // fetchEditDetails();
+                                                print("edit pressed");
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             NewClients(
                                                               isEdit: true,
-                                                              name: dataItem[
-                                                                  'name'],
+                                                              clientId:
+                                                                  custIDnew,
+
+                                                              // name: dataItem[
+                                                              //     'name'],
                                                             )));
                                               },
                                               child: Icon(Icons.edit)),
@@ -208,7 +212,9 @@ class _AddClientsState extends State<AddClients> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          ClientDetails()));
+                                                          ClientDetails(
+                                                            clientId: custIDnew,
+                                                          )));
                                             },
                                             icon: Icon(Icons.info_outline))
                                       ],
@@ -233,10 +239,10 @@ class _AddClientsState extends State<AddClients> {
                                         isEdit: false,
                                       )));
 
-                          setState(() {
-                            fetchCust();
-                            isLoading = true;
-                          });
+                          // setState(() {
+                          //   fetchCust();
+                          //   isLoading = true;
+                          // });
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
@@ -319,6 +325,7 @@ class _AddClientsState extends State<AddClients> {
         // print("filtered data $data");
       });
     } else {}
+    fetchCust();
   }
 
   Future<void> fetchEditDetails() async {

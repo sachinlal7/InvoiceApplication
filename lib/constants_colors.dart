@@ -87,3 +87,14 @@ String get emailId => _email;
 String _emailPerson = "";
 set personEmail(String val) => _emailPerson = val;
 String get personEmail => _emailPerson;
+
+String _imageValue = "";
+set profileImage(String val) => _imageValue = val;
+String get profileImage => _imageValue;
+
+final PROFILE_IMAGE = "";
+
+var userrname = "";
+var userrNumber = "";
+var userrEmail = "";
+var userrPhoto = "";

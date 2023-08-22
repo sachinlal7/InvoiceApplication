@@ -24,6 +24,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   bool isLogin = false;
   String profileImageUrl = "";
+  bool isLoading = true;
 
   Future<void> clearUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,7 +37,8 @@ class _NavBarState extends State<NavBar> {
   }
 
   void fetchProfile() async {
-    final url = Base_URL + updateProfileApi;
+    // final url = Base_URL + updateProfileApi;
+    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
     final uri = Uri.parse(url);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
@@ -47,20 +49,42 @@ class _NavBarState extends State<NavBar> {
     businessName = data['data']['business_name'];
     businessEmail = data['data']['email'];
     UserName = data['data']['username'];
-    // phoneNumber = data['data']['phone_number'];
+    phoneNumber = data['data']['phone_number'];
     address = data['data']['address'];
+
     image = data['data']['profile_pic'];
+
     print(image);
 
     profileImageUrl = Url_image + image;
+    print(profileImageUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PROFILE_IMAGE, profileImageUrl);
 
     print("fetchedValue is $businessName");
     print(profileImageUrl);
     final circleAvatar = CircleAvatar(
-      backgroundImage: NetworkImage(profileImageUrl),
+      // backgroundImage: NetworkImage(profileImageUrl),
+      backgroundImage: NetworkImage(
+          "http://192.168.1.31:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
       radius: 40.0,
     );
-    setState(() {});
+    if (this.mounted) {
+      setState(() {});
+    }
+    getImageUrl();
+    print(profileImage);
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void getImageUrl() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    profileImage = prefs.getString(PROFILE_IMAGE) ?? "";
   }
 
   @override
@@ -88,12 +112,16 @@ class _NavBarState extends State<NavBar> {
             SizedBox(
               height: 250,
               child: UserAccountsDrawerHeader(
-                  currentAccountPicture: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(profileImageUrl),
-                    ),
-                  ),
+                  currentAccountPicture: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                              backgroundImage: image != null && image.isNotEmpty
+                                  ? NetworkImage(profileImageUrl)
+                                  : NetworkImage(
+                                      "http://192.168.1.31:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
+                        ),
                   accountName: Text(
                     businessName!,
                     style: TextStyle(color: Color_white),

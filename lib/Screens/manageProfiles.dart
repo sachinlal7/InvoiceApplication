@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ManageProfiles extends StatefulWidget {
   const ManageProfiles({super.key});
@@ -101,7 +102,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchProfile();
+    // fetchProfile();
 
     technicalProductsController = TextEditingController(text: businessName);
     EmailController = TextEditingController(text: businessEmail);
@@ -112,6 +113,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
   @override
   Widget build(BuildContext context) {
+    print("profile image $profileImage");
     debugPrint("profile build");
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
@@ -136,10 +138,18 @@ class _ManageProfilesState extends State<ManageProfiles> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundImage: NetworkImage(profileImageUrl),
-                        ),
+                        child: _image != null
+                            ? CircleAvatar(
+                                radius: 70,
+                                backgroundImage: FileImage(File(_image!.path)),
+                              )
+                            : CircleAvatar(
+                                radius: 70,
+                                backgroundImage: profileImageUrl.isEmpty
+                                    ? NetworkImage(profileImage)
+                                    : NetworkImage(
+                                        "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg"),
+                              ),
 
                         //  _image != null
                         //     ? Image.file(
@@ -302,7 +312,10 @@ class _ManageProfilesState extends State<ManageProfiles> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      updateProfile().then((value) => fetchProfile());
+                      // updateProfile().then((value) => fetchProfile());
+                      updateProfile();
+                      // setState(() {});
+                      // Navigator.pop(context);
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.059,
@@ -332,34 +345,34 @@ class _ManageProfilesState extends State<ManageProfiles> {
     );
   }
 
-  void fetchProfile() async {
-    final url = Base_URL + updateProfileApi;
-    final uri = Uri.parse(url);
-    final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
-    print(response.statusCode);
-    print(response.body);
-    var data = jsonDecode(response.body);
-    print(data);
-    UserName = data['data']['username'];
-    businessName = data['data']['business_name'];
-    businessEmail = data['data']['email'];
+  // void fetchProfile() async {
+  //   final url = Base_URL + updateProfileApi;
+  //   final uri = Uri.parse(url);
+  //   final response = await http
+  //       .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+  //   print(response.statusCode);
+  //   print(response.body);
+  //   var data = jsonDecode(response.body);
+  //   print(data);
+  //   UserName = data['data']['username'];
+  //   businessName = data['data']['business_name'];
+  //   businessEmail = data['data']['email'];
 
-    address = data['data']['address'];
-    image = data['data']['profile_pic'];
+  //   address = data['data']['address'];
+  //   image = data['data']['profile_pic'];
 
-    phoneNumber = data['data']['phone_number'];
-    print(phoneNumber);
+  //   phoneNumber = data['data']['phone_number'];
+  //   print(phoneNumber);
 
-    profileImageUrl = Url_image + image;
-    print("fetchedValue is $businessName");
+  //   profileImageUrl = Url_image + image;
+  //   print("fetchedValue is $businessName");
 
-    final circleAvatar = CircleAvatar(
-      backgroundImage: NetworkImage(profileImageUrl),
-      radius: 40.0,
-    );
-    setState(() {});
-  }
+  //   final circleAvatar = CircleAvatar(
+  //     backgroundImage: NetworkImage(profileImageUrl),
+  //     radius: 40.0,
+  //   );
+  //   setState(() {});
+  // }
 
   // Future<void> updateProfile() async {
   //   final body = {
@@ -437,19 +450,45 @@ class _ManageProfilesState extends State<ManageProfiles> {
           uploadedImageUrl = image;
           message = 'Profile updated successfully.';
           print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
         });
       } else {
         setState(() {
           message =
               'Profile update failed with status code: ${response.statusCode}';
           print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
         });
       }
     } catch (error) {
-      setState(() {
-        message = 'Error updating profile: $error';
-        print(message);
-      });
+      if (mounted) {
+        setState(() {
+          message = 'Error updating profile: $error';
+          print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        });
+      }
     }
   }
 }

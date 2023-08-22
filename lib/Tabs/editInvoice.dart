@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
+import 'previewInvoice.dart';
+
 class NewInvoice extends StatefulWidget {
   const NewInvoice({super.key});
 
@@ -30,20 +32,20 @@ class _NewInvoiceState extends State<NewInvoice> {
 
   FocusNode searchFocusNode = FocusNode();
   FocusNode textFieldFocusNode = FocusNode();
-  List<DropDownValueModel> dropDownListData = [
-    DropDownValueModel(name: 'Paid', value: "value"),
-    DropDownValueModel(name: 'Unpaid ', value: "value"),
-  ];
+  // List<DropDownValueModel> dropDownListData = [
+  //   DropDownValueModel(name: 'Paid', value: "value"),
+  //   DropDownValueModel(name: 'Unpaid ', value: "value"),
+  // ];
 
-  List<DropDownValueModel> DropdownItem = const [
-    DropDownValueModel(name: 'Client 1', value: "value"),
-    DropDownValueModel(
-        name: 'Client 2',
-        value: "value2",
-        toolTipMsg:
-            "DropDownButton is a widget that we can use to select one unique value from a set of values"),
-    DropDownValueModel(name: 'Client 3', value: "value3"),
-  ];
+  // List<DropDownValueModel> DropdownItem = const [
+  //   DropDownValueModel(name: 'Client 1', value: "value"),
+  //   DropDownValueModel(
+  //       name: 'Client 2',
+  //       value: "value2",
+  //       toolTipMsg:
+  //           "DropDownButton is a widget that we can use to select one unique value from a set of values"),
+  //   DropDownValueModel(name: 'Client 3', value: "value3"),
+  // ];
 
   void datePicker(context) async {
     DateTime? userSelectedDate = await showDatePicker(
@@ -207,28 +209,6 @@ class _NewInvoiceState extends State<NewInvoice> {
                               height: 35,
                               width: 200,
                               color: Colors.white,
-                              child: DropDownTextField(
-                                clearOption: false,
-                                textFieldFocusNode: textFieldFocusNode,
-                                searchFocusNode: searchFocusNode,
-                                // searchAutofocus: true,
-                                dropDownItemCount: 8,
-                                searchShowCursor: false,
-                                enableSearch: true,
-                                searchKeyboardType: TextInputType.multiline,
-                                dropDownList: const [
-                                  DropDownValueModel(
-                                      name: 'Client 1', value: "value"),
-                                  DropDownValueModel(
-                                      name: 'Client 2',
-                                      value: "value2",
-                                      toolTipMsg:
-                                          "DropDownButton is a widget that we can use to select one unique value from a set of values"),
-                                  DropDownValueModel(
-                                      name: 'Client 3', value: "value3"),
-                                ],
-                                onChanged: (val) {},
-                              ),
                             )
                           ],
                         ),
@@ -459,47 +439,51 @@ class _NewInvoiceState extends State<NewInvoice> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Payment Status"),
                             SizedBox(
-                              width: 50,
+                              width: 38,
                             ),
                             Container(
                               height: 35,
                               width: 200,
                               color: Colors.white,
-                              child: DropDownTextField(
-                                clearOption: false,
-                                textFieldFocusNode: textFieldFocusNode,
-                                searchFocusNode: searchFocusNode,
-                                // searchAutofocus: true,
-                                dropDownItemCount: 8,
-                                searchShowCursor: false,
-                                enableSearch: false,
-                                searchKeyboardType: TextInputType.multiline,
-                                dropDownList: dropDownListData,
-                                onChanged: (val) {},
+                              child: TextField(
+                                controller: PaidAmountController,
+                                decoration: InputDecoration(
+                                    hintText: "status",
+                                    contentPadding: EdgeInsets.only(bottom: 9),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none)),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 20),
-                        child: Container(
-                          height: 35,
-                          width: double.maxFinite,
-                          color: Colors.deepOrange,
-                          child: Center(
-                              child: Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          )),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PreviewInvoice()));
+                          },
+                          child: Container(
+                            height: 35,
+                            width: double.maxFinite,
+                            color: Colors.deepOrange,
+                            child: Center(
+                                child: Text(
+                              "Preview",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            )),
+                          ),
                         ),
                       ),
                     ],

@@ -61,7 +61,7 @@ class _InvoiceAddState extends State<InvoiceAdd> {
           ),
         ),
         body: TabBarView(
-          children: [NewInvoice(), PreviewInvoice(), TestPage()],
+          children: [NewInvoice(), PreviewInvoice(), PreviewInvoice()],
         ),
       ),
     ));

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -8,14 +9,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import '../constants_colors.dart';
+import 'package:image_picker/image_picker.dart';
 
 //  final bool isEdit;
 final String name = "";
 final formkey = GlobalKey<FormState>();
 
 class NewClients extends StatefulWidget {
-  const NewClients({super.key, this.isEdit, this.name});
-  final String? name;
+  final String? clientId;
+  const NewClients({super.key, this.isEdit, this.clientId});
+
   final isEdit;
   @override
   State<NewClients> createState() => _NewClientsState();
@@ -29,22 +32,47 @@ class _NewClientsState extends State<NewClients> {
   TextEditingController custNumController = TextEditingController();
 
   bool isEdit = false;
+  bool dataFetched = false;
   bool isvalid = true;
   List data = [];
   String name = "";
+  XFile? _image;
 
   final formkey = GlobalKey<FormState>();
+
+  Future<void> fetchData() async {
+    await EditClientDetails();
+    setState(() {
+      dataFetched = true;
+    });
+  }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    fetchData();
+    setState(() {});
 
-    fetchEditDetails();
+    // fetchEditDetails();
     // if (names.isNotEmpty) {
     //   customerController?.text = names[0];
     // }
     print("the transfrd name $name");
+    if (widget.isEdit) {
+      customerController = TextEditingController(text: userrname);
+      custEmailController = TextEditingController(text: userrEmail);
+      custNumController = TextEditingController(text: userrNumber);
+    }
   }
 
   @override
@@ -54,22 +82,37 @@ class _NewClientsState extends State<NewClients> {
         backgroundColor: Colors.blue,
         title: Text(widget.isEdit ? "Edit Details" : "Client Details"),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: double.maxFinite,
-            ),
-            Form(
-              key: formkey,
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(45),
+            height: MediaQuery.of(context).size.height * 0.39,
+            width: double.maxFinite,
+            child: _image != null
+                ? CircleAvatar(
+                    radius: 40,
+                    backgroundImage: FileImage(File(_image!.path)),
+                  )
+                : SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
+                      ),
+                    ),
+                  ),
+          ),
+          Form(
+            key: formkey,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.5,
                 width: double.maxFinite,
                 color: Color_grey,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -103,7 +146,7 @@ class _NewClientsState extends State<NewClients> {
                                     validator: (value) {
                                       if (value!.isEmpty ||
                                           RegExp(r'^[\w-]+&').hasMatch(value)) {
-                                        return "Enter correct Namess";
+                                        return "Enter correct Names";
                                       } else {
                                         return null;
                                       }
@@ -192,6 +235,34 @@ class _NewClientsState extends State<NewClients> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text("Upload Image"),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            Container(
+                                height: 35,
+                                width: 120,
+                                color: Colors.white,
+                                child: SizedBox(
+                                  width: 20,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        pickImage();
+                                      },
+                                      child: Center(child: Text("Click here"))),
+                                ))
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
                       Row(
                         children: [
                           Padding(
@@ -237,14 +308,14 @@ class _NewClientsState extends State<NewClients> {
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -262,6 +333,7 @@ class _NewClientsState extends State<NewClients> {
     print(authorizationValue);
     final response = await http.post(uri,
         body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       customerController!.text = value;
@@ -274,6 +346,44 @@ class _NewClientsState extends State<NewClients> {
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => AddClients()));
+  }
+
+  Future<void> EditClientDetails() async {
+    final clientId = widget.clientId;
+
+    final url = Base_URL + custlistendpoint;
+    final uri = Uri.parse(url);
+
+    final response = await http.get(uri, headers: {
+      'Authorization': 'Bearer $authorizationValue',
+    });
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      for (final clientData in jsonData['data']) {
+        final id = clientData['id'].toString();
+
+        if (id == clientId) {
+          final clientName = clientData['name'] as String;
+          final clientNumber = clientData['phone_number'] as String;
+          final clienEmail = clientData['email'] as String;
+          print("name of client $clientName");
+
+          // Now you have the clientName for the given clientId
+          setState(() {
+            userrname = clientName;
+            userrNumber = clientNumber;
+            userrEmail = clienEmail;
+            print("value fetched");
+          });
+          break; // No need to continue searching
+        }
+      }
+    } else {
+      // Handle error case
+    }
+    setState(() {});
   }
 
   Future<void> updateData(String customerIdValue) async {
