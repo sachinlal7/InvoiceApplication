@@ -336,9 +336,6 @@ class _NewClientsState extends State<NewClients> {
     print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      customerController!.text = value;
-      custEmailController.text = custEmailController.text;
-      custNumController.text = custNumController.text;
       print('created successfully ');
     } else {
       print('creation failed');
