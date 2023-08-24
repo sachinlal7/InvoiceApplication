@@ -113,3 +113,8 @@ var selectedDate = "";
 var selectedDate2 = "";
 var invoicecustid = "";
 var invoicecustname = "";
+
+// var idValue = "";\
+var changedValue = "";
+var changedID = "";
+var clientID = "";

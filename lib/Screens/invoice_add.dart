@@ -6,9 +6,11 @@ import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Tabs/editInvoice.dart';
 import 'package:invoice_app/Tabs/previewInvoice.dart';
 import 'package:http/http.dart' as http;
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 import '../Tabs/dropdown.dart';
 import '../constants_colors.dart';
+import 'package:intl/intl.dart';
 
 class InvoiceAdd extends StatefulWidget {
   const InvoiceAdd({super.key});
@@ -22,6 +24,9 @@ class _InvoiceAddState extends State<InvoiceAdd>
   late TabController _tabController;
 
   List<String> customerNames = [];
+  List<String> customerIDs = [];
+  Map<String, String> customerNamesWithIds = {};
+  String selectedCustomerId = '';
 
   TextEditingController clientController = TextEditingController();
   TextEditingController ProductNameController = TextEditingController();
@@ -34,6 +39,9 @@ class _InvoiceAddState extends State<InvoiceAdd>
   TextEditingController DueAmountController = TextEditingController();
   TextEditingController PaidAmountController = TextEditingController();
   TextEditingController PaymentStatusController = TextEditingController();
+  TextEditingController DateController = TextEditingController();
+  SingleValueDropDownController singleValueController =
+      SingleValueDropDownController();
 
   DateTime currentDate = DateTime.now();
   DateTime currentDate1 = DateTime.now();
@@ -42,36 +50,44 @@ class _InvoiceAddState extends State<InvoiceAdd>
   // String? selectedDate1;
   String _selectedValue = '';
 
-  // Future<void> fetchCustomerNames() async {
-  //   final url = "http://192.168.1.31:8000/api/customer-list/";
-  //   final response = await http.get(Uri.parse(url),
-  //       headers: {'Authorization': 'Bearer $authorizationValue'});
-  //   print(response.statusCode);
-  //   print(response.body);
-  //   if (response.statusCode == 200) {
-  //     final data = json.decode(response.body);
-  //     var custName = data['data']['name'];
-  //     print(custName);
+  Future<void> fetchCustomerNames() async {
+    final url = "http://192.168.1.31:8000/api/customer-list/";
+    final response = await http.get(Uri.parse(url),
+        headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.body);
+    print(response.statusCode);
 
-  //     print(customerNames);
-  //   } else {
-  //     throw Exception('Failed to fetch customer names');
-  //   }
-  // }
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List<dynamic> customerList = data['data'];
+
+      for (var customer in customerList) {
+        customerNames.add(customer['name']);
+        customerIDs.add(customer['id'].toString());
+      }
+      print("Fetched Customer Names: $customerNames");
+      print("Fetched Customer IDs: $customerIDs");
+
+      setState(() {});
+    } else {
+      throw Exception('Failed to fetch customer names');
+    }
+  }
 
   void datePicker(context) async {
     DateTime? userSelectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2025));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2025),
+    );
+
     if (userSelectedDate == null) {
       return;
     } else {
       setState(() {
         currentDate = userSelectedDate;
-        selectedDate =
-            "${currentDate.year}/${currentDate.month}/${currentDate.day}";
+        selectedDate = DateFormat('yyyy-MM-dd').format(currentDate);
       });
     }
   }
@@ -87,8 +103,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
     } else {
       setState(() {
         currentDate1 = userSelectedDate1;
-        selectedDate1 =
-            "${currentDate1.year}/${currentDate1.month}/${currentDate1.day}";
+        selectedDate1 = DateFormat('yyyy-MM-dd').format(currentDate);
       });
     }
   }
@@ -104,8 +119,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
     } else {
       setState(() {
         currentDate2 = userSelectedDate2;
-        selectedDate2 =
-            "${currentDate2.year}/${currentDate2.month}/${currentDate2.day}";
+        selectedDate2 = DateFormat('yyyy-MM-dd').format(currentDate);
       });
     }
   }
@@ -115,6 +129,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
+    fetchCustomerNames();
   }
 
   @override
@@ -230,7 +246,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(
-                                                    "${currentDate.year}/${currentDate.month}/${currentDate.day}"))),
+                                                    "${currentDate.year}-${currentDate.month}-${currentDate.day}"))),
                                       ),
                                     ],
                                   ),
@@ -249,7 +265,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(
-                                                    "${currentDate1.year}/${currentDate1.month}/${currentDate1.day}"))),
+                                                    "${currentDate1.year}-${currentDate1.month}-${currentDate1.day}"))),
                                       ),
                                     ],
                                   ),
@@ -288,8 +304,34 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                     ),
                                     Container(
                                       height: 35,
-                                      width: 160,
+                                      width: 180,
                                       color: Colors.white,
+                                      child: DropDownTextField(
+                                        // initialValue: "name4",
+                                        controller: singleValueController,
+                                        clearOption: true,
+                                        // enableSearch: true,
+                                        // dropdownColor: Colors.green,
+                                        searchDecoration: const InputDecoration(
+                                            hintText: "Select Client"),
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Required field";
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                        dropDownItemCount: customerNames.length,
+
+                                        dropDownList: customerNames.map((name) {
+                                          return DropDownValueModel(
+                                              name: name, value: name);
+                                        }).toList(),
+                                        onChanged: (val) {
+                                          changedValue = val.name;
+                                          print(changedValue);
+                                        },
+                                      ),
                                     )
                                   ],
                                 ),
@@ -510,7 +552,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                           width: 180,
                                           color: Colors.white,
                                           child: Text(
-                                            "${currentDate2.year}/${currentDate2.month}/${currentDate2.day}",
+                                            "${currentDate2.year}-${currentDate2.month}-${currentDate2.day}",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w400),
                                           )
@@ -642,7 +684,14 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                   onTap: () {
                                     setState(() {
                                       print("object");
-                                      _tabController.animateTo(1);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PreviewInvoice(
+                                                    selectedValue: changedValue,
+                                                  )));
+                                      // _tabController.animateTo(1);
                                     });
                                     // fetchCustomerNames();
                                   },
