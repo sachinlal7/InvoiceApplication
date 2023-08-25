@@ -46,13 +46,13 @@ class _NavBarState extends State<NavBar> {
     print(response.body);
     var data = jsonDecode(response.body);
     print(data);
-    businessName = data['data']['business_name'];
+    businessName = data['data']['business_name'] ?? "";
     businessEmail = data['data']['email'];
     UserName = data['data']['username'];
     phoneNumber = data['data']['phone_number'];
     address = data['data']['address'];
 
-    image = data['data']['profile_pic'];
+    image = data['data']['profile_pic'] ?? "";
 
     print(image);
 

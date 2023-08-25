@@ -4,6 +4,8 @@ import 'package:invoice_app/Tabs/editTabBar.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:invoice_app/subscreens/invoiceList.dart';
 
+import '../subscreens/outstandingInvoices.dart';
+import '../subscreens/paidInvoices.dart';
 import 'invoice_add.dart';
 
 class dashboardInvoices extends StatefulWidget {
@@ -16,7 +18,17 @@ class dashboardInvoices extends StatefulWidget {
 class _dashboardInvoicesState extends State<dashboardInvoices> {
   void _createNewInvoice() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => InvoiceAdd()));
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                InvoiceAdd(isEdit: false, InvoiceId: invoiceID)));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    InvoiceList();
   }
 
   @override
@@ -65,8 +77,8 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
           body: TabBarView(
             children: [
               InvoiceList(),
-              Center(child: Text('Outstanding Tab Content')),
-              Center(child: Text('Paid Tab Content')),
+              OutStandingInvoices(),
+              PaidInvoices(),
             ],
           ),
           floatingActionButton: FloatingActionButton(

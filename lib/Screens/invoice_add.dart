@@ -1,19 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
-import 'package:invoice_app/Tabs/editInvoice.dart';
 import 'package:invoice_app/Tabs/previewInvoice.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:invoice_app/constants_colors.dart';
 
 import '../Tabs/dropdown.dart';
-import '../constants_colors.dart';
+
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class InvoiceAdd extends StatefulWidget {
-  const InvoiceAdd({super.key});
+  final String? InvoiceId;
+  final isEdit;
+  const InvoiceAdd({super.key, this.isEdit, this.InvoiceId});
 
   @override
   State<InvoiceAdd> createState() => _InvoiceAddState();
@@ -21,13 +25,6 @@ class InvoiceAdd extends StatefulWidget {
 
 class _InvoiceAddState extends State<InvoiceAdd>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  List<String> customerNames = [];
-  List<String> customerIDs = [];
-  Map<String, String> customerNamesWithIds = {};
-  String selectedCustomerId = '';
-
   TextEditingController clientController = TextEditingController();
   TextEditingController ProductNameController = TextEditingController();
   TextEditingController QuantityController = TextEditingController();
@@ -46,9 +43,16 @@ class _InvoiceAddState extends State<InvoiceAdd>
   DateTime currentDate = DateTime.now();
   DateTime currentDate1 = DateTime.now();
   DateTime currentDate2 = DateTime.now();
-  // String? selectedDate;
-  // String? selectedDate1;
+
   String _selectedValue = '';
+  XFile? _image;
+  bool dataFetched = false;
+  List<String> customerNames = [];
+  List<String> customerIDs = [];
+  Map<String, String> customerNamesWithIds = {};
+  String selectedCustomerId = '';
+  late TabController _tabController;
+  bool isEdit = false;
 
   Future<void> fetchCustomerNames() async {
     final url = "http://192.168.1.31:8000/api/customer-list/";
@@ -124,6 +128,22 @@ class _InvoiceAddState extends State<InvoiceAdd>
     }
   }
 
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  Future<void> fecthInvoiceID() async {
+    await EditInvoiceDetails();
+    setState(() {
+      dataFetched = true;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -131,6 +151,18 @@ class _InvoiceAddState extends State<InvoiceAdd>
     _tabController = TabController(length: 3, vsync: this);
     _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
     fetchCustomerNames();
+    fecthInvoiceID();
+    setState(() {});
+
+    if (widget.isEdit) {
+      ProductNameController = TextEditingController(text: InvoiceProductName);
+      QuantityController = TextEditingController(text: InvoiceQuantity);
+      UnitPriceController = TextEditingController(text: InvoiceUnitPrice);
+      TotalPriceController = TextEditingController(text: InvoiceTotalPrice);
+      AddressController = TextEditingController(text: InvoiceAddress);
+      FaxNumberController = TextEditingController(text: InvoiceFax);
+      PaidAmountController = TextEditingController(text: InvoicePaidAmount);
+    }
   }
 
   @override
@@ -170,7 +202,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
             controller: _tabController,
             tabs: [
               Tab(
-                text: 'EDIT',
+                text: widget.isEdit ? "EDIT" : "NEW",
               ),
               Tab(text: 'PREVIEW'),
               Tab(text: 'HISTORY')
@@ -203,10 +235,25 @@ class _InvoiceAddState extends State<InvoiceAdd>
                           SizedBox(
                             width: 25,
                           ),
-                          Image(
-                            image:
-                                AssetImage("assets/images/order_history.png"),
-                            height: 80,
+                          GestureDetector(
+                            onTap: () {
+                              pickImage();
+                            },
+                            child: _image != null
+                                ? CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage:
+                                        FileImage(File(_image!.path)),
+                                  )
+                                : SizedBox(
+                                    height: 80,
+                                    width: 80,
+                                    child: CircleAvatar(
+                                        radius: 40,
+                                        backgroundImage: AssetImage(
+                                          "assets/images/order_history.png",
+                                        )),
+                                  ),
                           ),
                           SizedBox(
                             width: 25,
@@ -242,7 +289,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         },
                                         child: Container(
                                             height: 30,
-                                            width: 100,
+                                            width: 120,
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(
@@ -261,7 +308,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         },
                                         child: Container(
                                             height: 30,
-                                            width: 100,
+                                            width: 120,
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(
@@ -308,12 +355,12 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       color: Colors.white,
                                       child: DropDownTextField(
                                         // initialValue: "name4",
-                                        controller: singleValueController,
-                                        clearOption: true,
+                                        // controller: singleValueController,
+                                        // clearOption: true,
                                         // enableSearch: true,
                                         // dropdownColor: Colors.green,
-                                        searchDecoration: const InputDecoration(
-                                            hintText: "Select Client"),
+                                        // searchDecoration: const InputDecoration(
+                                        //     hintText: "Select Client"),
                                         validator: (value) {
                                           if (value == null) {
                                             return "Required field";
@@ -573,43 +620,43 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Due Amount"),
-                                    SizedBox(
-                                      width: 50,
-                                    ),
-                                    Container(
-                                      height: 35,
-                                      width: 180,
-                                      color: Colors.white,
-                                      child: TextFormField(
-                                        controller: DueAmountController,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.allow(
-                                              RegExp(r'^\d+\.?\d{0,2}'))
-                                        ],
-                                        onChanged: (value) {
-                                          dueAmount = value;
-                                        },
-                                        decoration: InputDecoration(
-                                            hintText: "1000",
-                                            contentPadding: EdgeInsets.only(
-                                                bottom: 9, left: 5),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide.none)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.all(8.0),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       Text("Due Amount"),
+                              //       SizedBox(
+                              //         width: 50,
+                              //       ),
+                              //       Container(
+                              //         height: 35,
+                              //         width: 180,
+                              //         color: Colors.white,
+                              //         child: TextFormField(
+                              //           controller: DueAmountController,
+                              //           keyboardType:
+                              //               TextInputType.numberWithOptions(
+                              //                   decimal: true),
+                              //           inputFormatters: [
+                              //             FilteringTextInputFormatter.allow(
+                              //                 RegExp(r'^\d+\.?\d{0,2}'))
+                              //           ],
+                              //           onChanged: (value) {
+                              //             dueAmount = value;
+                              //           },
+                              //           decoration: InputDecoration(
+                              //               hintText: "1000",
+                              //               contentPadding: EdgeInsets.only(
+                              //                   bottom: 9, left: 5),
+                              //               border: OutlineInputBorder(
+                              //                   borderSide: BorderSide.none)),
+                              //         ),
+                              //       )
+                              //     ],
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -647,36 +694,36 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Payment Status"),
-                                    SizedBox(
-                                      width: 28,
-                                    ),
-                                    Container(
-                                      height: 35,
-                                      width: 180,
-                                      color: Colors.white,
-                                      child: TextFormField(
-                                        controller: PaymentStatusController,
-                                        onChanged: (value) {
-                                          paymentStatus = value;
-                                        },
-                                        decoration: InputDecoration(
-                                            hintText: "status",
-                                            contentPadding: EdgeInsets.only(
-                                                bottom: 9, left: 5),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide.none)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.all(8.0),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       Text("Payment Status"),
+                              //       SizedBox(
+                              //         width: 28,
+                              //       ),
+                              //       Container(
+                              //         height: 35,
+                              //         width: 180,
+                              //         color: Colors.white,
+                              //         child: TextFormField(
+                              //           controller: PaymentStatusController,
+                              //           onChanged: (value) {
+                              //             paymentStatus = value;
+                              //           },
+                              //           decoration: InputDecoration(
+                              //               hintText: "status",
+                              //               contentPadding: EdgeInsets.only(
+                              //                   bottom: 9, left: 5),
+                              //               border: OutlineInputBorder(
+                              //                   borderSide: BorderSide.none)),
+                              //         ),
+                              //       )
+                              //     ],
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 20),
@@ -684,14 +731,14 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                   onTap: () {
                                     setState(() {
                                       print("object");
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PreviewInvoice(
-                                                    selectedValue: changedValue,
-                                                  )));
-                                      // _tabController.animateTo(1);
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             PreviewInvoice(
+                                      //               selectedValue: changedValue,
+                                      //             )));
+                                      _tabController.animateTo(1);
                                     });
                                     // fetchCustomerNames();
                                   },
@@ -723,5 +770,55 @@ class _InvoiceAddState extends State<InvoiceAdd>
         ),
       ),
     ));
+  }
+
+  Future<void> EditInvoiceDetails() async {
+    final InvoiceId = widget.InvoiceId;
+
+    final url = "http://192.168.1.31:8000/api/invoice-list/";
+    final uri = Uri.parse(url);
+
+    final response = await http.get(uri, headers: {
+      'Authorization': 'Bearer $authorizationValue',
+    });
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      for (final InvoiceData in jsonData['data']) {
+        final id = InvoiceData['id'].toString();
+
+        if (id == InvoiceData) {
+          final clientName = InvoiceData['client_name'] as String;
+          final ClientAddress = InvoiceData['address'] as String;
+          final ProductName = InvoiceData['product_name'] as String;
+          final Quantity = InvoiceData['quantity'] as String;
+          final FAXnumber = InvoiceData['fax_number'] as String;
+          final UnitPrice = InvoiceData['unit_price'] as String;
+          final TotalPrice = InvoiceData['total_price'] as String;
+          final PaidAmount = InvoiceData['paid_amount'] as String;
+
+          print("name of client $clientName");
+
+          // Now you have the clientName for the given clientId
+          setState(() {
+            InvoiceUserName = clientName;
+            InvoiceProductName = ProductName;
+            InvoiceQuantity = Quantity;
+            InvoiceUnitPrice = UnitPrice;
+            InvoiceTotalPrice = TotalPrice;
+            InvoiceAddress = ClientAddress;
+            InvoiceFax = FAXnumber;
+            InvoicePaidAmount = PaidAmount;
+
+            print("value fetched $InvoiceUserName");
+          });
+          break; // No need to continue searching
+        }
+      }
+    } else {
+      // Handle error case
+    }
+    setState(() {});
   }
 }

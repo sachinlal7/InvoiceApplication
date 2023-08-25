@@ -82,240 +82,249 @@ class _NewClientsState extends State<NewClients> {
         backgroundColor: Colors.blue,
         title: Text(widget.isEdit ? "Edit Details" : "Client Details"),
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(45),
-            height: MediaQuery.of(context).size.height * 0.39,
-            width: double.maxFinite,
-            child: _image != null
-                ? CircleAvatar(
-                    radius: 40,
-                    backgroundImage: FileImage(File(_image!.path)),
-                  )
-                : SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(45),
+              height: MediaQuery.of(context).size.height * 0.39,
+              width: double.maxFinite,
+              child: _image != null
+                  ? CircleAvatar(
+                      radius: 40,
+                      backgroundImage: FileImage(File(_image!.path)),
+                    )
+                  : SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
+                        ),
                       ),
                     ),
-                  ),
-          ),
-          Form(
-            key: formkey,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                width: double.maxFinite,
-                color: Color_grey,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text("Client Name"),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  height: 35,
-                                  width: 200,
-                                  color: Colors.white,
-                                  child: TextFormField(
-                                    maxLength: 30,
-                                    controller: customerController,
-                                    decoration: InputDecoration(
-                                        counterText: "",
-                                        hintText: " Customer Name",
-                                        contentPadding:
-                                            EdgeInsets.only(bottom: 9, left: 8),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide.none)),
-                                    validator: (value) {
-                                      if (value!.isEmpty ||
-                                          RegExp(r'^[\w-]+&').hasMatch(value)) {
-                                        return "Enter correct Names";
-                                      } else {
-                                        return null;
-                                      }
-                                    },
+            ),
+            Form(
+              key: formkey,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: double.maxFinite,
+                  color: Color_grey,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Client Name"),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Column(
+                                children: [
+                                  Container(
+                                    height: 35,
+                                    width: 200,
+                                    color: Colors.white,
+                                    child: TextFormField(
+                                      maxLength: 30,
+                                      controller: customerController,
+                                      decoration: InputDecoration(
+                                          counterText: "",
+                                          hintText: " Customer Name",
+                                          contentPadding: EdgeInsets.only(
+                                              bottom: 9, left: 8),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide.none)),
+                                      validator: (value) {
+                                        if (value!.isEmpty ||
+                                            RegExp(r'^[\w-]+&')
+                                                .hasMatch(value)) {
+                                          return "Enter correct Names";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          ],
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text("Email"),
-                            SizedBox(
-                              width: 50,
-                            ),
-                            Container(
-                              height: 35,
-                              width: 200,
-                              color: Colors.white,
-                              child: TextFormField(
-                                controller: custEmailController,
-                                decoration: InputDecoration(
-                                    hintText: " Email Address",
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Email"),
+                              SizedBox(
+                                width: 50,
+                              ),
+                              Container(
+                                height: 35,
+                                width: 200,
+                                color: Colors.white,
+                                child: TextFormField(
+                                  controller: custEmailController,
+                                  decoration: InputDecoration(
+                                      hintText: " Email Address",
+                                      contentPadding: EdgeInsets.only(left: 8),
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide.none)),
+                                  validator: EmailValidator(
+                                      errorText: "Enter correct Email"),
+
+                                  // validator: (value) {
+                                  //   if (value!.isEmpty ||
+                                  //       RegExp(r'^[\w-\.]+@ ([\w-]+ \.)+[\w-]{2,5}')
+                                  //           .hasMatch(value)) {
+                                  //     return "correct email uid";
+                                  //   } else {
+                                  //     return "Enter correct email id";
+                                  //   }
+                                  // },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Phone"),
+                              SizedBox(
+                                width: 50,
+                              ),
+                              Container(
+                                height: 35,
+                                width: 200,
+                                color: Colors.white,
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 10,
+                                  controller: custNumController,
+                                  textAlign: TextAlign.start,
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    hintText: " Phone Number",
                                     contentPadding: EdgeInsets.only(left: 8),
                                     border: OutlineInputBorder(
-                                        borderSide: BorderSide.none)),
-                                validator: EmailValidator(
-                                    errorText: "Enter correct Email"),
-
-                                // validator: (value) {
-                                //   if (value!.isEmpty ||
-                                //       RegExp(r'^[\w-\.]+@ ([\w-]+ \.)+[\w-]{2,5}')
-                                //           .hasMatch(value)) {
-                                //     return "correct email uid";
-                                //   } else {
-                                //     return "Enter correct email id";
-                                //   }
-                                // },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text("Phone"),
-                            SizedBox(
-                              width: 50,
-                            ),
-                            Container(
-                              height: 35,
-                              width: 200,
-                              color: Colors.white,
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                maxLength: 10,
-                                controller: custNumController,
-                                textAlign: TextAlign.start,
-                                decoration: InputDecoration(
-                                  counterText: "",
-                                  hintText: " Phone Number",
-                                  contentPadding: EdgeInsets.only(left: 8),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
+                                        borderSide: BorderSide.none),
+                                  ),
+                                  validator: (value) {
+                                    if (value!.isEmpty ||
+                                        RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                      return null;
+                                    } else {
+                                      return "enter correct phone number";
+                                    }
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value!.isEmpty ||
-                                      RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                    return null;
-                                  } else {
-                                    return "enter correct phone number";
-                                  }
-                                },
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Upload Image"),
+                              SizedBox(
+                                width: 50,
+                              ),
+                              Container(
+                                  height: 35,
+                                  width: 120,
+                                  color: Colors.white,
+                                  child: SizedBox(
+                                    width: 20,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          pickImage();
+                                        },
+                                        child:
+                                            Center(child: Text("Click here"))),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
                           children: [
-                            Text("Upload Image"),
-                            SizedBox(
-                              width: 50,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  height: 35,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.42,
+                                  color: Color_blue,
+                                  child: Center(
+                                      child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  )),
+                                ),
+                              ),
                             ),
-                            Container(
-                                height: 35,
-                                width: 120,
-                                color: Colors.white,
-                                child: SizedBox(
-                                  width: 20,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        pickImage();
-                                      },
-                                      child: Center(child: Text("Click here"))),
-                                ))
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (formkey.currentState!.validate()) {}
+
+                                  widget.isEdit
+                                      ? updateData(customerIdValue)
+                                      : submitData();
+                                },
+                                child: Container(
+                                  height: 35,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.42,
+                                  color: Colors.deepOrange,
+                                  child: Center(
+                                      child: Text(
+                                    widget.isEdit ? "Update" : "Save",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  )),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                height: 35,
-                                width: MediaQuery.of(context).size.width * 0.42,
-                                color: Color_blue,
-                                child: Center(
-                                    child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                )),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (formkey.currentState!.validate()) {}
-
-                                widget.isEdit
-                                    ? updateData(customerIdValue)
-                                    : submitData();
-                              },
-                              child: Container(
-                                height: 35,
-                                width: MediaQuery.of(context).size.width * 0.42,
-                                color: Colors.deepOrange,
-                                child: Center(
-                                    child: Text(
-                                  widget.isEdit ? "Update" : "Save",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                )),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

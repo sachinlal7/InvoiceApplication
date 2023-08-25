@@ -140,8 +140,8 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {});
-    userNameController = TextEditingController(text: "sachinlal7");
-    passwordController = TextEditingController(text: "sachin123");
+    userNameController = TextEditingController(text: "alibaba121");
+    passwordController = TextEditingController(text: "alibaba111");
     print("login page");
     //  getData();
     // fetchProfile();
@@ -160,14 +160,22 @@ class _LoginState extends State<Login> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 250,
+                  height: 130,
+                ),
+                Container(
+                  height: 180,
+                  width: 180,
+                  child: Image.asset("assets/images/see_products.png"),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
                 Text(
                   "Login",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w400),
                 ),
                 SizedBox(
                   height: 30,
@@ -275,7 +283,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         "Forgot Password?",
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 13,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
@@ -285,7 +293,62 @@ class _LoginState extends State<Login> {
                       ),
                     )
                   ],
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        "------------------------------",
+                        style: TextStyle(color: Color_white),
+                      ),
+                      Text(
+                        " or ",
+                        style: TextStyle(color: Color_white),
+                      ),
+                      Text(
+                        "------------------------------",
+                        style: TextStyle(color: Color_white),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.059,
+                  width: MediaQuery.of(context).size.height * 0.432,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: Center(
+                      child: Text(
+                    "Login with Google",
+                    style: TextStyle(
+                        color: Color_orange,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15),
+                  )),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.059,
+                  width: MediaQuery.of(context).size.height * 0.432,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: Center(
+                      child: Text(
+                    "Login with Facebook",
+                    style: TextStyle(
+                        color: Color_orange,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15),
+                  )),
+                ),
               ],
             ),
           ),

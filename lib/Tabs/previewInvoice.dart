@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:invoice_app/Screens/dashboardInvoice.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/custName_mdoels.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 int? idValue;
 
@@ -91,10 +94,11 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
       "product_name": productName,
       "unit_price": unitPrice,
       "invoice_date": selectedDate,
-      "address": address,
+      "address": billAddress,
       "due_date": selectedDate1,
       "fax_number": faxNumber,
-      "payment_date": selectedDate2
+      "payment_date": selectedDate2,
+      "paid_amount": paidAmount
     };
     print(body);
     print(clientID);
@@ -116,15 +120,65 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
       );
       print(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final responseData = json.decode(response.body);
         print("Response: $responseData");
+        Fluttertoast.showToast(
+            msg: "Invoice Created",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
       } else {
         print('Request failed with status: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: "Invoice Creation failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     } catch (error) {
       print('Error: $error');
     }
+  }
+
+  Future<void> EditInvoiceData(String customerIdValue) async {
+    final body = {
+      "client": getUserIdValue,
+      "invoice_number": "12365407",
+      "invoice_date": "2001-12-31",
+      "due_date": "2001-1-3",
+      "address": "ranchi",
+      "quantity": "5",
+      "unit_price": "8000",
+      "product_name": "tablate"
+    };
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var customerIdValue = prefs.get(getUser);
+    print(" get user id $CustKey");
+
+    final url = "http://192.168.1.31:8000/api/edit-invoice/253";
+    final uri = Uri.parse(url);
+    print(authorizationValue);
+    print(customerIdValue);
+    final response = await http.put(uri,
+        body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('successfully updated');
+    } else {
+      print('update failed');
+    }
+    // if (mounted) {
+    //   Navigator.pushReplacement(
+    //       context, MaterialPageRoute(builder: (context) => AddClients()));
+    // }
   }
 
   @override
@@ -231,12 +285,12 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Text("Payment Date",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text("Due Amount",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        // Text("Due Amount",
+                        //     style: TextStyle(fontWeight: FontWeight.bold)),
                         Text("Paid Amount",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text("Payment Status",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        // Text("Payment Status",
+                        //     style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -280,18 +334,18 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                         selectedDate2,
                         style: TextStyle(fontSize: 15),
                       ),
-                      Text(
-                        dueAmount,
-                        style: TextStyle(fontSize: 15),
-                      ),
+                      // Text(
+                      //   dueAmount,
+                      //   style: TextStyle(fontSize: 15),
+                      // ),
                       Text(
                         paidAmount,
                         style: TextStyle(fontSize: 15),
                       ),
-                      Text(
-                        paymentStatus,
-                        style: TextStyle(fontSize: 15),
-                      ),
+                      // Text(
+                      //   paymentStatus,
+                      //   style: TextStyle(fontSize: 15),
+                      // ),
                     ],
                   ),
                 ),
@@ -304,6 +358,10 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                   setState(() {
                     print("object");
                     sendInvoiceData();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => dashboardInvoices())));
                   });
                 },
                 child: Container(

@@ -7,19 +7,19 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class InvoiceList extends StatefulWidget {
-  const InvoiceList({super.key});
+class OutStandingInvoices extends StatefulWidget {
+  const OutStandingInvoices({super.key});
 
   @override
-  State<InvoiceList> createState() => _InvoiceListState();
+  State<OutStandingInvoices> createState() => _OutStandingInvoicesState();
 }
 
-class _InvoiceListState extends State<InvoiceList> {
+class _OutStandingInvoicesState extends State<OutStandingInvoices> {
   List data = [];
   bool isLoading = true;
 
-  Future<void> fetchInvoice() async {
-    final url = "http://192.168.1.31:8000/api/invoice-list/";
+  Future<void> fetchOutstanding() async {
+    final url = "http://192.168.1.31:8000/api/unpaid-invoice-list/";
 
     final uri = Uri.parse(url);
     print("seven");
@@ -28,7 +28,8 @@ class _InvoiceListState extends State<InvoiceList> {
     // var getTheKey = prefs.getString(ACCESS_KEY);
     print(authorizationValue);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .post(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;
@@ -50,6 +51,7 @@ class _InvoiceListState extends State<InvoiceList> {
       //   print("numbr of cust $custNum");
       // }
     });
+    setState(() {});
   }
 
   Future<void> deleteInvoice(String InvoiceId) async {
@@ -72,14 +74,15 @@ class _InvoiceListState extends State<InvoiceList> {
         // print("filtered data $data");
       });
     } else {}
-    fetchInvoice();
+    fetchOutstanding();
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchInvoice();
+    fetchOutstanding();
+    setState(() {});
   }
 
   @override
@@ -91,7 +94,7 @@ class _InvoiceListState extends State<InvoiceList> {
         child: CircularProgressIndicator(),
       ),
       replacement: RefreshIndicator(
-        onRefresh: fetchInvoice,
+        onRefresh: fetchOutstanding,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: SingleChildScrollView(
@@ -111,8 +114,10 @@ class _InvoiceListState extends State<InvoiceList> {
                         var paidAmount = dataItem['paid_amount'] ?? "";
                         var invoiceID = dataItem['id'].toString();
                         var clientName = dataItem['client_name'];
+                        var dueAmount = dataItem['due_amount'] ?? "";
 
                         print(InvoiceNumber);
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Container(
@@ -139,13 +144,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     Text("₹ $totalPrice")
                                   ],
                                 ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("₹ $paidAmount"),
-                                  ],
-                                ),
+                                Text("₹ $dueAmount"),
                                 Column(
                                   children: [
                                     Padding(
@@ -264,7 +263,7 @@ class _InvoiceListState extends State<InvoiceList> {
                             isLogin = false;
                             // clearUserData();
                             setState(() {
-                              fetchInvoice();
+                              fetchOutstanding();
                             });
 
                             Fluttertoast.showToast(
