@@ -114,10 +114,10 @@ class _OutStandingInvoicesState extends State<OutStandingInvoices> {
                         var paidAmount = dataItem['paid_amount'] ?? "";
                         var invoiceID = dataItem['id'].toString();
                         var clientName = dataItem['client_name'];
-                        var dueAmount = dataItem['due_amount'] ?? "";
+                        var paymentStatus = dataItem['payment_status'];
+                        var dueAmount = dataItem['due_amount'];
 
                         print(InvoiceNumber);
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Container(
@@ -129,7 +129,7 @@ class _OutStandingInvoicesState extends State<OutStandingInvoices> {
                               children: [
                                 Column(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -144,56 +144,114 @@ class _OutStandingInvoicesState extends State<OutStandingInvoices> {
                                     Text("₹ $totalPrice")
                                   ],
                                 ),
-                                Text("₹ $dueAmount"),
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: GestureDetector(
-                                          onTap: () async {
-                                            // SharedPreferences prefs =
-                                            //     await SharedPreferences
-                                            //         .getInstance();
-                                            // var keyuser = prefs.setString(
-                                            //     getUser, personId);
-                                            // print(getUser);
-                                            // print("twelve $keyuser");
-
-                                            // fetchEditDetails();
-                                            print("edit pressed");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        InvoiceAdd(
-                                                          isEdit: true,
-                                                          InvoiceId: invoiceID,
-
-                                                          // name: dataItem[
-                                                          //     'name'],
-                                                        )));
-                                          },
-                                          child: Icon(Icons.edit)),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("₹ $dueAmount"),
                                     ),
-                                    IconButton(
-                                        onPressed: () async {
-                                          print(custIDnew);
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          var keyuser = prefs.setString(
-                                              getInvoiceID, invoiceID);
-                                          print("eighteen");
-                                          print(keyuser);
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return customDialog(
-                                                    "Deleted Successfully",
-                                                    "Are you sure want to delete ?");
-                                              });
-                                        },
-                                        icon: Icon(Icons.delete)),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        paymentStatus,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: paymentStatus.toLowerCase() ==
+                                                  'paid'
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: GestureDetector(
+                                              onTap: () async {
+                                                // SharedPreferences prefs =
+                                                //     await SharedPreferences
+                                                //         .getInstance();
+                                                // var keyuser = prefs.setString(
+                                                //     getUser, personId);
+                                                // print(getUser);
+                                                // print("twelve $keyuser");
+
+                                                // fetchEditDetails();
+                                                print("edit pressed");
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            InvoiceAdd(
+                                                              isEdit: true,
+                                                              InvoiceId:
+                                                                  invoiceID,
+
+                                                              // name: dataItem[
+                                                              //     'name'],
+                                                            )));
+                                              },
+                                              child: Icon(Icons.share)),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: GestureDetector(
+                                              onTap: () async {
+                                                // SharedPreferences prefs =
+                                                //     await SharedPreferences
+                                                //         .getInstance();
+                                                // var keyuser = prefs.setString(
+                                                //     getUser, personId);
+                                                // print(getUser);
+                                                // print("twelve $keyuser");
+
+                                                // fetchEditDetails();
+                                                print("edit pressed");
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            InvoiceAdd(
+                                                              isEdit: true,
+                                                              InvoiceId:
+                                                                  invoiceID,
+
+                                                              // name: dataItem[
+                                                              //     'name'],
+                                                            )));
+                                              },
+                                              child: Icon(Icons.edit)),
+                                        ),
+                                        IconButton(
+                                            onPressed: () async {
+                                              print(custIDnew);
+                                              SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              var keyuser = prefs.setString(
+                                                  getInvoiceID, invoiceID);
+                                              print("eighteen");
+                                              print(keyuser);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return customDialog(
+                                                        "Deleted Successfully",
+                                                        "Are you sure want to delete ?");
+                                                  });
+                                            },
+                                            icon: Icon(Icons.delete)),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ],

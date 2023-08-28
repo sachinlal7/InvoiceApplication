@@ -15,8 +15,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static const String KEYLOGIN = "KEY";
-
   @override
   void initState() {
     // TODO: implement initState

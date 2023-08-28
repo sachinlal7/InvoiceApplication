@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/invoice_add.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice_app/subscreens/webView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class InvoiceList extends StatefulWidget {
   const InvoiceList({super.key});
@@ -17,6 +19,7 @@ class InvoiceList extends StatefulWidget {
 class _InvoiceListState extends State<InvoiceList> {
   List data = [];
   bool isLoading = true;
+  WebViewController controller = WebViewController();
 
   Future<void> fetchInvoice() async {
     final url = "http://192.168.1.31:8000/api/invoice-list/";
@@ -75,6 +78,40 @@ class _InvoiceListState extends State<InvoiceList> {
     fetchInvoice();
   }
 
+  Future<void> WebView() async {
+    final url = "http://192.168.1.31:8000/api/preview/$invoiceID";
+
+    final uri = Uri.parse(url);
+    print("seven");
+
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var getTheKey = prefs.getString(ACCESS_KEY);
+    print(authorizationValue);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      print(results);
+
+      // print("customer id result $custres");
+      // var setTheCustId = prefs.setInt(CUST_ID, custResults);
+      setState(() {
+        data = results;
+      });
+    } else {
+      print("error");
+    }
+    setState(() {
+      isLoading = false;
+      // void getdata(int index) {
+      //   var custNum = custResults[index][index];
+      //   print("numbr of cust $custNum");
+      // }
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -111,101 +148,166 @@ class _InvoiceListState extends State<InvoiceList> {
                         var paidAmount = dataItem['paid_amount'] ?? "";
                         var invoiceID = dataItem['id'].toString();
                         var clientName = dataItem['client_name'];
+                        var paymentStatus = dataItem['payment_status'];
 
                         print(InvoiceNumber);
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Container(
-                            height: 100,
-                            color: Color_green,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      InvoiceNumber,
-                                      style: TextStyle(color: Colors.blueGrey),
-                                    ),
-                                    Text(
-                                      clientName,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text("₹ $totalPrice")
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("₹ $paidAmount"),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: GestureDetector(
-                                          onTap: () async {
-                                            // SharedPreferences prefs =
-                                            //     await SharedPreferences
-                                            //         .getInstance();
-                                            // var keyuser = prefs.setString(
-                                            //     getUser, personId);
-                                            // print(getUser);
-                                            // print("twelve $keyuser");
+                          child: GestureDetector(
+                            onTap: () {
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => WebViewPage()));
+                            },
+                            child: Container(
+                              height: 100,
+                              color: Color_green,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        InvoiceNumber,
+                                        style:
+                                            TextStyle(color: Colors.blueGrey),
+                                      ),
+                                      Text(
+                                        clientName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text("₹ $totalPrice")
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("₹ $paidAmount"),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          paymentStatus,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color:
+                                                paymentStatus.toLowerCase() ==
+                                                        'paid'
+                                                    ? Colors.green
+                                                    : Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: GestureDetector(
+                                                onTap: () async {
+                                                  // SharedPreferences prefs =
+                                                  //     await SharedPreferences
+                                                  //         .getInstance();
+                                                  // var keyuser = prefs.setString(
+                                                  //     getUser, personId);
+                                                  // print(getUser);
+                                                  // print("twelve $keyuser");
 
-                                            // fetchEditDetails();
-                                            print("edit pressed");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        InvoiceAdd(
-                                                          isEdit: true,
-                                                          InvoiceId: invoiceID,
+                                                  // fetchEditDetails();
+                                                  print("edit pressed");
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              InvoiceAdd(
+                                                                isEdit: true,
+                                                                InvoiceId:
+                                                                    invoiceID,
 
-                                                          // name: dataItem[
-                                                          //     'name'],
-                                                        )));
-                                          },
-                                          child: Icon(Icons.edit)),
-                                    ),
-                                    IconButton(
-                                        onPressed: () async {
-                                          print(custIDnew);
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          var keyuser = prefs.setString(
-                                              getInvoiceID, invoiceID);
-                                          print("eighteen");
-                                          print(keyuser);
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return customDialog(
-                                                    "Deleted Successfully",
-                                                    "Are you sure want to delete ?");
-                                              });
-                                        },
-                                        icon: Icon(Icons.delete)),
-                                  ],
-                                ),
-                              ],
+                                                                // name: dataItem[
+                                                                //     'name'],
+                                                              )));
+                                                },
+                                                child: Icon(Icons.share)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: GestureDetector(
+                                                onTap: () async {
+                                                  // SharedPreferences prefs =
+                                                  //     await SharedPreferences
+                                                  //         .getInstance();
+                                                  // var keyuser = prefs.setString(
+                                                  //     getUser, personId);
+                                                  // print(getUser);
+                                                  // print("twelve $keyuser");
+
+                                                  // fetchEditDetails();
+                                                  print("edit pressed");
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              InvoiceAdd(
+                                                                isEdit: true,
+                                                                InvoiceId:
+                                                                    invoiceID,
+
+                                                                // name: dataItem[
+                                                                //     'name'],
+                                                              )));
+                                                },
+                                                child: Icon(Icons.edit)),
+                                          ),
+                                          IconButton(
+                                              onPressed: () async {
+                                                print(custIDnew);
+                                                SharedPreferences prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                var keyuser = prefs.setString(
+                                                    getInvoiceID, invoiceID);
+                                                print("eighteen");
+                                                print(keyuser);
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return customDialog(
+                                                          "Deleted Successfully",
+                                                          "Are you sure want to delete ?");
+                                                    });
+                                              },
+                                              icon: Icon(Icons.delete)),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // child: ListTile(
+
+                              //   title: Text("Client Name"),
+                              //   subtitle: Text(InvoiceNumber),
+                              //   trailing: Text("\$0.00"),
+
+                              // ),
                             ),
-                            // child: ListTile(
-
-                            //   title: Text("Client Name"),
-                            //   subtitle: Text(InvoiceNumber),
-                            //   trailing: Text("\$0.00"),
-
-                            // ),
                           ),
                         );
                       }),

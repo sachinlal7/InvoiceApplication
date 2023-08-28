@@ -738,6 +738,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       //             PreviewInvoice(
                                       //               selectedValue: changedValue,
                                       //             )));
+                                      isEdit = true;
                                       _tabController.animateTo(1);
                                     });
                                     // fetchCustomerNames();

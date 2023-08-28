@@ -38,20 +38,24 @@ class _PaidInvoicesState extends State<PaidInvoices> {
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
-      setState(() {
-        data = results;
-      });
+      if (mounted) {
+        setState(() {
+          data = results;
+        });
+      }
     } else {
       print("error");
     }
-    setState(() {
-      isLoading = false;
-      // void getdata(int index) {
-      //   var custNum = custResults[index][index];
-      //   print("numbr of cust $custNum");
-      // }
-    });
-    setState(() {});
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        // void getdata(int index) {
+        //   var custNum = custResults[index][index];
+        //   print("numbr of cust $custNum");
+        // }
+      });
+    }
+    // setState(() {});
   }
 
   Future<void> deleteInvoice(String InvoiceId) async {
@@ -114,10 +118,9 @@ class _PaidInvoicesState extends State<PaidInvoices> {
                         var paidAmount = dataItem['paid_amount'] ?? "";
                         var invoiceID = dataItem['id'].toString();
                         var clientName = dataItem['client_name'];
-                        // var dueAmount = dataItem['due_amount'] ?? "";
+                        var paymentStatus = dataItem['payment_status'];
 
                         print(InvoiceNumber);
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Container(
@@ -129,7 +132,7 @@ class _PaidInvoicesState extends State<PaidInvoices> {
                               children: [
                                 Column(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -144,56 +147,114 @@ class _PaidInvoicesState extends State<PaidInvoices> {
                                     Text("₹ $totalPrice")
                                   ],
                                 ),
-                                Text("PAID"),
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: GestureDetector(
-                                          onTap: () async {
-                                            // SharedPreferences prefs =
-                                            //     await SharedPreferences
-                                            //         .getInstance();
-                                            // var keyuser = prefs.setString(
-                                            //     getUser, personId);
-                                            // print(getUser);
-                                            // print("twelve $keyuser");
-
-                                            // fetchEditDetails();
-                                            print("edit pressed");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        InvoiceAdd(
-                                                          isEdit: true,
-                                                          InvoiceId: invoiceID,
-
-                                                          // name: dataItem[
-                                                          //     'name'],
-                                                        )));
-                                          },
-                                          child: Icon(Icons.edit)),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("₹ $paidAmount"),
                                     ),
-                                    IconButton(
-                                        onPressed: () async {
-                                          print(custIDnew);
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          var keyuser = prefs.setString(
-                                              getInvoiceID, invoiceID);
-                                          print("eighteen");
-                                          print(keyuser);
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return customDialog(
-                                                    "Deleted Successfully",
-                                                    "Are you sure want to delete ?");
-                                              });
-                                        },
-                                        icon: Icon(Icons.delete)),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        paymentStatus,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: paymentStatus.toLowerCase() ==
+                                                  'paid'
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: GestureDetector(
+                                              onTap: () async {
+                                                // SharedPreferences prefs =
+                                                //     await SharedPreferences
+                                                //         .getInstance();
+                                                // var keyuser = prefs.setString(
+                                                //     getUser, personId);
+                                                // print(getUser);
+                                                // print("twelve $keyuser");
+
+                                                // fetchEditDetails();
+                                                print("edit pressed");
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            InvoiceAdd(
+                                                              isEdit: true,
+                                                              InvoiceId:
+                                                                  invoiceID,
+
+                                                              // name: dataItem[
+                                                              //     'name'],
+                                                            )));
+                                              },
+                                              child: Icon(Icons.share)),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: GestureDetector(
+                                              onTap: () async {
+                                                // SharedPreferences prefs =
+                                                //     await SharedPreferences
+                                                //         .getInstance();
+                                                // var keyuser = prefs.setString(
+                                                //     getUser, personId);
+                                                // print(getUser);
+                                                // print("twelve $keyuser");
+
+                                                // fetchEditDetails();
+                                                print("edit pressed");
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            InvoiceAdd(
+                                                              isEdit: true,
+                                                              InvoiceId:
+                                                                  invoiceID,
+
+                                                              // name: dataItem[
+                                                              //     'name'],
+                                                            )));
+                                              },
+                                              child: Icon(Icons.edit)),
+                                        ),
+                                        IconButton(
+                                            onPressed: () async {
+                                              print(custIDnew);
+                                              SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              var keyuser = prefs.setString(
+                                                  getInvoiceID, invoiceID);
+                                              print("eighteen");
+                                              print(keyuser);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return customDialog(
+                                                        "Deleted Successfully",
+                                                        "Are you sure want to delete ?");
+                                                  });
+                                            },
+                                            icon: Icon(Icons.delete)),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ],
