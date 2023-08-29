@@ -64,7 +64,8 @@ class _AddClientsState extends State<AddClients> {
                           print("ten");
                           final dataItem = data[index] as Map;
                           var custIDnew = dataItem['id'].toString();
-                          print(custIDnew);
+                          var newClientId = dataItem['id'];
+                          print("new client id $newClientId");
 
                           final person = data[index];
                           personId = person["id"].toString();

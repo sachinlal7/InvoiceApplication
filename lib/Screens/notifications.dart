@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../constants_colors.dart';
+import 'package:http/http.dart' as http;
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});
@@ -11,6 +14,40 @@ class Notifications extends StatefulWidget {
 
 class _NotificationsState extends State<Notifications> {
   List data = [];
+  bool isLoading = true;
+  Future<void> getNotifications() async {
+    final url = "http://192.168.1.31:8000/api/notifications/";
+
+    final uri = Uri.parse(url);
+    print(authorizationValue);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print("status code ${response.statusCode}");
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      print(results);
+
+      setState(() {
+        data = results;
+      });
+    } else {
+      print("error");
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,18 +60,45 @@ class _NotificationsState extends State<Notifications> {
             height: MediaQuery.of(context).size.height * 0.8,
             width: double.maxFinite,
             child: ListView.builder(
-                itemCount: 1,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
+                  final dataitem = data[index] as Map;
+                  var title = dataitem['title'];
+                  var message = dataitem['message'];
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Container(
-                      color: Color_green,
-                      child: ListTile(
-                        title: Text("Client Name"),
-                        subtitle: Text("INV000001"),
-                        trailing: Text("\$0.00"),
-                      ),
-                    ),
+                        color: Color_green,
+                        child: Container(
+                          height: 110,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  title,
+                                  style: TextStyle(color: Color_orange),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(message),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Date"),
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(Icons.delete))
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        )),
                   );
                 }),
           ),

@@ -66,7 +66,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
       final List<dynamic> customerList = data['data'];
 
       for (var customer in customerList) {
-        customerNames.add(customer['name']);
+        customerNames.add(customer['name'] ?? "");
         customerIDs.add(customer['id'].toString());
       }
       print("Fetched Customer Names: $customerNames");
@@ -724,38 +724,78 @@ class _InvoiceAddState extends State<InvoiceAdd>
                               //     ],
                               //   ),
                               // ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 20),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      print("object");
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             PreviewInvoice(
-                                      //               selectedValue: changedValue,
-                                      //             )));
-                                      isEdit = true;
-                                      _tabController.animateTo(1);
-                                    });
-                                    // fetchCustomerNames();
-                                  },
-                                  child: Container(
-                                    height: 35,
-                                    width: double.maxFinite,
-                                    color: Colors.deepOrange,
-                                    child: Center(
-                                        child: Text(
-                                      "Preview",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                    )),
-                                  ),
-                                ),
-                              ),
+
+                              widget.isEdit
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 20),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            print("object");
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PreviewInvoice(
+                                                          isEdit: true,
+                                                          selectedValue:
+                                                              changedValue,
+                                                        )));
+                                            // isEdit = true;
+                                            // _tabController.animateTo(1);
+                                          });
+                                          // fetchCustomerNames();
+                                        },
+                                        child: Container(
+                                          height: 35,
+                                          width: double.maxFinite,
+                                          color: Colors.deepOrange,
+                                          child: Center(
+                                              child: Text(
+                                            "Preview",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          )),
+                                        ),
+                                      ),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 20),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            print("object");
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PreviewInvoice(
+                                                          isEdit: false,
+                                                          selectedValue:
+                                                              changedValue,
+                                                        )));
+                                            // isEdit = true;
+                                            // _tabController.animateTo(1);
+                                          });
+                                          // fetchCustomerNames();
+                                        },
+                                        child: Container(
+                                          height: 35,
+                                          width: double.maxFinite,
+                                          color: Colors.deepOrange,
+                                          child: Center(
+                                              child: Text(
+                                            "Preview",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          )),
+                                        ),
+                                      ),
+                                    ),
                             ],
                           ),
                         ),

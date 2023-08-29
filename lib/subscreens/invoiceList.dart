@@ -142,19 +142,21 @@ class _InvoiceListState extends State<InvoiceList> {
                       itemCount: data.length,
                       itemBuilder: (context, index) {
                         final dataItem = data[index] as Map;
-                        var InvoiceNumber =
-                            dataItem['invoice_number'].toString();
+                        InvoiceNumber = dataItem['invoice_number'].toString();
                         var totalPrice = dataItem['total_price'];
                         var paidAmount = dataItem['paid_amount'] ?? "";
                         var invoiceID = dataItem['id'].toString();
                         var clientName = dataItem['client_name'];
                         var paymentStatus = dataItem['payment_status'];
 
-                        print(InvoiceNumber);
+                        print(invoiceID);
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.setString(INVOICE_ID, invoiceID);
                               // Navigator.push(
                               //     context,
                               //     MaterialPageRoute(
@@ -231,7 +233,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
                                                   // fetchEditDetails();
                                                   print("edit pressed");
-                                                  Navigator.push(
+                                                  Navigator.pushReplacement(
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
@@ -250,11 +252,14 @@ class _InvoiceListState extends State<InvoiceList> {
                                             padding: const EdgeInsets.all(12.0),
                                             child: GestureDetector(
                                                 onTap: () async {
-                                                  // SharedPreferences prefs =
-                                                  //     await SharedPreferences
-                                                  //         .getInstance();
-                                                  // var keyuser = prefs.setString(
-                                                  //     getUser, personId);
+                                                  print(
+                                                      "edit pressed $invoiceID");
+
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  prefs.setString(
+                                                      getInvoiceID, invoiceID);
                                                   // print(getUser);
                                                   // print("twelve $keyuser");
 
@@ -267,7 +272,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                                               InvoiceAdd(
                                                                 isEdit: true,
                                                                 InvoiceId:
-                                                                    invoiceID,
+                                                                    InvoiceNumber,
 
                                                                 // name: dataItem[
                                                                 //     'name'],

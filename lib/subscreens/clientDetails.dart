@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:invoice_app/constants_colors.dart';
@@ -18,6 +19,12 @@ class _ClientDetailsState extends State<ClientDetails> {
   bool isLoading = true;
 
   List data = [];
+
+  void getClientIdv() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    clientIdVal = prefs.getString(CLIENTId) ?? "";
+    print("clientIdVal $clientIdVal");
+  }
 
   Future<void> fetchClientDetails() async {
     final clientId = widget.clientId;
@@ -57,11 +64,41 @@ class _ClientDetailsState extends State<ClientDetails> {
     }
   }
 
+  Future<void> clientsPendingInvoice() async {
+    print(clientID);
+    final url = "http://192.168.1.31:8000/api/customer-list-all/$personId";
+
+    final uri = Uri.parse(url);
+    print(authorizationValue);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+    print("status code ${response.statusCode}");
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      print(results);
+
+      setState(() {
+        data = results;
+      });
+    } else {
+      print("error");
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
+    fetchClientDetails();
     // TODO: implement initState
     super.initState();
-    fetchClientDetails();
+    // getClientIdv();
+    // fetchClientDetails();
+    clientsPendingInvoice();
   }
 
   @override
@@ -150,8 +187,17 @@ class _ClientDetailsState extends State<ClientDetails> {
               height: 400,
               width: double.maxFinite,
               child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: data.length,
                   itemBuilder: (context, index) {
+                    final dataItem = data[index] as Map;
+                    InvoiceNumber = dataItem['invoice_number'].toString();
+                    var InvoiceDate = dataItem['invoice_date'];
+
+                    var paymentStatus = dataItem['payment_status'];
+                    print("inv num $InvoiceNumber");
+                    print(InvoiceDate);
+                    print(paymentStatus);
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       child: Container(
@@ -161,9 +207,9 @@ class _ClientDetailsState extends State<ClientDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text("INV00001"),
-                            Text("22/08/2023"),
-                            Text("pending"),
+                            Text(InvoiceNumber),
+                            Text(InvoiceDate),
+                            Text(paymentStatus),
                           ],
                         ),
                       ),

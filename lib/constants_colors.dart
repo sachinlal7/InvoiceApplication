@@ -32,6 +32,7 @@ final URL_image = "http://69.49.235.253:8035";
 String uploadedImageUrl = URL_image + image;
 
 final ACCESS_KEY = "";
+final clientUserId = "";
 final token = "";
 final userId = "";
 final USER_ID = " ";
@@ -42,10 +43,12 @@ final CustKey = "";
 final InvId = "";
 final getUser = "";
 final getInvoiceID = "";
+final INVOICE_ID = "";
 var invoiceID = "";
-final custIDnew = "";
+var custIDnew = "";
 var personId = "";
 var personName = "";
+var InvoiceNumber = "";
 final value = "";
 final errorMsg = "";
 final names = "";
@@ -95,6 +98,22 @@ String _imageValue = "";
 set profileImage(String val) => _imageValue = val;
 String get profileImage => _imageValue;
 
+String _ClientID = "";
+set clientIdValue(String val) => _ClientID = val;
+String get clientIdValue => _ClientID;
+
+String _InvoiceID = "";
+set InvoiceIdValue(String val) => _InvoiceID = val;
+String get InvoiceIdValue => _InvoiceID;
+
+String _InvID = "";
+set InvIdValue(String val) => _InvID = val;
+String get InvIdValue => _InvID;
+
+String _ClientIDV = "";
+set clientIdVal(String val) => _ClientIDV = val;
+String get clientIdVal => _ClientIDV;
+
 final PROFILE_IMAGE = "";
 
 var userrname = "";
@@ -129,3 +148,4 @@ var invoicecustname = "";
 var changedValue = "";
 var changedID = "";
 var clientID = "";
+var CLIENTId = "";
