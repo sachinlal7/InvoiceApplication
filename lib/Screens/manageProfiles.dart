@@ -55,10 +55,9 @@ class _ManageProfilesState extends State<ManageProfiles> {
     try {
       var headers = {
         "Authorization":
-            "Bearer $authorizationValue", // Replace with actual token
+            "Bearer $authorizationValues", // Replace with actual token
         "Accept": "application/json",
       };
-      print("image value $authorizationValue");
 
       var request = http.MultipartRequest(
         'PUT',
@@ -113,7 +112,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
   @override
   Widget build(BuildContext context) {
-    print("profile image $profileImage");
+    // print("profile image $profileImage");
     debugPrint("profile build");
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
@@ -146,7 +145,8 @@ class _ManageProfilesState extends State<ManageProfiles> {
                             : CircleAvatar(
                                 radius: 70,
                                 backgroundImage: profileImageUrl.isEmpty
-                                    ? NetworkImage(profileImage)
+                                    ? NetworkImage(
+                                        "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")
                                     : NetworkImage(
                                         "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg"),
                               ),
@@ -314,6 +314,10 @@ class _ManageProfilesState extends State<ManageProfiles> {
                     onTap: () {
                       // updateProfile().then((value) => fetchProfile());
                       updateProfile();
+                      Navigator.pushReplacement(
+                          context,
+                          (MaterialPageRoute(
+                              builder: (context) => DashBoard())));
                       // setState(() {});
                       // Navigator.pop(context);
                     },
@@ -412,7 +416,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
 
     try {
       var headers = {
-        "Authorization": "Bearer $authorizationValue",
+        "Authorization": "Bearer $authorizationValues",
         "Accept": "application/json",
         "Content-Type": "application/json",
       };
@@ -447,7 +451,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
       if (response.statusCode == 200) {
         setState(() {
           loading = false;
-          uploadedImageUrl = image;
+          // uploadedImageUrl = image;
           message = 'Profile updated successfully.';
           print(message);
           Fluttertoast.showToast(

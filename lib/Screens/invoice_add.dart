@@ -55,9 +55,9 @@ class _InvoiceAddState extends State<InvoiceAdd>
   bool isEdit = false;
 
   Future<void> fetchCustomerNames() async {
-    final url = "http://192.168.1.31:8000/api/customer-list/";
+    final url = "http://192.168.1.35:8000/api/customer-list/";
     final response = await http.get(Uri.parse(url),
-        headers: {'Authorization': 'Bearer $authorizationValue'});
+        headers: {'Authorization': 'Bearer $authorizationValues'});
     print(response.body);
     print(response.statusCode);
 
@@ -142,6 +142,13 @@ class _InvoiceAddState extends State<InvoiceAdd>
     setState(() {
       dataFetched = true;
     });
+  }
+
+  void calculateTotalPrice() {
+    double quantity = double.tryParse(QuantityController.text) ?? 0;
+    double unitPrice = double.tryParse(UnitPriceController.text) ?? 0;
+    double totalPrice = quantity * unitPrice;
+    TotalPriceController.text = totalPrice.toString();
   }
 
   @override
@@ -432,6 +439,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
                                           quantity = value;
+                                          calculateTotalPrice();
                                         },
                                         decoration: InputDecoration(
                                             hintText: "1",
@@ -469,6 +477,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         ],
                                         onChanged: (value) {
                                           unitPrice = value;
+                                          calculateTotalPrice();
                                         },
                                         decoration: InputDecoration(
                                             hintText: "500",
@@ -820,7 +829,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
     final uri = Uri.parse(url);
 
     final response = await http.get(uri, headers: {
-      'Authorization': 'Bearer $authorizationValue',
+      'Authorization': 'Bearer $authorizationValues',
     });
 
     if (response.statusCode == 200) {

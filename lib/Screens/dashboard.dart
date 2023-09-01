@@ -23,12 +23,12 @@ class _DashBoardState extends State<DashBoard> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
-        authorizationValue = prefs.getString(ACCESS_KEY) ?? "";
+        authorizationValues = prefs.getString(ACCESS_KEY) ?? "";
       });
 
       print("fourth");
 
-      print(authorizationValue);
+      print(authorizationValues);
     } catch (e) {
       print(e.toString());
     }
@@ -130,7 +130,7 @@ class _DashBoardState extends State<DashBoard> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddClients()));
-                          print("five");
+                          // print("five");
                         },
                         child: Container(
                           height: MediaQuery.of(context).size.height * 0.20,

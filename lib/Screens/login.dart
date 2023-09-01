@@ -123,7 +123,7 @@ class _LoginState extends State<Login> {
     final url = Base_URL + updateProfileApi;
     final uri = Uri.parse(url);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
     print(response.statusCode);
     print(response.body);
     var data = jsonDecode(response.body);
@@ -360,7 +360,7 @@ class _LoginState extends State<Login> {
   void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    authorizationValue = prefs.getString(ACCESS_KEY) ?? "";
+    authorizationValues = prefs.getString(ACCESS_KEY) ?? "";
     var getUserId = prefs.getString(USER_ID) ?? "";
     print(getUserId);
 

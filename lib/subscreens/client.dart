@@ -36,11 +36,14 @@ class _NewClientsState extends State<NewClients> {
   bool isvalid = true;
   List data = [];
   String name = "";
-  XFile? _image;
+  XFile? _images;
+  bool loading = false;
+  String message = '';
 
   final formkey = GlobalKey<FormState>();
 
   Future<void> fetchData() async {
+    print("one");
     await EditClientDetails();
     setState(() {
       dataFetched = true;
@@ -48,35 +51,56 @@ class _NewClientsState extends State<NewClients> {
   }
 
   Future<void> pickImage() async {
+    print("two");
     final ImagePicker picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = image;
+      _images = image;
     });
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    fetchData();
-    setState(() {});
+  Future<void> fetchDetails() async {
+    try {
+      // Fetch clientIdVal and wait for it to complete
+      await fetchData();
 
-    // fetchEditDetails();
-    // if (names.isNotEmpty) {
-    //   customerController?.text = names[0];
-    // }
-    print("the transfrd name $name");
+      // Now that you have clientIdVal, you can call clientsPendingInvoice
+      await saveValues();
+
+      // Continue with other operations if needed
+    } catch (e) {
+      // Handle errors here
+      print('Error: $e');
+    }
+  }
+
+  Future<void> saveValues() async {
     if (widget.isEdit) {
       customerController = TextEditingController(text: userrname);
+      print("six");
       custEmailController = TextEditingController(text: userrEmail);
       custNumController = TextEditingController(text: userrNumber);
     }
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    fetchDetails();
+
+    // fetchEditDetails();
+    // if (names.isNotEmpty) {
+    //   customerController?.text = names[0];
+    // }
+    print("the transfrd name $name");
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("build");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -90,17 +114,17 @@ class _NewClientsState extends State<NewClients> {
               padding: EdgeInsets.all(45),
               height: MediaQuery.of(context).size.height * 0.39,
               width: double.maxFinite,
-              child: _image != null
+              child: _images != null
                   ? CircleAvatar(
                       radius: 40,
-                      backgroundImage: FileImage(File(_image!.path)),
+                      backgroundImage: FileImage(File(_images!.path)),
                     )
                   : SizedBox(
                       height: 40,
                       width: 40,
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                          "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
+                          "http://192.168.1.35:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
                         ),
                       ),
                     ),
@@ -226,8 +250,7 @@ class _NewClientsState extends State<NewClients> {
                                         borderSide: BorderSide.none),
                                   ),
                                   validator: (value) {
-                                    if (value!.isEmpty ||
-                                        RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                    if (value!.isEmpty) {
                                       return null;
                                     } else {
                                       return "enter correct phone number";
@@ -299,7 +322,7 @@ class _NewClientsState extends State<NewClients> {
 
                                   widget.isEdit
                                       ? updateData(customerIdValue)
-                                      : submitData();
+                                      : SubmitData();
                                 },
                                 child: Container(
                                   height: 35,
@@ -329,39 +352,126 @@ class _NewClientsState extends State<NewClients> {
     );
   }
 
-  Future<void> submitData() async {
-    final body = {
-      "name": customerController.text.toString(),
-      "email": custEmailController.text.toString(),
-      "phone_number": custNumController.text.toString()
-    };
+  Future<void> SubmitData() async {
+    setState(() {
+      loading = true;
+    });
 
-    final url = "http://192.168.1.31:8000/api/customer/";
+    try {
+      var headers = {
+        "Authorization": "Bearer $authorizationValues",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      };
 
-    final uri = Uri.parse(url);
-    print(authorizationValue);
-    final response = await http.post(uri,
-        body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
-    print(response.statusCode);
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse("http://192.168.1.35:8000/api/customer/"),
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('created successfully ');
-    } else {
-      print('creation failed');
+      request.headers.addAll(headers);
+
+      final fields = {
+        "name": customerController.text.toString(),
+        "email": custEmailController.text.toString(),
+        "phone_number": custNumController.text.toString(),
+      };
+      print(fields);
+
+      request.fields.addAll(fields);
+
+      if (_images != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'profile_pic',
+          _images!.path,
+        ));
+      }
+
+      var response = await request.send();
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          loading = false;
+          // uploadedImageUrl = image;
+          message = 'Profile updated successfully.';
+          print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        });
+      } else {
+        setState(() {
+          message =
+              'Profile submission failed with status code: ${response.statusCode}';
+          print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        });
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          message = 'Error updating profile: $error';
+          print(message);
+          Fluttertoast.showToast(
+              msg: message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        });
+      }
     }
-
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AddClients()));
   }
+  // Future<void> submitData() async {
+  //   final body = {
+  //     "name": customerController.text.toString(),
+  //     "email": custEmailController.text.toString(),
+  //     "phone_number": custNumController.text.toString(),
+
+  //   };
+
+  //   final url = "http://192.168.1.31:8000/api/customer/";
+
+  //   final uri = Uri.parse(url);
+  //   print(authorizationValue);
+  //   final response = await http.post(uri,
+  //       body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+  //   print(response.statusCode);
+
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     print('created successfully ');
+  //   } else {
+  //     print('creation failed');
+  //   }
+
+  //   Navigator.pushReplacement(
+  //       context, MaterialPageRoute(builder: (context) => AddClients()));
+  // }
 
   Future<void> EditClientDetails() async {
+    print("three");
     final clientId = widget.clientId;
 
     final url = Base_URL + custlistendpoint;
     final uri = Uri.parse(url);
 
     final response = await http.get(uri, headers: {
-      'Authorization': 'Bearer $authorizationValue',
+      'Authorization': 'Bearer $authorizationValues',
     });
 
     if (response.statusCode == 200) {
@@ -393,6 +503,7 @@ class _NewClientsState extends State<NewClients> {
   }
 
   Future<void> updateData(String customerIdValue) async {
+    print("four");
     final body = {
       "name": customerController.text,
       "email": custEmailController.text,
@@ -403,12 +514,12 @@ class _NewClientsState extends State<NewClients> {
     var customerIdValue = prefs.get(getUser);
     print(" get user id $CustKey");
 
-    final url = "http://192.168.1.31:8000/api/customer-edit/$customerIdValue";
+    final url = "http://192.168.1.35:8000/api/customer-edit/$customerIdValue";
     final uri = Uri.parse(url);
-    print(authorizationValue);
+    print(authorizationValues);
     print(customerIdValue);
     final response = await http.put(uri,
-        body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+        body: body, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('successfully updated');
@@ -422,16 +533,16 @@ class _NewClientsState extends State<NewClients> {
   }
 
   Future<void> fetchEditDetails() async {
+    print("five");
     final url = Base_URL + custlistendpoint;
 
     final uri = Uri.parse(url);
-    print("seven");
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValue);
+    print(authorizationValues);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     print(response.body);
 

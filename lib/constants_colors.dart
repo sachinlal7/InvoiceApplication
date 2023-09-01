@@ -6,7 +6,7 @@ final Color_green = Color.fromARGB(255, 205, 223, 215);
 final Color_white = Colors.white;
 final Color_blue = Color.fromARGB(255, 11, 138, 211);
 
-final Base_URL = "http://192.168.1.31:8000/api/";
+final Base_URL = "http://192.168.1.35:8000/api/";
 final BASE_URL = "http://69.49.235.253:8035/api/";
 
 final userRegistration = "user-registration/";
@@ -27,11 +27,12 @@ final deleteInvoice = "delete-invoice/7";
 final paymentReminders = "send_payment_reminders/";
 final forgotPassword = "forgot-password/";
 
-final Url_image = "http://192.168.1.31:8000";
+final Url_image = "http://192.168.1.35:8000";
 final URL_image = "http://69.49.235.253:8035";
 String uploadedImageUrl = URL_image + image;
 
 final ACCESS_KEY = "";
+final NEW_CLIENT_ID = "";
 final clientUserId = "";
 final token = "";
 final userId = "";
@@ -45,7 +46,7 @@ final getUser = "";
 final getInvoiceID = "";
 final INVOICE_ID = "";
 var invoiceID = "";
-var custIDnew = "";
+final custIDnew = "";
 var personId = "";
 var personName = "";
 var InvoiceNumber = "";
@@ -55,10 +56,17 @@ final names = "";
 String? businessName = "";
 var companyName = "";
 var image = "";
+var client_image = "";
+
 var businessEmail = "";
 var UserName = "";
 var phoneNumber = "";
 var address = "";
+
+String ClientName = "";
+var ClientEmail = "";
+var ClientNumber = "";
+var ClientImage = "";
 final BUSINESS_NAME = "";
 final EMAIL_ID = "";
 var NAME = "";
@@ -67,11 +75,13 @@ var NAME = "";
 final dataItem = "";
 final imageUrl = "";
 
+bool isSearching = false;
+
 final name = "";
 late bool isLogin = true;
 String _authValue = "";
-set authorizationValue(String val) => _authValue = val;
-String get authorizationValue => _authValue;
+set authorizationValues(String val) => _authValue = val;
+String get authorizationValues => _authValue;
 String authSetValue = "";
 
 String _CustIDValue = "";
@@ -94,13 +104,21 @@ String _emailPerson = "";
 set personEmail(String val) => _emailPerson = val;
 String get personEmail => _emailPerson;
 
-String _imageValue = "";
-set profileImage(String val) => _imageValue = val;
-String get profileImage => _imageValue;
+// String _imageValue = "";
+// set profileImage(String val) => _imageValue = val;
+// String get profileImage => _imageValue;
+
+String _imagValue = "";
+set clientImage(String val) => _imagValue = val;
+String get clientImage => _imagValue;
 
 String _ClientID = "";
 set clientIdValue(String val) => _ClientID = val;
 String get clientIdValue => _ClientID;
+
+String _ClienID = "";
+set newCustId(String val) => _ClienID = val;
+String get newCustId => _ClienID;
 
 String _InvoiceID = "";
 set InvoiceIdValue(String val) => _InvoiceID = val;
@@ -115,6 +133,7 @@ set clientIdVal(String val) => _ClientIDV = val;
 String get clientIdVal => _ClientIDV;
 
 final PROFILE_IMAGE = "";
+final CLIENT_IMAGE = "";
 
 var userrname = "";
 var InvoiceUserName = "";

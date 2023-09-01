@@ -26,10 +26,10 @@ class _ChangePasswordState extends State<ChangePassword> {
 
     final url = Base_URL + changePassword;
     final uri = Uri.parse(url);
-    print("auth value $authorizationValue");
+    print("auth value $authorizationValues");
 
     final response = await http.post(uri,
-        body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+        body: body, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     if (response.statusCode == 200) {
       oldpasswordController.text = " ";

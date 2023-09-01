@@ -47,7 +47,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
 
     try {
       final response = await http
-          .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+          .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -116,11 +116,11 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
     print(uri);
 
     try {
-      print(authorizationValue);
+      print(authorizationValues);
       final response = await http.post(
         uri,
         headers: {
-          'Authorization': 'Bearer $authorizationValue',
+          'Authorization': 'Bearer $authorizationValues',
           'Content-Type': 'application/json',
         },
         body: json.encode(body),
@@ -170,10 +170,10 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
 
     final url = "http://192.168.1.31:8000/api/edit-invoice/$InvoiceIdValue";
     final uri = Uri.parse(url);
-    print(authorizationValue);
+    print(authorizationValues);
     print(InvoiceIdValue);
     final response = await http.put(uri,
-        body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
+        body: body, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('successfully updated');

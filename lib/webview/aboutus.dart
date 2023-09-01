@@ -4,14 +4,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class WebViewPage extends StatefulWidget {
-  const WebViewPage({super.key});
+class AboutUs extends StatefulWidget {
+  const AboutUs({super.key});
 
   @override
-  State<WebViewPage> createState() => _WebViewPageState();
+  State<AboutUs> createState() => _AboutUsState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _AboutUsState extends State<AboutUs> {
   WebViewController controller = WebViewController();
 
   double _progress = 0;
@@ -55,7 +55,8 @@ class _WebViewPageState extends State<WebViewPage> {
         body: Stack(
       children: [
         InAppWebView(
-          initialUrlRequest: URLRequest(url: Uri.parse("https://pub.dev/")),
+          initialUrlRequest:
+              URLRequest(url: Uri.parse("http://192.168.1.31:8000/About-Us/")),
           onWebViewCreated: (InAppWebViewController controller) {
             inAppWebViewController = controller;
             controller.clearCache();

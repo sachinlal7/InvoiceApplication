@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/createInvoice.dart';
+import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Tabs/editTabBar.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:invoice_app/subscreens/invoiceList.dart';
@@ -16,6 +17,10 @@ class dashboardInvoices extends StatefulWidget {
 }
 
 class _dashboardInvoicesState extends State<dashboardInvoices> {
+  bool isSearching = false; // Track whether searching is active
+  TextEditingController searchController = TextEditingController();
+  String search = " ";
+
   void _createNewInvoice() {
     Navigator.push(
         context,
@@ -24,11 +29,14 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
                 InvoiceAdd(isEdit: false, InvoiceId: invoiceID)));
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    InvoiceList();
+  void _toggleSearch() {
+    setState(() {
+      isSearching = !isSearching;
+      if (!isSearching) {
+        // Clear the search field and perform any reset logic here
+        searchController.clear();
+      }
+    });
   }
 
   @override
@@ -39,24 +47,50 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 69, 150, 216),
-            title: Center(
-              child: Text(
-                "Invoices",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-              ),
-            ),
-            leading: IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                )),
+            title: isSearching
+                ? TextField(
+                    controller: searchController,
+                    onChanged: (String? value) {
+                      setState(() {
+                        search = value.toString();
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search by Names',
+                      hintStyle: TextStyle(color: Color_white),
+                      border: InputBorder.none,
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      "Invoices",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+            leading: isSearching
+                ? IconButton(
+                    onPressed: _toggleSearch,
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                  )
+                : IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => DashBoard()));
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                  ),
             actions: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: _toggleSearch,
                   icon: Icon(
-                    Icons.search_outlined,
+                    isSearching ? Icons.close : Icons.search_outlined,
                     size: 28,
                     color: Colors.white,
                   ))
@@ -76,7 +110,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
           ),
           body: TabBarView(
             children: [
-              InvoiceList(),
+              InvoiceList(searchController: searchController),
               OutStandingInvoices(),
               PaidInvoices(),
             ],

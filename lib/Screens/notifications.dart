@@ -19,9 +19,9 @@ class _NotificationsState extends State<Notifications> {
     final url = "http://192.168.1.31:8000/api/notifications/";
 
     final uri = Uri.parse(url);
-    print(authorizationValue);
+    print(authorizationValues);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
     print("status code ${response.statusCode}");
     print(response.body);
 

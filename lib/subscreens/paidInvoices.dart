@@ -19,16 +19,16 @@ class _PaidInvoicesState extends State<PaidInvoices> {
   bool isLoading = true;
 
   Future<void> fetchPaid() async {
-    final url = "http://192.168.1.31:8000/api/paid-invoice-list/";
+    final url = "http://192.168.1.35:8000/api/paid-invoice-list/";
 
     final uri = Uri.parse(url);
     print("seven");
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValue);
+    print(authorizationValues);
     final response = await http
-        .post(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .post(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
     print(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -64,7 +64,7 @@ class _PaidInvoicesState extends State<PaidInvoices> {
     print(" get user id $InvId");
     print("SEVENTEEN");
 
-    final url = "http://192.168.1.31:8000/api/delete-invoice/$InvId";
+    final url = "http://192.168.1.35:8000/api/delete-invoice/$InvId";
 
     final uri = Uri.parse(url);
 

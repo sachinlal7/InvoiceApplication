@@ -5,6 +5,9 @@ import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Screens/homescreen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:invoice_app/constants_colors.dart';
+import 'package:invoice_app/webview/aboutus.dart';
+import 'package:invoice_app/webview/contactUs.dart';
+import 'package:invoice_app/webview/termsAndConditions.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,8 +26,10 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   bool isLogin = false;
-  String profileImageUrl = "";
+  // String profileImageUrlss = "";
+
   bool isLoading = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> clearUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,42 +43,43 @@ class _NavBarState extends State<NavBar> {
 
   void fetchProfile() async {
     // final url = Base_URL + updateProfileApi;
-    final url = "http://192.168.1.31:8000/api/user-updated-profile/";
+    print('authorizationValue $authorizationValues');
+    final url = "http://192.168.1.35:8000/api/user-updated-profile/";
     final uri = Uri.parse(url);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
-    print(response.statusCode);
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
+    print("statuss code ${response.statusCode}");
     print(response.body);
     var data = jsonDecode(response.body);
     print(data);
-    businessName = data['data']['business_name'] ?? "";
-    businessEmail = data['data']['email'];
+    phoneNumber = data['data']['phone_number'] ?? " ";
+    businessEmail = data['data']['email'] ?? "";
     UserName = data['data']['username'];
-    phoneNumber = data['data']['phone_number'];
+
     address = data['data']['address'];
+    businessName = data['data']['business_name'] ?? "";
 
     image = data['data']['profile_pic'] ?? "";
 
     print(image);
 
-    profileImageUrl = Url_image + image;
-    print(profileImageUrl);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(PROFILE_IMAGE, profileImageUrl);
+    // profileImageUrlss = Url_image + image;
+    // print(profileImageUrlss);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString(PROFILE_IMAGE, profileImageUrlss);
 
     print("fetchedValue is $businessName");
-    print(profileImageUrl);
+    // print(profileImageUrlss);
     final circleAvatar = CircleAvatar(
       // backgroundImage: NetworkImage(profileImageUrl),
       backgroundImage: NetworkImage(
-          "http://192.168.1.31:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
+          "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
       radius: 40.0,
     );
     if (this.mounted) {
       setState(() {});
     }
-    getImageUrl();
-    print(profileImage);
+    // getImageUrl();
 
     if (mounted) {
       setState(() {
@@ -82,10 +88,10 @@ class _NavBarState extends State<NavBar> {
     }
   }
 
-  void getImageUrl() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    profileImage = prefs.getString(PROFILE_IMAGE) ?? "";
-  }
+  // void getImageUrl() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   profileImage = prefs.getString(PROFILE_IMAGE) ?? "";
+  // }
 
   @override
   void initState() {
@@ -107,6 +113,7 @@ class _NavBarState extends State<NavBar> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
+        key: _scaffoldKey,
         child: ListView(
           children: [
             SizedBox(
@@ -118,9 +125,10 @@ class _NavBarState extends State<NavBar> {
                           padding: const EdgeInsets.all(8.0),
                           child: CircleAvatar(
                               backgroundImage: image != null && image.isNotEmpty
-                                  ? NetworkImage(profileImageUrl)
+                                  ? NetworkImage(
+                                      "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")
                                   : NetworkImage(
-                                      "http://192.168.1.31:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
+                                      "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
                         ),
                   accountName: Text(
                     businessName!,
@@ -134,6 +142,7 @@ class _NavBarState extends State<NavBar> {
             GestureDetector(
               onTap: () {
                 print(URL_image + image);
+                _scaffoldKey.currentState?.openEndDrawer();
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => DashBoard()));
                 isLogin = false;
@@ -145,6 +154,7 @@ class _NavBarState extends State<NavBar> {
             ),
             GestureDetector(
               onTap: () {
+                _scaffoldKey.currentState?.openEndDrawer();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ManageProfiles()));
                 setState(() {});
@@ -154,18 +164,54 @@ class _NavBarState extends State<NavBar> {
                 title: Text("Manage Profile"),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.security),
-              title: Text("Pivacy Policy"),
-            ),
             GestureDetector(
               onTap: () {
+                _scaffoldKey.currentState?.openEndDrawer();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => Settings()));
               },
               child: ListTile(
                 leading: Icon(Icons.settings),
                 title: Text("Settings"),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.security),
+              title: Text("Pivacy Policy"),
+            ),
+            GestureDetector(
+              onTap: () {
+                _scaffoldKey.currentState?.openEndDrawer();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AboutUs()));
+              },
+              child: ListTile(
+                leading: Icon(Icons.info),
+                title: Text("About us"),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                _scaffoldKey.currentState?.openEndDrawer();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ContactUs()));
+              },
+              child: ListTile(
+                leading: Icon(Icons.phone_rounded),
+                title: Text("Contact Us"),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TermsConditions()));
+              },
+              child: ListTile(
+                leading: Image(
+                  image: AssetImage("assets/images/t&c.png"),
+                  height: 25,
+                ),
+                title: Text("Terms and conditions"),
               ),
             ),
             GestureDetector(
@@ -180,17 +226,6 @@ class _NavBarState extends State<NavBar> {
                 leading: Icon(Icons.logout),
                 title: Text("Logout"),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text("About us"),
-            ),
-            ListTile(
-              leading: Image(
-                image: AssetImage("assets/images/t&c.png"),
-                height: 25,
-              ),
-              title: Text("Terms and conditions"),
             ),
           ],
         ),

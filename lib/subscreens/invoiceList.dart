@@ -1,16 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:invoice_app/Screens/dashboardInvoice.dart';
 import 'package:invoice_app/Screens/invoice_add.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:invoice_app/subscreens/webView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class InvoiceList extends StatefulWidget {
-  const InvoiceList({super.key});
+  final TextEditingController searchController;
+
+  const InvoiceList({super.key, required this.searchController});
 
   @override
   State<InvoiceList> createState() => _InvoiceListState();
@@ -18,20 +22,23 @@ class InvoiceList extends StatefulWidget {
 
 class _InvoiceListState extends State<InvoiceList> {
   List data = [];
+  List newData = [];
   bool isLoading = true;
   WebViewController controller = WebViewController();
 
+  dashboardInvoices dashboardInvoicesInstance = dashboardInvoices();
+
   Future<void> fetchInvoice() async {
-    final url = "http://192.168.1.31:8000/api/invoice-list/";
+    final url = "http://192.168.1.35:8000/api/invoice-list/";
 
     final uri = Uri.parse(url);
     print("seven");
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValue);
+    print(authorizationValues);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;
@@ -86,9 +93,9 @@ class _InvoiceListState extends State<InvoiceList> {
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValue);
+    print(authorizationValues);
     final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;
@@ -157,10 +164,10 @@ class _InvoiceListState extends State<InvoiceList> {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               prefs.setString(INVOICE_ID, invoiceID);
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => WebViewPage()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WebViewPage()));
                             },
                             child: Container(
                               height: 100,
@@ -223,28 +230,11 @@ class _InvoiceListState extends State<InvoiceList> {
                                             padding: const EdgeInsets.all(12.0),
                                             child: GestureDetector(
                                                 onTap: () async {
-                                                  // SharedPreferences prefs =
-                                                  //     await SharedPreferences
-                                                  //         .getInstance();
-                                                  // var keyuser = prefs.setString(
-                                                  //     getUser, personId);
-                                                  // print(getUser);
-                                                  // print("twelve $keyuser");
-
-                                                  // fetchEditDetails();
-                                                  print("edit pressed");
-                                                  Navigator.pushReplacement(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              InvoiceAdd(
-                                                                isEdit: true,
-                                                                InvoiceId:
-                                                                    invoiceID,
-
-                                                                // name: dataItem[
-                                                                //     'name'],
-                                                              )));
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return customDialog1();
+                                                      });
                                                 },
                                                 child: Icon(Icons.share)),
                                           ),
@@ -389,6 +379,49 @@ class _InvoiceListState extends State<InvoiceList> {
                 ),
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget customDialog1() {
+    return Dialog(
+      child: SizedBox(
+        height: 100,
+        width: 100,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                height: 40,
+                width: MediaQuery.of(context).size.width,
+                color: Color_white,
+                child: IconButton(
+                    onPressed: () async {
+                      String? encodeQueryParameters(
+                          Map<String, String> params) {
+                        return params.entries
+                            .map((MapEntry<String, String> e) =>
+                                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                            .join('&');
+                      }
+
+                      final Uri emailuri = Uri(
+                          scheme: 'mailto',
+                          path: 'mobappsolutions179@gmail.com',
+                          query: encodeQueryParameters(<String, String>{
+                            'subject': 'Bill Genearted',
+                            'body': 'Thanks for Shopping'
+                          }));
+                      launchUrl(emailuri);
+                    },
+                    icon: Icon(
+                      Icons.mail,
+                      size: 50,
+                    )),
+              ),
+            ),
           ],
         ),
       ),
