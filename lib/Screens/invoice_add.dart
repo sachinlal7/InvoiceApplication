@@ -7,6 +7,7 @@ import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Tabs/previewInvoice.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:invoice_app/Tabs/submitInvoicePreview.dart';
 import 'package:invoice_app/constants_colors.dart';
 
 import '../Tabs/dropdown.dart';
@@ -37,6 +38,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   TextEditingController PaidAmountController = TextEditingController();
   TextEditingController PaymentStatusController = TextEditingController();
   TextEditingController DateController = TextEditingController();
+  TextEditingController DueDateController = TextEditingController();
   SingleValueDropDownController singleValueController =
       SingleValueDropDownController();
 
@@ -92,11 +94,12 @@ class _InvoiceAddState extends State<InvoiceAdd>
       setState(() {
         currentDate = userSelectedDate;
         selectedDate = DateFormat('yyyy-MM-dd').format(currentDate);
+        DateController.text = selectedDate;
       });
     }
   }
 
-  void datePicker1(context) async {
+  void dueDatePicker(context) async {
     DateTime? userSelectedDate1 = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -108,11 +111,12 @@ class _InvoiceAddState extends State<InvoiceAdd>
       setState(() {
         currentDate1 = userSelectedDate1;
         selectedDate1 = DateFormat('yyyy-MM-dd').format(currentDate);
+        DueDateController.text = selectedDate1;
       });
     }
   }
 
-  void datePicker2(context) async {
+  void paymentDatePicker(context) async {
     DateTime? userSelectedDate2 = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -124,6 +128,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
       setState(() {
         currentDate2 = userSelectedDate2;
         selectedDate2 = DateFormat('yyyy-MM-dd').format(currentDate);
+        PaymentDateContoller.text = selectedDate2;
       });
     }
   }
@@ -151,16 +156,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
     TotalPriceController.text = totalPrice.toString();
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
-    fetchCustomerNames();
-    fecthInvoiceID();
-    setState(() {});
-
+  Future<void> saveValues() async {
     if (widget.isEdit) {
       ProductNameController = TextEditingController(text: InvoiceProductName);
       QuantityController = TextEditingController(text: InvoiceQuantity);
@@ -170,6 +166,33 @@ class _InvoiceAddState extends State<InvoiceAdd>
       FaxNumberController = TextEditingController(text: InvoiceFax);
       PaidAmountController = TextEditingController(text: InvoicePaidAmount);
     }
+  }
+
+  Future<void> fetchInvocieDetails() async {
+    try {
+      // Fetch clientIdVal and wait for it to complete
+      await fecthInvoiceID();
+
+      // Now that you have clientIdVal, you can call clientsPendingInvoice
+      await saveValues();
+
+      // Continue with other operations if needed
+    } catch (e) {
+      // Handle errors here
+      print('Error: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
+    fetchInvocieDetails();
+    isEdit ? " " : fetchCustomerNames();
+    // fecthInvoiceID();
+    setState(() {});
   }
 
   @override
@@ -311,7 +334,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                     children: [
                                       GestureDetector(
                                         onTap: () {
-                                          datePicker1(context);
+                                          dueDatePicker(context);
                                         },
                                         child: Container(
                                             height: 30,
@@ -360,32 +383,49 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       height: 35,
                                       width: 180,
                                       color: Colors.white,
-                                      child: DropDownTextField(
-                                        // initialValue: "name4",
-                                        // controller: singleValueController,
-                                        // clearOption: true,
-                                        // enableSearch: true,
-                                        // dropdownColor: Colors.green,
-                                        // searchDecoration: const InputDecoration(
-                                        //     hintText: "Select Client"),
-                                        validator: (value) {
-                                          if (value == null) {
-                                            return "Required field";
-                                          } else {
-                                            return null;
-                                          }
-                                        },
-                                        dropDownItemCount: customerNames.length,
+                                      child: isEdit
+                                          ? DropDownTextField(
+                                              // initialValue: "name4",
+                                              // controller: singleValueController,
+                                              // clearOption: true,
+                                              // enableSearch: true,
+                                              // dropdownColor: Colors.green,
+                                              // searchDecoration: const InputDecoration(
+                                              //     hintText: "Select Client"),
+                                              validator: (value) {
+                                                if (value == null) {
+                                                  return "Required field";
+                                                } else {
+                                                  return null;
+                                                }
+                                              },
+                                              dropDownItemCount:
+                                                  customerNames.length,
 
-                                        dropDownList: customerNames.map((name) {
-                                          return DropDownValueModel(
-                                              name: name, value: name);
-                                        }).toList(),
-                                        onChanged: (val) {
-                                          changedValue = val.name;
-                                          print(changedValue);
-                                        },
-                                      ),
+                                              dropDownList:
+                                                  customerNames.map((name) {
+                                                return DropDownValueModel(
+                                                    name: name, value: name);
+                                              }).toList(),
+                                              onChanged: (val) {
+                                                changedValue = val.name;
+                                                print(changedValue);
+                                              },
+                                            )
+                                          : TextFormField(
+                                              controller: ProductNameController,
+                                              onChanged: (value) {
+                                                productName = value;
+                                              },
+                                              decoration: InputDecoration(
+                                                  hintText: "Product",
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          bottom: 9, left: 5),
+                                                  border: OutlineInputBorder(
+                                                      borderSide:
+                                                          BorderSide.none)),
+                                            ),
                                     )
                                   ],
                                 ),
@@ -599,7 +639,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        datePicker2(context);
+                                        paymentDatePicker(context);
                                       },
                                       child: Container(
                                           padding:
@@ -777,15 +817,23 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         onTap: () {
                                           setState(() {
                                             print("object");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PreviewInvoice(
-                                                          isEdit: false,
-                                                          selectedValue:
-                                                              changedValue,
-                                                        )));
+                                            isEdit
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PreviewInvoice(
+                                                              selectedValue:
+                                                                  changedValue,
+                                                            )))
+                                                : Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SubmitPreviewInvoice(
+                                                              selectedValue:
+                                                                  changedValue,
+                                                            )));
                                             // isEdit = true;
                                             // _tabController.animateTo(1);
                                           });
@@ -825,7 +873,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   Future<void> EditInvoiceDetails() async {
     final InvoiceId = widget.InvoiceId;
 
-    final url = "http://192.168.1.31:8000/api/invoice-list/";
+    final url = "http://192.168.1.35:8000/api/invoice-list/";
     final uri = Uri.parse(url);
 
     final response = await http.get(uri, headers: {

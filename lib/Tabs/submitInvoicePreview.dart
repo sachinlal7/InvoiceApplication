@@ -12,17 +12,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 int? idValue;
 
-class PreviewInvoice extends StatefulWidget {
+class SubmitPreviewInvoice extends StatefulWidget {
   String? selectedValue;
   final isEdit;
 
-  PreviewInvoice({super.key, this.selectedValue, this.isEdit});
+  SubmitPreviewInvoice({super.key, this.selectedValue, this.isEdit});
 
   @override
-  State<PreviewInvoice> createState() => _PreviewInvoiceState();
+  State<SubmitPreviewInvoice> createState() => _SubmitPreviewInvoiceState();
 }
 
-class _PreviewInvoiceState extends State<PreviewInvoice> {
+class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
   bool isEdit = false;
   TextEditingController idController = TextEditingController();
   TextEditingController clientController = TextEditingController();
@@ -108,12 +108,11 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
       "fax_number": faxNumber,
       "payment_date": selectedDate2,
       "paid_amount": paidAmount,
-      "Invoice_date": "2003-05-11",
       "due_date": selectedDate1,
     };
     print(body);
     print(clientID);
-    final url = "http://192.168.1.31:8000/api/invoice/";
+    final url = "http://192.168.1.31:8000/api/invoice/$clientID";
     final uri = Uri.parse(url);
     print(uri);
 
@@ -158,43 +157,12 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
     }
   }
 
-  Future<void> updateInvoiceData(String customerIdValue) async {
-    final body = {
-      "client": invoiceID,
-      "invoice_number": "12365407",
-      "invoice_date": "2001-12-31",
-      "due_date": "2001-1-3",
-      "address": "ranchi",
-      "quantity": "5",
-      "unit_price": "8000",
-      "product_name": "tablate"
-    };
-
-    final url = "http://192.168.1.35:8000/api/edit-invoice/$InvoiceIdValue";
-    final uri = Uri.parse(url);
-    print(authorizationValues);
-    print(InvoiceIdValue);
-    final response = await http.put(uri,
-        body: body, headers: {'Authorization': 'Bearer $authorizationValues'});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('successfully updated');
-    } else {
-      print('update failed');
-    }
-    // if (mounted) {
-    //   Navigator.pushReplacement(
-    //       context, MaterialPageRoute(builder: (context) => AddClients()));
-    // }
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // getCustId();
     getDataApi();
-    print(widget.isEdit);
   }
 
   @override
@@ -213,7 +181,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                     SizedBox(
                       height: 20,
                     ),
-                    Text("INV00012"),
+                    Text("INV0001"),
                     Row(
                       children: [
                         SizedBox(
@@ -365,11 +333,11 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
                 child: GestureDetector(
                   onTap: () {
-                    updateInvoiceData(customerIdValue).then((value) =>
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => dashboardInvoices())));
+                    submitInvoiceData();
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => dashboardInvoices()));
                   },
                   child: Container(
                     height: 35,
@@ -377,7 +345,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                     color: Colors.deepOrange,
                     child: Center(
                         child: Text(
-                      "update",
+                      "Submit",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     )),
                   ),

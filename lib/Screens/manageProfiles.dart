@@ -144,25 +144,11 @@ class _ManageProfilesState extends State<ManageProfiles> {
                               )
                             : CircleAvatar(
                                 radius: 70,
-                                backgroundImage: profileImageUrl.isEmpty
-                                    ? NetworkImage(
-                                        "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")
+                                backgroundImage: image != null &&
+                                        image.isNotEmpty
+                                    ? NetworkImage(profileImageUrlss)
                                     : NetworkImage(
-                                        "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg"),
-                              ),
-
-                        //  _image != null
-                        //     ? Image.file(
-                        //         File(_image!.path),
-                        //         height: 200,
-                        //         fit: BoxFit.cover,
-                        //       )
-                        //     : CircleAvatar(
-                        //         backgroundImage: profileImageUrl
-                        //                 .isNotEmpty
-                        //             ? NetworkImage(profileImageUrl)
-                        //             : NetworkImage(
-                        //                 "http://192.168.1.31:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg")),
+                                        "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
                       ),
                       // )),
                       Positioned(
@@ -178,16 +164,6 @@ class _ManageProfilesState extends State<ManageProfiles> {
                           ))
                     ],
                   ),
-                  // TextFormField(
-                  //   decoration: InputDecoration(
-                  //       filled: true,
-                  //       hintText: "Business Name",
-                  //       fillColor: Colors.white),
-                  // ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-
                   Container(
                     height: 55,
                     width: 370,
@@ -210,7 +186,6 @@ class _ManageProfilesState extends State<ManageProfiles> {
                       },
                     ),
                   ),
-
                   SizedBox(height: 20),
                   Container(
                     height: 55,
@@ -306,7 +281,6 @@ class _ManageProfilesState extends State<ManageProfiles> {
                       },
                     ),
                   ),
-
                   SizedBox(
                     height: 80,
                   ),
@@ -318,6 +292,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                           context,
                           (MaterialPageRoute(
                               builder: (context) => DashBoard())));
+
                       // setState(() {});
                       // Navigator.pop(context);
                     },
@@ -349,150 +324,81 @@ class _ManageProfilesState extends State<ManageProfiles> {
     );
   }
 
-  // void fetchProfile() async {
-  //   final url = Base_URL + updateProfileApi;
-  //   final uri = Uri.parse(url);
-  //   final response = await http
-  //       .get(uri, headers: {'Authorization': 'Bearer $authorizationValue'});
-  //   print(response.statusCode);
-  //   print(response.body);
-  //   var data = jsonDecode(response.body);
-  //   print(data);
-  //   UserName = data['data']['username'];
-  //   businessName = data['data']['business_name'];
-  //   businessEmail = data['data']['email'];
-
-  //   address = data['data']['address'];
-  //   image = data['data']['profile_pic'];
-
-  //   phoneNumber = data['data']['phone_number'];
-  //   print(phoneNumber);
-
-  //   profileImageUrl = Url_image + image;
-  //   print("fetchedValue is $businessName");
-
-  //   final circleAvatar = CircleAvatar(
-  //     backgroundImage: NetworkImage(profileImageUrl),
-  //     radius: 40.0,
-  //   );
-  //   setState(() {});
-  // }
-
-  // Future<void> updateProfile() async {
-  //   final body = {
-  //     "business_name": technicalProductsController.text,
-  //     "email": EmailController.text,
-  //     "username": NameController.text,
-  //     "phone_number": phoneNumberController.text.toString(),
-  //     "address": addressController.text
-  //   };
-
-  //   // SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   // var customerIdValue = prefs.get(getUser);
-  //   // print(" get user id $CustKey");
-
-  //   final url = "http://192.168.1.31:8000/api/user-updated-profile/";
-  //   final uri = Uri.parse(url);
-  //   print(authorizationValue);
-  //   print(customerIdValue);
-  //   final response = await http.put(uri,
-  //       body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
-
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     print('successfully updated');
-  //   } else {
-  //     print('update failed');
-  //   }
-  //   if (mounted) {
-  //     Navigator.pushReplacement(
-  //         context, MaterialPageRoute(builder: (context) => DashBoard()));
-  //   }
-  // }
-
   Future<void> updateProfile() async {
+    print("authorizationValues4 $authorizationValues");
     setState(() {
       loading = true;
     });
 
-    try {
-      var headers = {
-        "Authorization": "Bearer $authorizationValues",
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      };
+    // try {
+    var headers = {
+      "Authorization": "Bearer $authorizationValues",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    };
 
-      var request = http.MultipartRequest(
-        'PUT',
-        Uri.parse(Base_URL + updateProfileApi),
-      );
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse(Base_URL + updateProfileApi),
+    );
 
-      request.headers.addAll(headers);
+    request.headers.addAll(headers);
+    print("authorizationValues3 $authorizationValues");
 
-      final fields = {
-        "business_name": technicalProductsController.text,
-        "email": EmailController.text,
-        "username": NameController.text,
-        "phone_number": phoneNumberController.text.toString(),
-        "address": addressController.text,
-      };
+    final fields = {
+      "business_name": technicalProductsController.text,
+      "email": EmailController.text,
+      "username": NameController.text,
+      "phone_number": phoneNumberController.text.toString(),
+      "address": addressController.text,
+    };
 
-      request.fields.addAll(fields);
+    request.fields.addAll(fields);
 
-      if (_image != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'profile_pic',
-          _image!.path,
-        ));
-      }
+    if (_image != null) {
+      print("authorizationValues2 $authorizationValues");
+      request.files.add(await http.MultipartFile.fromPath(
+        'profile_pic',
+        _image!.path,
+      ));
+    }
 
-      var response = await request.send();
-      print(response.statusCode);
+    var response = await request.send();
+    print(request.headers);
+    print(request.fields);
+    print(response.statusCode);
+    print("authorizationValues1 $authorizationValues");
 
-      if (response.statusCode == 200) {
-        setState(() {
-          loading = false;
-          // uploadedImageUrl = image;
-          message = 'Profile updated successfully.';
-          print(message);
-          Fluttertoast.showToast(
-              msg: message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        });
-      } else {
-        setState(() {
-          message =
-              'Profile update failed with status code: ${response.statusCode}';
-          print(message);
-          Fluttertoast.showToast(
-              msg: message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        });
-      }
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          message = 'Error updating profile: $error';
-          print(message);
-          Fluttertoast.showToast(
-              msg: message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        });
-      }
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("authorizationValues10 $authorizationValues");
+      setState(() {
+        loading = false;
+        // uploadedImageUrl = image;
+        message = 'Profile updated successfully.';
+        print(message);
+        Fluttertoast.showToast(
+            msg: message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      });
+    } else {
+      setState(() {
+        message =
+            'Profile update failed with status code: ${response.statusCode}';
+        print(message);
+        Fluttertoast.showToast(
+            msg: message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      });
     }
   }
 }

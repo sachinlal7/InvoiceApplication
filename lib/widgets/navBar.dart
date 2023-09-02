@@ -26,7 +26,6 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   bool isLogin = false;
-  // String profileImageUrlss = "";
 
   bool isLoading = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -41,9 +40,33 @@ class _NavBarState extends State<NavBar> {
     prefs.reload();
   }
 
-  void fetchProfile() async {
+  Future<void> setImageUrl() async {
+    print("four");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PROFILE_IMAGE, profileImageUrlss);
+  }
+
+  // Future<void> fetchDataAndImage() async {
+  //   try {
+  //     // Fetch clientIdVal and wait for it to complete
+  //     await fetchProfile();
+
+  //     // Now that you have clientIdVal, you can call clientsPendingInvoice
+  //     await setImageUrl();
+
+  //     await getImageUrl();
+
+  //     // Continue with other operations if needed
+  //   } catch (e) {
+  //     // Handle errors here
+  //     print('Error: $e');
+  //   }
+  // }
+
+  Future<void> fetchProfile() async {
+    print("two");
     // final url = Base_URL + updateProfileApi;
-    print('authorizationValue $authorizationValues');
+    print('authorizationValue4 $authorizationValues');
     final url = "http://192.168.1.35:8000/api/user-updated-profile/";
     final uri = Uri.parse(url);
     final response = await http
@@ -63,10 +86,8 @@ class _NavBarState extends State<NavBar> {
 
     print(image);
 
-    // profileImageUrlss = Url_image + image;
-    // print(profileImageUrlss);
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString(PROFILE_IMAGE, profileImageUrlss);
+    profileImageUrlss = Url_image + image;
+    print(profileImageUrlss);
 
     print("fetchedValue is $businessName");
     // print(profileImageUrlss);
@@ -88,7 +109,8 @@ class _NavBarState extends State<NavBar> {
     }
   }
 
-  // void getImageUrl() async {
+  // Future<void> getImageUrl() async {
+  //   print("three");
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   profileImage = prefs.getString(PROFILE_IMAGE) ?? "";
   // }
@@ -98,18 +120,16 @@ class _NavBarState extends State<NavBar> {
     // TODO: implement initState
 
     super.initState();
+    print("one");
+    // fetchDataAndImage();
 
     fetchProfile();
-
-    print("setstate again");
-    // fetchProfile();
-    debugPrint("object");
-    debugPrint("data");
   }
 
   @override
   Widget build(BuildContext context) {
     print("build call");
+    print("authorizationValues5 $authorizationValues");
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
@@ -125,8 +145,7 @@ class _NavBarState extends State<NavBar> {
                           padding: const EdgeInsets.all(8.0),
                           child: CircleAvatar(
                               backgroundImage: image != null && image.isNotEmpty
-                                  ? NetworkImage(
-                                      "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")
+                                  ? NetworkImage(profileImageUrlss)
                                   : NetworkImage(
                                       "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
                         ),
@@ -154,6 +173,7 @@ class _NavBarState extends State<NavBar> {
             ),
             GestureDetector(
               onTap: () {
+                print("authorizationValues6 $authorizationValues");
                 _scaffoldKey.currentState?.openEndDrawer();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ManageProfiles()));

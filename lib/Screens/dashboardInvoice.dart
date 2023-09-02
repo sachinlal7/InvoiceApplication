@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/createInvoice.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
@@ -7,6 +9,8 @@ import 'package:invoice_app/subscreens/invoiceList.dart';
 
 import '../subscreens/outstandingInvoices.dart';
 import '../subscreens/paidInvoices.dart';
+import 'package:http/http.dart' as http;
+
 import 'invoice_add.dart';
 
 class dashboardInvoices extends StatefulWidget {
@@ -20,6 +24,8 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
   bool isSearching = false; // Track whether searching is active
   TextEditingController searchController = TextEditingController();
   String search = " ";
+  bool isLoading = true;
+  List AllInvoices = [];
 
   void _createNewInvoice() {
     Navigator.push(
@@ -27,6 +33,49 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
         MaterialPageRoute(
             builder: (context) =>
                 InvoiceAdd(isEdit: false, InvoiceId: invoiceID)));
+  }
+
+  Future<void> fetchInvoice() async {
+    final url = "http://192.168.1.35:8000/api/invoice-list/";
+
+    final uri = Uri.parse(url);
+    print("seven");
+
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var getTheKey = prefs.getString(ACCESS_KEY);
+    print(authorizationValues);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
+    print(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var json = jsonDecode(response.body) as Map;
+      var results = json['data'] as List;
+      print(results);
+
+      // print("customer id result $custres");
+      // var setTheCustId = prefs.setInt(CUST_ID, custResults);
+      setState(() {
+        AllInvoices = results;
+        foundUsers = AllInvoices;
+      });
+    } else {
+      print("error");
+    }
+    setState(() {
+      isLoading = false;
+      // void getdata(int index) {
+      //   var custNum = custResults[index][index];
+      //   print("numbr of cust $custNum");
+      // }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchInvoice();
   }
 
   void _toggleSearch() {
@@ -50,11 +99,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
             title: isSearching
                 ? TextField(
                     controller: searchController,
-                    onChanged: (String? value) {
-                      setState(() {
-                        search = value.toString();
-                      });
-                    },
+                    // onChanged: (value) => _runFilter(value),
                     decoration: InputDecoration(
                       hintText: 'Search by Names',
                       hintStyle: TextStyle(color: Color_white),

@@ -162,9 +162,13 @@ var selectedDate = "";
 var selectedDate2 = "";
 var invoicecustid = "";
 var invoicecustname = "";
+var clientid = "";
 
+String profileImageUrlss = "";
+List foundUsers = [];
 // var idValue = "";\
 var changedValue = "";
 var changedID = "";
 var clientID = "";
 var CLIENTId = "";
+List AllInvoices = [];
