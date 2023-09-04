@@ -39,43 +39,46 @@ class _AddClientsState extends State<AddClients> {
     // print("get client");
   }
 
-  Future<void> EditClientDetails() async {
-    print("three");
+  // Future<void> EditClientDetails() async {
+  //   print("three");
 
-    final url = Base_URL + custlistendpoint;
-    final uri = Uri.parse(url);
+  //   final url = Base_URL + custlistendpoint;
+  //   final uri = Uri.parse(url);
 
-    final response = await http.get(uri, headers: {
-      'Authorization': 'Bearer $authorizationValues',
-    });
+  //   final response = await http.get(uri, headers: {
+  //     'Authorization': 'Bearer $authorizationValues',
+  //   });
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+  //   if (response.statusCode == 201) {
+  //     final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+  //     print(jsonData);
 
-      for (final clientData in jsonData['data']) {
-        final id = clientData['id'].toString();
+  //     for (final clientData in jsonData['data']) {
+  //       print(clientData);
+  //       final id = clientData['id'].toString();
+  //       print(id);
 
-        if (id == clientIdVal) {
-          final clientName = clientData['name'] as String;
-          final clientNumber = clientData['phone_number'] as String;
-          final clienEmail = clientData['email'] as String;
-          print("name of client $clientName");
+  //       if (id == clientIdVal) {
+  //         final clientName = clientData['name'] as String;
+  //         final clientNumber = clientData['phone_number'] as String;
+  //         final clienEmail = clientData['email'] as String;
+  //         print("name of client $clientName");
 
-          // Now you have the clientName for the given clientId
-          setState(() {
-            userrname = clientName;
-            userrNumber = clientNumber;
-            userrEmail = clienEmail;
-            print("value fetched");
-          });
-          break; // No need to continue searching
-        }
-      }
-    } else {
-      // Handle error case
-    }
-    setState(() {});
-  }
+  //         // Now you have the clientName for the given clientId
+  //         setState(() {
+  //           userrname = clientName;
+  //           userrNumber = clientNumber;
+  //           userrEmail = clienEmail;
+  //           print("value fetched");
+  //         });
+  //         break; // No need to continue searching
+  //       }
+  //     }
+  //   } else {
+  //     // Handle error case
+  //   }
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
@@ -237,7 +240,7 @@ class _AddClientsState extends State<AddClients> {
                                                 // fetchEditDetails();
                                                 // print("edit pressed");
 
-                                                Navigator.pushReplacement(
+                                                Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>

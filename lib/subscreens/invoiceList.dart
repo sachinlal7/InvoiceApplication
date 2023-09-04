@@ -30,19 +30,20 @@ class _InvoiceListState extends State<InvoiceList> {
     final url = "http://192.168.1.35:8000/api/invoice-list/";
 
     final uri = Uri.parse(url);
-    print("seven");
+    print("sevennn");
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValues);
+    // print(authorizationValues);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
-    print(response.body);
+    // print(response.body);
+    // print("response body");
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body) as Map;
       var results = json['data'] as List;
-      print(results);
+      // print(results);
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
@@ -60,6 +61,8 @@ class _InvoiceListState extends State<InvoiceList> {
       //   print("numbr of cust $custNum");
       // }
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(INV_id, invoiceID);
   }
 
   Future<void> deleteInvoice(String InvoiceId) async {
@@ -89,7 +92,6 @@ class _InvoiceListState extends State<InvoiceList> {
     final url = "http://192.168.1.31:8000/api/preview/$invoiceID";
 
     final uri = Uri.parse(url);
-    print("seven");
 
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     // var getTheKey = prefs.getString(ACCESS_KEY);
@@ -149,23 +151,26 @@ class _InvoiceListState extends State<InvoiceList> {
                     ? ListView.builder(
                         itemCount: foundUsers.length,
                         itemBuilder: (context, index) {
-                          final dataItem = foundUsers[index] as Map;
-                          InvoiceNumber = dataItem['invoice_number'].toString();
+                          final dataItem = foundUsers[index];
+                          var invoiceID = dataItem['id'].toString();
+                          var InvoiceNumber =
+                              dataItem['invoice_number'].toString();
+
                           var totalPrice = dataItem['total_price'];
                           var paidAmount = dataItem['paid_amount'] ?? "";
-                          var invoiceID = dataItem['id'].toString();
+
                           var clientName = dataItem['client_name'];
                           var paymentStatus = dataItem['payment_status'];
                           clientid = dataItem['id'].toString();
 
-                          print(clientid);
+                          print(invoiceID);
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: GestureDetector(
-                              onTap: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.setString(INVOICE_ID, invoiceID);
+                              onTap: () {
+                                // SharedPreferences prefs =
+                                //     await SharedPreferences.getInstance();
+                                // prefs.setString(INVOICE_ID, invoiceID);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -253,9 +258,9 @@ class _InvoiceListState extends State<InvoiceList> {
                                                     SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
-                                                    prefs.setString(
-                                                        getInvoiceID,
-                                                        invoiceID);
+                                                    InvoiceId = prefs.getString(
+                                                            INV_id) ??
+                                                        " ";
                                                     // print(getUser);
                                                     // print("twelve $keyuser");
 
@@ -270,7 +275,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                                                       isEdit:
                                                                           true,
                                                                       InvoiceId:
-                                                                          InvoiceNumber,
+                                                                          invoiceID,
 
                                                                       // name: dataItem[
                                                                       //     'name'],

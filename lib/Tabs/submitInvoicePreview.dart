@@ -106,9 +106,9 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
       "address": billAddress,
       "invoice_date": selectedDate,
       "fax_number": faxNumber,
-      "payment_date": selectedDate2,
+      "payment_date": paymentDateSelected,
       "paid_amount": paidAmount,
-      "due_date": selectedDate1,
+      "due_date": dueDateSelected,
     };
     print(body);
     print(clientID);
@@ -219,7 +219,7 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
                                 ),
                                 Row(
                                   children: [
-                                    Text(selectedDate1),
+                                    Text(dueDateSelected),
                                   ],
                                 ),
                               ],
@@ -308,7 +308,7 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          selectedDate2,
+                          paymentDateSelected,
                           style: TextStyle(fontSize: 15),
                         ),
                         // Text(

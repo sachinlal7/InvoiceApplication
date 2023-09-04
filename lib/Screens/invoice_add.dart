@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -110,8 +111,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
     } else {
       setState(() {
         currentDate1 = userSelectedDate1;
-        selectedDate1 = DateFormat('yyyy-MM-dd').format(currentDate);
-        DueDateController.text = selectedDate1;
+        dueDateSelected = DateFormat('yyyy-MM-dd').format(currentDate1);
+        DueDateController.text = dueDateSelected;
       });
     }
   }
@@ -127,8 +128,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
     } else {
       setState(() {
         currentDate2 = userSelectedDate2;
-        selectedDate2 = DateFormat('yyyy-MM-dd').format(currentDate);
-        PaymentDateContoller.text = selectedDate2;
+        paymentDateSelected = DateFormat('yyyy-MM-dd').format(currentDate2);
+        PaymentDateContoller.text = paymentDateSelected;
       });
     }
   }
@@ -143,6 +144,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   }
 
   Future<void> fecthInvoiceID() async {
+    print("three");
     await EditInvoiceDetails();
     setState(() {
       dataFetched = true;
@@ -150,6 +152,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   }
 
   void calculateTotalPrice() {
+    print("six");
     double quantity = double.tryParse(QuantityController.text) ?? 0;
     double unitPrice = double.tryParse(UnitPriceController.text) ?? 0;
     double totalPrice = quantity * unitPrice;
@@ -157,6 +160,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   }
 
   Future<void> saveValues() async {
+    print("five");
     if (widget.isEdit) {
       ProductNameController = TextEditingController(text: InvoiceProductName);
       QuantityController = TextEditingController(text: InvoiceQuantity);
@@ -165,11 +169,88 @@ class _InvoiceAddState extends State<InvoiceAdd>
       AddressController = TextEditingController(text: InvoiceAddress);
       FaxNumberController = TextEditingController(text: InvoiceFax);
       PaidAmountController = TextEditingController(text: InvoicePaidAmount);
+      clientController = TextEditingController(text: clientName);
+      DateController = TextEditingController(text: InvoiceDate);
+      DueDateController = TextEditingController(text: InvoiceDueDate);
     }
   }
 
+  Future<void> EditInvoiceDetails() async {
+    print("four");
+    final InvoiceId = widget.InvoiceId;
+
+    final url = "http://192.168.1.35:8000/api/invoice-list/";
+
+    final uri = Uri.parse(url);
+
+    final response = await http.get(uri, headers: {
+      'Authorization': 'Bearer $authorizationValues',
+    });
+    print(response.statusCode);
+    print(InvoiceId);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      print("ten");
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      // if (jsonData['status'] == true) {
+      //   final Map<String, dynamic> data = jsonData['data'];
+
+      for (final InvoiceData in jsonData['data']) {
+        print("eleven");
+        final id = InvoiceData['id'].toString();
+
+        if (id == InvoiceId) {
+          print("nine");
+          final invoiceNumber = InvoiceData['invoice_number'].toString();
+          final invoiceDate = InvoiceData['invoice_date'] as String;
+          final dueDate = InvoiceData['due_date'] as String;
+          final address = InvoiceData['address'] as String;
+          final productName = InvoiceData['product_name'] as String;
+          print("twelve");
+          final quantity = InvoiceData['quantity'].toString();
+          final faxNumber = InvoiceData['fax_number'] as String;
+          final unitPrice = InvoiceData['unit_price'].toString();
+          final totalPrice = InvoiceData['total_price'] as String;
+          print("thirteen");
+          final paidAmount = InvoiceData['paid_amount'] as String;
+          print(paidAmount);
+          final clientNames = InvoiceData['client_name'].toString();
+          print(clientNames);
+          print("name of client ");
+
+          // Now you have the clientName for the given clientId
+
+          setState(() {
+            InvoiceNumber = invoiceNumber;
+            InvoiceClientName = clientNames;
+            InvoiceProductName = productName;
+            InvoiceDate = invoiceDate;
+            InvoiceDueDate = dueDate;
+            InvoiceAddress = address;
+            InvoiceQuantity = quantity;
+            InvoiceFax = faxNumber;
+            InvoiceUnitPrice = unitPrice;
+            InvoiceTotalPrice = totalPrice;
+            InvoicePaidAmount = paidAmount;
+
+            print("value fetched");
+          });
+          break; // No need to continue searching
+        }
+      }
+      // }
+    } else {
+      // Handle error case
+    }
+    setState(() {});
+  }
+
   Future<void> fetchInvocieDetails() async {
+    print("one");
     try {
+      print("two");
+      // await getInvoiceID();
       // Fetch clientIdVal and wait for it to complete
       await fecthInvoiceID();
 
@@ -188,9 +269,19 @@ class _InvoiceAddState extends State<InvoiceAdd>
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
+    // _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
     fetchInvocieDetails();
-    isEdit ? " " : fetchCustomerNames();
+    if (widget.isEdit == false) {
+      fetchCustomerNames();
+    } else {
+      return;
+    }
+    if (widget.isEdit == true &&
+        QuantityController.text.isNotEmpty &&
+        UnitPriceController.text.isNotEmpty) {
+      calculateTotalPrice();
+    }
+
     // fecthInvoiceID();
     setState(() {});
   }
@@ -256,7 +347,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                       SizedBox(
                         height: 20,
                       ),
-                      Text("INV00001"),
+                      Text(InvoiceNumber),
                       SizedBox(
                         height: 10,
                       ),
@@ -322,8 +413,9 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                             width: 120,
                                             color: Color_white,
                                             child: Center(
-                                                child: Text(
-                                                    "${currentDate.year}-${currentDate.month}-${currentDate.day}"))),
+                                                child: Text(widget.isEdit
+                                                    ? selectedDate
+                                                    : "${currentDate.year}-${currentDate.month}-${currentDate.day}"))),
                                       ),
                                     ],
                                   ),
@@ -335,14 +427,20 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       GestureDetector(
                                         onTap: () {
                                           dueDatePicker(context);
+                                          // showDatePicker(
+                                          //     context: context,
+                                          //     initialDate: DateTime.now(),
+                                          //     firstDate: DateTime(1980),
+                                          //     lastDate: DateTime(2025));
                                         },
                                         child: Container(
                                             height: 30,
                                             width: 120,
                                             color: Color_white,
                                             child: Center(
-                                                child: Text(
-                                                    "${currentDate1.year}-${currentDate1.month}-${currentDate1.day}"))),
+                                                child: Text(widget.isEdit
+                                                    ? dueDateSelected
+                                                    : "${currentDate1.year}-${currentDate1.month}-${currentDate1.day}"))),
                                       ),
                                     ],
                                   ),
@@ -380,53 +478,52 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       width: 50,
                                     ),
                                     Container(
-                                      height: 35,
-                                      width: 180,
-                                      color: Colors.white,
-                                      child: isEdit
-                                          ? DropDownTextField(
-                                              // initialValue: "name4",
-                                              // controller: singleValueController,
-                                              // clearOption: true,
-                                              // enableSearch: true,
-                                              // dropdownColor: Colors.green,
-                                              // searchDecoration: const InputDecoration(
-                                              //     hintText: "Select Client"),
-                                              validator: (value) {
-                                                if (value == null) {
-                                                  return "Required field";
-                                                } else {
-                                                  return null;
-                                                }
-                                              },
-                                              dropDownItemCount:
-                                                  customerNames.length,
+                                        height: 35,
+                                        width: 180,
+                                        color: Colors.white,
+                                        child: widget.isEdit
+                                            ? TextFormField(
+                                                controller: clientController,
+                                                onChanged: (value) {
+                                                  clientName = value;
+                                                },
+                                                decoration: InputDecoration(
+                                                    hintText: "Client Name",
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            bottom: 9, left: 5),
+                                                    border: OutlineInputBorder(
+                                                        borderSide:
+                                                            BorderSide.none)),
+                                              )
+                                            : DropDownTextField(
+                                                // initialValue: "name4",
+                                                // controller: singleValueController,
+                                                // clearOption: true,
+                                                // enableSearch: true,
+                                                // dropdownColor: Colors.green,
+                                                // searchDecoration: const InputDecoration(
+                                                //     hintText: "Select Client"),
+                                                validator: (value) {
+                                                  if (value == null) {
+                                                    return "Required field";
+                                                  } else {
+                                                    return null;
+                                                  }
+                                                },
+                                                dropDownItemCount:
+                                                    customerNames.length,
 
-                                              dropDownList:
-                                                  customerNames.map((name) {
-                                                return DropDownValueModel(
-                                                    name: name, value: name);
-                                              }).toList(),
-                                              onChanged: (val) {
-                                                changedValue = val.name;
-                                                print(changedValue);
-                                              },
-                                            )
-                                          : TextFormField(
-                                              controller: ProductNameController,
-                                              onChanged: (value) {
-                                                productName = value;
-                                              },
-                                              decoration: InputDecoration(
-                                                  hintText: "Product",
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          bottom: 9, left: 5),
-                                                  border: OutlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide.none)),
-                                            ),
-                                    )
+                                                dropDownList:
+                                                    customerNames.map((name) {
+                                                  return DropDownValueModel(
+                                                      name: name, value: name);
+                                                }).toList(),
+                                                onChanged: (val) {
+                                                  changedValue = val.name;
+                                                  print(changedValue);
+                                                },
+                                              ))
                                   ],
                                 ),
                               ),
@@ -447,7 +544,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       child: TextFormField(
                                         controller: ProductNameController,
                                         onChanged: (value) {
-                                          productName = value;
+                                          ProductNameController.text = value;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "Product",
@@ -517,7 +614,13 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         ],
                                         onChanged: (value) {
                                           unitPrice = value;
-                                          calculateTotalPrice();
+                                          if (widget.isEdit == true &&
+                                              QuantityController
+                                                  .text.isNotEmpty &&
+                                              UnitPriceController
+                                                  .text.isNotEmpty) {
+                                            calculateTotalPrice();
+                                          }
                                         },
                                         decoration: InputDecoration(
                                             hintText: "500",
@@ -554,7 +657,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                               RegExp(r'^\d+\.?\d{0,2}'))
                                         ],
                                         onChanged: (value) {
-                                          totalPrice = value;
+                                          TotalPriceController.text = value;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "2500",
@@ -870,53 +973,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
     ));
   }
 
-  Future<void> EditInvoiceDetails() async {
-    final InvoiceId = widget.InvoiceId;
-
-    final url = "http://192.168.1.35:8000/api/invoice-list/";
-    final uri = Uri.parse(url);
-
-    final response = await http.get(uri, headers: {
-      'Authorization': 'Bearer $authorizationValues',
-    });
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      for (final InvoiceData in jsonData['data']) {
-        final id = InvoiceData['id'].toString();
-
-        if (id == InvoiceData) {
-          final clientName = InvoiceData['client_name'] as String;
-          final ClientAddress = InvoiceData['address'] as String;
-          final ProductName = InvoiceData['product_name'] as String;
-          final Quantity = InvoiceData['quantity'] as String;
-          final FAXnumber = InvoiceData['fax_number'] as String;
-          final UnitPrice = InvoiceData['unit_price'] as String;
-          final TotalPrice = InvoiceData['total_price'] as String;
-          final PaidAmount = InvoiceData['paid_amount'] as String;
-
-          print("name of client $clientName");
-
-          // Now you have the clientName for the given clientId
-          setState(() {
-            InvoiceUserName = clientName;
-            InvoiceProductName = ProductName;
-            InvoiceQuantity = Quantity;
-            InvoiceUnitPrice = UnitPrice;
-            InvoiceTotalPrice = TotalPrice;
-            InvoiceAddress = ClientAddress;
-            InvoiceFax = FAXnumber;
-            InvoicePaidAmount = PaidAmount;
-
-            print("value fetched $InvoiceUserName");
-          });
-          break; // No need to continue searching
-        }
-      }
-    } else {
-      // Handle error case
-    }
-    setState(() {});
+  Future<void> getInvoiceID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var Invoice_ID = prefs.get(INVOICE_ID);
   }
 }

@@ -106,10 +106,10 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
       "address": billAddress,
       "invoice_date": selectedDate,
       "fax_number": faxNumber,
-      "payment_date": selectedDate2,
+      "payment_date": paymentDateSelected,
       "paid_amount": paidAmount,
       "Invoice_date": "2003-05-11",
-      "due_date": selectedDate1,
+      "due_date": dueDateSelected,
     };
     print(body);
     print(clientID);
@@ -160,22 +160,28 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
 
   Future<void> updateInvoiceData(String customerIdValue) async {
     final body = {
-      "client": invoiceID,
-      "invoice_number": "12365407",
-      "invoice_date": "2001-12-31",
-      "due_date": "2001-1-3",
-      "address": "ranchi",
-      "quantity": "5",
-      "unit_price": "8000",
-      "product_name": "tablate"
+      "client": "85",
+      "invoice_number": InvoiceNumber,
+      "invoice_date": selectedDate,
+      "due_date": dueDateSelected,
+      "address": billAddress,
+      "quantity": quantity,
+      "unit_price": unitPrice,
+      "product_name": productName,
+      "paid_amount": paidAmount,
+      "payment_date": paymentDateSelected,
     };
+    print(body);
 
-    final url = "http://192.168.1.35:8000/api/edit-invoice/$InvoiceIdValue";
+    final url = "http://192.168.1.35:8000/api/edit-invoice/$invoiceID";
+    print(url);
     final uri = Uri.parse(url);
     print(authorizationValues);
-    print(InvoiceIdValue);
+
     final response = await http.put(uri,
         body: body, headers: {'Authorization': 'Bearer $authorizationValues'});
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('successfully updated');
@@ -213,7 +219,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                     SizedBox(
                       height: 20,
                     ),
-                    Text("INV00012"),
+                    Text(InvoiceNumber),
                     Row(
                       children: [
                         SizedBox(
@@ -251,7 +257,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                                 ),
                                 Row(
                                   children: [
-                                    Text(selectedDate1),
+                                    Text(dueDateSelected),
                                   ],
                                 ),
                               ],
@@ -312,7 +318,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          changedValue,
+                          clientName,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
@@ -340,7 +346,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          selectedDate2,
+                          paymentDateSelected,
                           style: TextStyle(fontSize: 15),
                         ),
                         // Text(

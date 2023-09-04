@@ -50,6 +50,7 @@ final custIDnew = "";
 var personId = "";
 var personName = "";
 var InvoiceNumber = "";
+var InvoiceClientName = "";
 final value = "";
 final errorMsg = "";
 final names = "";
@@ -132,16 +133,24 @@ String _ClientIDV = "";
 set clientIdVal(String val) => _ClientIDV = val;
 String get clientIdVal => _ClientIDV;
 
+String _InvoID = "";
+set InvoiceId(String val) => _InvoID = val;
+String get InvoiceId => _InvoID;
+
 final PROFILE_IMAGE = "";
 final CLIENT_IMAGE = "";
 
 var userrname = "";
+var INV_id = "";
+var Invoice_ID = "";
 var InvoiceUserName = "";
 var InvoiceProductName = "";
 var InvoiceQuantity = "";
 var InvoiceUnitPrice = "";
 var InvoiceTotalPrice = "";
 var InvoiceAddress = "";
+var InvoiceDueDate = "";
+var InvoiceDate = "";
 var InvoiceFax = "";
 var InvoicePaidAmount = "";
 var userrNumber = "";
@@ -157,12 +166,14 @@ var paymentDate = "";
 var dueAmount = "";
 var paidAmount = "";
 var paymentStatus = "";
-var selectedDate1 = "";
+var paymentDateSelected = "";
 var selectedDate = "";
-var selectedDate2 = "";
+var dueDateSelected = "";
 var invoicecustid = "";
 var invoicecustname = "";
 var clientid = "";
+
+var clientName = "";
 
 String profileImageUrlss = "";
 List foundUsers = [];
