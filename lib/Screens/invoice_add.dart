@@ -27,7 +27,7 @@ class InvoiceAdd extends StatefulWidget {
 
 class _InvoiceAddState extends State<InvoiceAdd>
     with SingleTickerProviderStateMixin {
-  TextEditingController clientController = TextEditingController();
+  TextEditingController clientController1 = TextEditingController();
   TextEditingController ProductNameController = TextEditingController();
   TextEditingController QuantityController = TextEditingController();
   TextEditingController UnitPriceController = TextEditingController();
@@ -162,16 +162,18 @@ class _InvoiceAddState extends State<InvoiceAdd>
   Future<void> saveValues() async {
     print("five");
     if (widget.isEdit) {
-      ProductNameController = TextEditingController(text: InvoiceProductName);
+      ProductNameController = TextEditingController(text: ProductName);
       QuantityController = TextEditingController(text: InvoiceQuantity);
       UnitPriceController = TextEditingController(text: InvoiceUnitPrice);
       TotalPriceController = TextEditingController(text: InvoiceTotalPrice);
       AddressController = TextEditingController(text: InvoiceAddress);
       FaxNumberController = TextEditingController(text: InvoiceFax);
       PaidAmountController = TextEditingController(text: InvoicePaidAmount);
-      clientController = TextEditingController(text: clientName);
-      DateController = TextEditingController(text: InvoiceDate);
-      DueDateController = TextEditingController(text: InvoiceDueDate);
+      clientController1 = TextEditingController(text: client_name);
+      DateController = TextEditingController(text: InvDATE);
+      DueDateController = TextEditingController(text: dUE_DATE);
+      PaymentDateContoller = TextEditingController(text: PayDATE);
+      print("prdouct controller ${PaidAmountController.text.toString()}");
     }
   }
 
@@ -268,6 +270,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _tabController = TabController(length: 3, vsync: this);
     // _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
     fetchInvocieDetails();
@@ -414,7 +417,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(widget.isEdit
-                                                    ? selectedDate
+                                                    ? InvDATE
                                                     : "${currentDate.year}-${currentDate.month}-${currentDate.day}"))),
                                       ),
                                     ],
@@ -439,7 +442,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                             color: Color_white,
                                             child: Center(
                                                 child: Text(widget.isEdit
-                                                    ? dueDateSelected
+                                                    ? dUE_DATE
                                                     : "${currentDate1.year}-${currentDate1.month}-${currentDate1.day}"))),
                                       ),
                                     ],
@@ -483,7 +486,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         color: Colors.white,
                                         child: widget.isEdit
                                             ? TextFormField(
-                                                controller: clientController,
+                                                enabled: false,
+                                                controller: clientController1,
                                                 onChanged: (value) {
                                                   clientName = value;
                                                 },
@@ -545,6 +549,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         controller: ProductNameController,
                                         onChanged: (value) {
                                           ProductNameController.text = value;
+                                          PRoductName =
+                                              ProductNameController.text;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "Product",
@@ -575,7 +581,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         controller: QuantityController,
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
-                                          quantity = value;
+                                          QuantityController.text = value;
+                                          Qty = QuantityController.text;
                                           calculateTotalPrice();
                                         },
                                         decoration: InputDecoration(
@@ -613,7 +620,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                               RegExp(r'^\d+\.?\d{0,2}'))
                                         ],
                                         onChanged: (value) {
-                                          unitPrice = value;
+                                          UnitPriceController.text = value;
+                                          UNitPrice = UnitPriceController.text;
                                           if (widget.isEdit == true &&
                                               QuantityController
                                                   .text.isNotEmpty &&
@@ -658,6 +666,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         ],
                                         onChanged: (value) {
                                           TotalPriceController.text = value;
+                                          TotalsPRICE =
+                                              TotalPriceController.text;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "2500",
@@ -687,7 +697,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       child: TextFormField(
                                         controller: AddressController,
                                         onChanged: (value) {
-                                          billAddress = value;
+                                          AddressController.text = value;
+                                          addRess = AddressController.text;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "Noida",
@@ -716,8 +727,10 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                       color: Colors.white,
                                       child: TextFormField(
                                         controller: FaxNumberController,
+                                        keyboardType: TextInputType.number,
                                         onChanged: (value) {
-                                          faxNumber = value;
+                                          FaxNumberController.text = value;
+                                          faxnuM = FaxNumberController.text;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "fax",
@@ -745,70 +758,31 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         paymentDatePicker(context);
                                       },
                                       child: Container(
-                                          padding:
-                                              EdgeInsets.only(top: 5, left: 5),
-                                          height: 35,
-                                          width: 180,
-                                          color: Colors.white,
-                                          child: Text(
-                                            "${currentDate2.year}-${currentDate2.month}-${currentDate2.day}",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400),
-                                          )
-                                          // TextFormField(
-                                          //   controller: PaymentDateContoller,
-                                          //   onChanged: (value) {
-                                          //     paymentDate = value;
-                                          //   },
-                                          //   decoration: InputDecoration(
-                                          //       hintText: "pay date",
-                                          //       contentPadding:
-                                          //           EdgeInsets.only(bottom: 9),
-                                          //       border: OutlineInputBorder(
-                                          //           borderSide: BorderSide.none)),
-                                          // ),
-                                          ),
+                                        padding:
+                                            EdgeInsets.only(top: 5, left: 5),
+                                        height: 35,
+                                        width: 180,
+                                        color: Colors.white,
+                                        child: Text(widget.isEdit
+                                            ? PayDATE
+                                            : "${currentDate2.year}-${currentDate2.month}-${currentDate2.day}"),
+                                        // TextFormField(
+                                        //   controller: PaymentDateContoller,
+                                        //   onChanged: (value) {
+                                        //     paymentDate = value;
+                                        //   },
+                                        //   decoration: InputDecoration(
+                                        //       hintText: "pay date",
+                                        //       contentPadding:
+                                        //           EdgeInsets.only(bottom: 9),
+                                        //       border: OutlineInputBorder(
+                                        //           borderSide: BorderSide.none)),
+                                        // ),
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
-                              // Padding(
-                              //   padding: const EdgeInsets.all(8.0),
-                              //   child: Row(
-                              //     mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       Text("Due Amount"),
-                              //       SizedBox(
-                              //         width: 50,
-                              //       ),
-                              //       Container(
-                              //         height: 35,
-                              //         width: 180,
-                              //         color: Colors.white,
-                              //         child: TextFormField(
-                              //           controller: DueAmountController,
-                              //           keyboardType:
-                              //               TextInputType.numberWithOptions(
-                              //                   decimal: true),
-                              //           inputFormatters: [
-                              //             FilteringTextInputFormatter.allow(
-                              //                 RegExp(r'^\d+\.?\d{0,2}'))
-                              //           ],
-                              //           onChanged: (value) {
-                              //             dueAmount = value;
-                              //           },
-                              //           decoration: InputDecoration(
-                              //               hintText: "1000",
-                              //               contentPadding: EdgeInsets.only(
-                              //                   bottom: 9, left: 5),
-                              //               border: OutlineInputBorder(
-                              //                   borderSide: BorderSide.none)),
-                              //         ),
-                              //       )
-                              //     ],
-                              //   ),
-                              // ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -833,7 +807,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                               RegExp(r'^\d+\.?\d{0,2}'))
                                         ],
                                         onChanged: (value) {
-                                          paidAmount = value;
+                                          PaidAmountController.text = value;
+                                          paidVALUE = PaidAmountController.text;
                                         },
                                         decoration: InputDecoration(
                                             hintText: "1500",
@@ -846,37 +821,6 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                   ],
                                 ),
                               ),
-                              // Padding(
-                              //   padding: const EdgeInsets.all(8.0),
-                              //   child: Row(
-                              //     mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       Text("Payment Status"),
-                              //       SizedBox(
-                              //         width: 28,
-                              //       ),
-                              //       Container(
-                              //         height: 35,
-                              //         width: 180,
-                              //         color: Colors.white,
-                              //         child: TextFormField(
-                              //           controller: PaymentStatusController,
-                              //           onChanged: (value) {
-                              //             paymentStatus = value;
-                              //           },
-                              //           decoration: InputDecoration(
-                              //               hintText: "status",
-                              //               contentPadding: EdgeInsets.only(
-                              //                   bottom: 9, left: 5),
-                              //               border: OutlineInputBorder(
-                              //                   borderSide: BorderSide.none)),
-                              //         ),
-                              //       )
-                              //     ],
-                              //   ),
-                              // ),
-
                               widget.isEdit
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -896,6 +840,9 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                                         )));
                                             // isEdit = true;
                                             // _tabController.animateTo(1);
+                                          });
+                                          setState(() {
+                                            PreviewInvoice();
                                           });
                                           // fetchCustomerNames();
                                         },
@@ -971,10 +918,5 @@ class _InvoiceAddState extends State<InvoiceAdd>
         ),
       ),
     ));
-  }
-
-  Future<void> getInvoiceID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var Invoice_ID = prefs.get(INVOICE_ID);
   }
 }

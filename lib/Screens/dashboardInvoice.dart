@@ -22,7 +22,7 @@ class dashboardInvoices extends StatefulWidget {
 
 class _dashboardInvoicesState extends State<dashboardInvoices> {
   bool isSearching = false; // Track whether searching is active
-  TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   String search = " ";
   bool isLoading = true;
   List AllInvoices = [];
@@ -71,11 +71,24 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
     });
   }
 
+  void handleSearch(String searchText) {
+    setState(() {
+      searchController.text = searchText;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchInvoice();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller when the widget is disposed.
+    searchController.dispose();
+    super.dispose();
   }
 
   void _toggleSearch() {
@@ -99,6 +112,9 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
             title: isSearching
                 ? TextField(
                     controller: searchController,
+                    onChanged: (text) {
+                      handleSearch(text);
+                    },
                     // onChanged: (value) => _runFilter(value),
                     decoration: InputDecoration(
                       hintText: 'Search by Names',

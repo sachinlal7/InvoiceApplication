@@ -40,11 +40,7 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
   TextEditingController DateController = TextEditingController();
 
   void getDataApi() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    InvoiceIdValue = prefs.getString(getInvoiceID) ?? "";
-    print(" get user id $InvoiceIdValue");
-
-    final url = "http://192.168.1.31:8000/api/customer-list/";
+    final url = "http://192.168.1.35:8000/api/customer-list/";
     final uri = Uri.parse(url);
 
     try {
@@ -100,31 +96,29 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
     // Create the body for the HTTP request
     final Map<String, dynamic> body = {
       "client": clientID,
-      "product_name": productName,
       "quantity": quantity,
+      "product_name": productName,
       "unit_price": unitPrice,
-      "address": billAddress,
       "invoice_date": selectedDate,
+      "address": billAddress,
+      "due_date": dueDateSelected,
       "fax_number": faxNumber,
       "payment_date": paymentDateSelected,
-      "paid_amount": paidAmount,
-      "due_date": dueDateSelected,
+      "paid_amount": paidAmount
     };
     print(body);
-    print(clientID);
-    final url = "http://192.168.1.31:8000/api/invoice/$clientID";
+
+    final url = "http://192.168.1.35:8000/api/invoice/";
     final uri = Uri.parse(url);
     print(uri);
 
     try {
       print(authorizationValues);
       final response = await http.post(
-        uri,
+        uri, body: body,
         headers: {
           'Authorization': 'Bearer $authorizationValues',
-          'Content-Type': 'application/json',
         },
-        body: json.encode(body),
 
         // Convert body to JSON
       );

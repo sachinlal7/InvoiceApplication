@@ -25,7 +25,7 @@ class PreviewInvoice extends StatefulWidget {
 class _PreviewInvoiceState extends State<PreviewInvoice> {
   bool isEdit = false;
   TextEditingController idController = TextEditingController();
-  TextEditingController clientController = TextEditingController();
+  TextEditingController clientController1 = TextEditingController();
   TextEditingController ProductNameController = TextEditingController();
   TextEditingController QuantityController = TextEditingController();
   TextEditingController UnitPriceController = TextEditingController();
@@ -40,10 +40,6 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
   TextEditingController DateController = TextEditingController();
 
   void getDataApi() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    InvoiceIdValue = prefs.getString(getInvoiceID) ?? "";
-    print(" get user id $InvoiceIdValue");
-
     final url = "http://192.168.1.31:8000/api/customer-list/";
     final uri = Uri.parse(url);
 
@@ -160,20 +156,20 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
 
   Future<void> updateInvoiceData(String customerIdValue) async {
     final body = {
-      "client": "85",
-      "invoice_number": InvoiceNumber,
-      "invoice_date": selectedDate,
-      "due_date": dueDateSelected,
-      "address": billAddress,
-      "quantity": quantity,
-      "unit_price": unitPrice,
-      "product_name": productName,
-      "paid_amount": paidAmount,
-      "payment_date": paymentDateSelected,
+      "client": ClienTiD,
+      "invoice_date": InvDATE,
+      "due_date": dUE_DATE,
+      "address": addRess,
+      "quantity": Qty,
+      "unit_price": UNitPrice,
+      "product_name": PRoductName,
+      "paid_amount": paidVALUE,
+      "payment_date": PayDATE,
     };
     print(body);
+    print(MainUserID);
 
-    final url = "http://192.168.1.35:8000/api/edit-invoice/$invoiceID";
+    final url = "http://192.168.1.35:8000/api/edit-invoice/$INV_ID";
     print(url);
     final uri = Uri.parse(url);
     print(authorizationValues);
@@ -188,10 +184,10 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
     } else {
       print('update failed');
     }
-    // if (mounted) {
-    //   Navigator.pushReplacement(
-    //       context, MaterialPageRoute(builder: (context) => AddClients()));
-    // }
+    if (mounted) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => dashboardInvoices()));
+    }
   }
 
   @override
@@ -199,8 +195,20 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
     // TODO: implement initState
     super.initState();
     // getCustId();
+    setState(() {
+      ProductNameController = TextEditingController(text: ProductName);
+      QuantityController = TextEditingController(text: InvoiceQuantity);
+      UnitPriceController = TextEditingController(text: InvoiceUnitPrice);
+      TotalPriceController = TextEditingController(text: InvoiceTotalPrice);
+      AddressController = TextEditingController(text: InvoiceAddress);
+      FaxNumberController = TextEditingController(text: InvoiceFax);
+      PaidAmountController = TextEditingController(text: InvoicePaidAmount);
+      clientController1 = TextEditingController(text: client_name);
+      DateController = TextEditingController(text: InvDATE);
+      DueDateController = TextEditingController(text: dUE_DATE);
+      PaymentDateContoller = TextEditingController(text: PayDATE);
+    });
     getDataApi();
-    print(widget.isEdit);
   }
 
   @override
@@ -252,12 +260,12 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                               children: [
                                 Row(
                                   children: [
-                                    Text(selectedDate),
+                                    Text(InvDATE),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    Text(dueDateSelected),
+                                    Text(dUE_DATE),
                                   ],
                                 ),
                               ],
@@ -318,35 +326,36 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          clientName,
+                          client_name,
+                          style: TextStyle(fontSize: 15),
+                        ),
+
+                        Text(
+                          PRoductName,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          productName,
+                          Qty,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          quantity,
+                          UNitPrice,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          unitPrice,
+                          TotalsPRICE,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          totalPrice,
+                          addRess,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          billAddress,
+                          faxnuM,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          faxNumber,
-                          style: TextStyle(fontSize: 15),
-                        ),
-                        Text(
-                          paymentDateSelected,
+                          PayDATE,
                           style: TextStyle(fontSize: 15),
                         ),
                         // Text(
@@ -354,7 +363,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                         //   style: TextStyle(fontSize: 15),
                         // ),
                         Text(
-                          paidAmount,
+                          paidVALUE,
                           style: TextStyle(fontSize: 15),
                         ),
                         // Text(

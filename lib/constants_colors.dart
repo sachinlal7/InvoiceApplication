@@ -47,6 +47,7 @@ final getInvoiceID = "";
 final INVOICE_ID = "";
 var invoiceID = "";
 final custIDnew = "";
+var INV_ID = "";
 var personId = "";
 var personName = "";
 var InvoiceNumber = "";
@@ -80,6 +81,7 @@ bool isSearching = false;
 
 final name = "";
 late bool isLogin = true;
+
 String _authValue = "";
 set authorizationValues(String val) => _authValue = val;
 String get authorizationValues => _authValue;
@@ -133,9 +135,93 @@ String _ClientIDV = "";
 set clientIdVal(String val) => _ClientIDV = val;
 String get clientIdVal => _ClientIDV;
 
+String _ClientIDvv = "";
+set client_name(String val) => _ClientIDvv = val;
+String get client_name => _ClientIDvv;
+
 String _InvoID = "";
 set InvoiceId(String val) => _InvoID = val;
 String get InvoiceId => _InvoID;
+
+String _ProdName = "";
+set ProductName(String val) => _ProdName = val;
+String get ProductName => _ProdName;
+
+String _QTY = "";
+set Quantity(String val) => _QTY = val;
+String get Quantity => _QTY;
+
+String _CLIid = "";
+set ClientiD(String val) => _CLIid = val;
+String get ClientiD => _CLIid;
+
+String _untPrice = "";
+set UniTprice(String val) => _untPrice = val;
+String get UniTprice => _untPrice;
+
+String _adrs = "";
+set Addresss(String val) => _adrs = val;
+String get Addresss => _adrs;
+
+String _faxNUM = "";
+set FAXnum(String val) => _faxNUM = val;
+String get FAXnum => _faxNUM;
+
+String _PAYDT = "";
+set PayDATE(String val) => _PAYDT = val;
+String get PayDATE => _PAYDT;
+
+String _Totlprc = "";
+set Totalprice(String val) => _Totlprc = val;
+String get Totalprice => _Totlprc;
+
+String _paidamt = "";
+set Paid_amount(String val) => _paidamt = val;
+String get Paid_amount => _paidamt;
+
+String _INVDT = "";
+set InvDATE(String val) => _INVDT = val;
+String get InvDATE => _INVDT;
+
+String _DUEDT = "";
+set dUE_DATE(String val) => _DUEDT = val;
+String get dUE_DATE => _DUEDT;
+
+String _USRID = "";
+set MainUserID(String val) => _USRID = val;
+String get MainUserID => _USRID;
+
+String _CLTid = "";
+set ClienTiD(String val) => _CLTid = val;
+String get ClienTiD => _CLTid;
+
+String _paidvv = "";
+set paidVALUE(String val) => _paidvv = val;
+String get paidVALUE => _paidvv;
+
+String _prdct = "";
+set PRoductName(String val) => _prdct = val;
+String get PRoductName => _prdct;
+
+String _qtyyy = "";
+set Qty(String val) => _qtyyy = val;
+String get Qty => _qtyyy;
+
+String _untprc = "";
+set UNitPrice(String val) => _untprc = val;
+String get UNitPrice => _untprc;
+
+String _ttlsprc = "";
+set TotalsPRICE(String val) => _ttlsprc = val;
+String get TotalsPRICE => _ttlsprc;
+
+String _adrss = "";
+set addRess(String val) => _adrss = val;
+String get addRess => _adrss;
+
+String _fxnum = "";
+set faxnuM(String val) => _fxnum = val;
+String get faxnuM => _fxnum;
 
 final PROFILE_IMAGE = "";
 final CLIENT_IMAGE = "";
@@ -174,6 +260,7 @@ var invoicecustname = "";
 var clientid = "";
 
 var clientName = "";
+var CLIENT_NAME = "";
 
 String profileImageUrlss = "";
 List foundUsers = [];

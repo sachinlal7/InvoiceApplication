@@ -38,9 +38,11 @@ class _OutStandingInvoicesState extends State<OutStandingInvoices> {
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
-      setState(() {
-        data = results;
-      });
+      if (mounted) {
+        setState(() {
+          data = results;
+        });
+      }
     } else {
       print("error");
     }

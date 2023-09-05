@@ -74,11 +74,11 @@ class _LoginState extends State<Login> {
         var data = jsonDecode(response.body);
         print(data);
         final token = data['access'];
-        final userId = data['user_id'];
+        final userId = data['user_id'].toString();
 
         var prefs = await SharedPreferences.getInstance();
         var setToken = prefs.setString(ACCESS_KEY, token);
-        var setUserId = prefs.setInt(USER_ID, userId);
+        prefs.setString(USER_ID, userId);
 
         print("access ID : $setToken");
 

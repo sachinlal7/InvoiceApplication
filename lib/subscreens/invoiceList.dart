@@ -32,9 +32,6 @@ class _InvoiceListState extends State<InvoiceList> {
     final uri = Uri.parse(url);
     print("sevennn");
 
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var getTheKey = prefs.getString(ACCESS_KEY);
-    // print(authorizationValues);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
     // print(response.body);
@@ -61,8 +58,6 @@ class _InvoiceListState extends State<InvoiceList> {
       //   print("numbr of cust $custNum");
       // }
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(INV_id, invoiceID);
   }
 
   Future<void> deleteInvoice(String InvoiceId) async {
@@ -93,8 +88,6 @@ class _InvoiceListState extends State<InvoiceList> {
 
     final uri = Uri.parse(url);
 
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var getTheKey = prefs.getString(ACCESS_KEY);
     print(authorizationValues);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
@@ -155,22 +148,25 @@ class _InvoiceListState extends State<InvoiceList> {
                           var invoiceID = dataItem['id'].toString();
                           var InvoiceNumber =
                               dataItem['invoice_number'].toString();
-
                           var totalPrice = dataItem['total_price'];
                           var paidAmount = dataItem['paid_amount'] ?? "";
-
+                          var productName = dataItem['product_name'];
+                          var quantity = dataItem['quantity'].toString();
                           var clientName = dataItem['client_name'];
                           var paymentStatus = dataItem['payment_status'];
-                          clientid = dataItem['id'].toString();
+                          var clieNtId = dataItem['client_id'].toString();
+                          var unitprice = dataItem['unit_price'];
+                          var address = dataItem['address'];
+                          var faxnum = dataItem['fax_number'];
+                          var paydate = dataItem['payment_date'];
+                          var invoiceDATE = dataItem['invoice_date'];
+                          var dueDATE = dataItem['due_date'];
 
-                          print(invoiceID);
+                          print(clientid);
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: GestureDetector(
                               onTap: () {
-                                // SharedPreferences prefs =
-                                //     await SharedPreferences.getInstance();
-                                // prefs.setString(INVOICE_ID, invoiceID);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -254,13 +250,21 @@ class _InvoiceListState extends State<InvoiceList> {
                                                   onTap: () async {
                                                     print(
                                                         "edit pressed $invoiceID");
+                                                    INV_ID = invoiceID;
+                                                    client_name = clientName;
+                                                    ProductName = productName;
+                                                    Quantity = quantity;
+                                                    ClientiD = clientid;
+                                                    UniTprice = unitprice;
+                                                    Addresss = address;
+                                                    FAXnum = faxnum;
+                                                    PayDATE = paydate;
+                                                    Totalprice = totalPrice;
+                                                    Paid_amount = paidAmount;
+                                                    InvDATE = invoiceDATE;
+                                                    dUE_DATE = dueDATE;
+                                                    ClienTiD = clieNtId;
 
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    InvoiceId = prefs.getString(
-                                                            INV_id) ??
-                                                        " ";
                                                     // print(getUser);
                                                     // print("twelve $keyuser");
 

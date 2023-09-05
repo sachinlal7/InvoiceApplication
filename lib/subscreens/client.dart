@@ -509,7 +509,7 @@ class _NewClientsState extends State<NewClients> {
       "email": custEmailController.text,
       "phone_number": custNumController.text
     };
-
+    print(body);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var customerIdValue = prefs.get(getUser);
     print(" get user id $CustKey");
