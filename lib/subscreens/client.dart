@@ -100,6 +100,8 @@ class _NewClientsState extends State<NewClients> {
 
   @override
   Widget build(BuildContext context) {
+    print("ClientImageUrl $ClientImageUrl");
+    print(clientIMAGE_URL);
     print("build");
     return Scaffold(
       appBar: AppBar(
@@ -116,18 +118,15 @@ class _NewClientsState extends State<NewClients> {
               width: double.maxFinite,
               child: _images != null
                   ? CircleAvatar(
-                      radius: 40,
+                      radius: 70,
                       backgroundImage: FileImage(File(_images!.path)),
                     )
-                  : SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          "http://192.168.1.35:8000/media/whNwkEQYWLFJA8ij0WyOOAD5xhQ_tsF3svx.jpg",
-                        ),
-                      ),
-                    ),
+                  : CircleAvatar(
+                      radius: 70,
+                      backgroundImage: custimg != null && custimg.isNotEmpty
+                          ? NetworkImage(clientIMAGE_URL)
+                          : NetworkImage(
+                              "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
             ),
             Form(
               key: formkey,
@@ -437,31 +436,6 @@ class _NewClientsState extends State<NewClients> {
       }
     }
   }
-  // Future<void> submitData() async {
-  //   final body = {
-  //     "name": customerController.text.toString(),
-  //     "email": custEmailController.text.toString(),
-  //     "phone_number": custNumController.text.toString(),
-
-  //   };
-
-  //   final url = "http://192.168.1.31:8000/api/customer/";
-
-  //   final uri = Uri.parse(url);
-  //   print(authorizationValue);
-  //   final response = await http.post(uri,
-  //       body: body, headers: {'Authorization': 'Bearer $authorizationValue'});
-  //   print(response.statusCode);
-
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     print('created successfully ');
-  //   } else {
-  //     print('creation failed');
-  //   }
-
-  //   Navigator.pushReplacement(
-  //       context, MaterialPageRoute(builder: (context) => AddClients()));
-  // }
 
   Future<void> EditClientDetails() async {
     print("three");
@@ -532,42 +506,42 @@ class _NewClientsState extends State<NewClients> {
     }
   }
 
-  Future<void> fetchEditDetails() async {
-    print("five");
-    final url = Base_URL + custlistendpoint;
+//   Future<void> fetchEditDetails() async {
+//     print("five");
+//     final url = Base_URL + custlistendpoint;
 
-    final uri = Uri.parse(url);
+//     final uri = Uri.parse(url);
 
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var getTheKey = prefs.getString(ACCESS_KEY);
-    print(authorizationValues);
-    final response = await http
-        .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
+//     // final SharedPreferences prefs = await SharedPreferences.getInstance();
+//     // var getTheKey = prefs.getString(ACCESS_KEY);
+//     print(authorizationValues);
+//     final response = await http
+//         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
-    print(response.body);
+//     print(response.body);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var json = jsonDecode(response.body) as Map;
-      var results = json['data'] as List;
-      List<Map<String, dynamic>> jsonData = List.from(results);
+//     if (response.statusCode == 200 || response.statusCode == 201) {
+//       var json = jsonDecode(response.body) as Map;
+//       var results = json['data'] as List;
+//       List<Map<String, dynamic>> jsonData = List.from(results);
 
-      List<String> names =
-          jsonData.map((item) => item['name'].toString()).toList();
-      // print(names[0]);
-      // print(names[1]);
+//       List<String> names =
+//           jsonData.map((item) => item['name'].toString()).toList();
+//       // print(names[0]);
+//       // print(names[1]);
 
-// Now you have the list of names. You can use this list to show them in your TextField.
+// // Now you have the list of names. You can use this list to show them in your TextField.
 
-      // print("customer id result $custres");
-      // var setTheCustId = prefs.setInt(CUST_ID, custResults);
-      setState(() {
-        data = results;
-        print("final data $data");
-      });
-    } else {
-      print("error");
-    }
-  }
+//       // print("customer id result $custres");
+//       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
+//       setState(() {
+//         data = results;
+//         print("final data $data");
+//       });
+//     } else {
+//       print("error");
+//     }
+//   }
 
   // Future<void> clearUserData() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();

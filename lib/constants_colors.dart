@@ -58,12 +58,17 @@ final names = "";
 String? businessName = "";
 var companyName = "";
 var image = "";
+var custimg = "";
 var client_image = "";
+var CustImage = "";
+String ClientImageUrl = "";
 
 var businessEmail = "";
 var UserName = "";
 var phoneNumber = "";
 var address = "";
+
+var namess = "";
 
 String ClientName = "";
 var ClientEmail = "";
@@ -223,8 +228,14 @@ String _fxnum = "";
 set faxnuM(String val) => _fxnum = val;
 String get faxnuM => _fxnum;
 
+String _imgValue = "";
+set clientIMAGE_URL(String val) => _imagValue = val;
+String get clientIMAGE_URL => _imgValue;
+
 final PROFILE_IMAGE = "";
 final CLIENT_IMAGE = "";
+
+var IMAGE_URL = "";
 
 var userrname = "";
 var INV_id = "";
@@ -263,6 +274,7 @@ var clientName = "";
 var CLIENT_NAME = "";
 
 String profileImageUrlss = "";
+String CustomerProfileURL = "";
 List foundUsers = [];
 // var idValue = "";\
 var changedValue = "";

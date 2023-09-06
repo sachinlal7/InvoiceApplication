@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboardInvoice.dart';
+import 'package:invoice_app/Screens/invoice_add.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,7 +27,7 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
   bool isEdit = false;
   TextEditingController idController = TextEditingController();
   TextEditingController clientController1 = TextEditingController();
-  TextEditingController ProductNameController = TextEditingController();
+  TextEditingController ProductNameController1 = TextEditingController();
   TextEditingController QuantityController = TextEditingController();
   TextEditingController UnitPriceController = TextEditingController();
   TextEditingController TotalPriceController = TextEditingController();
@@ -159,15 +160,14 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
       "client": ClienTiD,
       "invoice_date": InvDATE,
       "due_date": dUE_DATE,
-      "address": addRess,
+      "address": Addresss,
       "quantity": Qty,
-      "unit_price": UNitPrice,
-      "product_name": PRoductName,
+      "unit_price": UniTprice,
+      "product_name": ProductName,
       "paid_amount": paidVALUE,
       "payment_date": PayDATE,
     };
     print(body);
-    print(MainUserID);
 
     final url = "http://192.168.1.35:8000/api/edit-invoice/$INV_ID";
     print(url);
@@ -196,23 +196,25 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
     super.initState();
     // getCustId();
     setState(() {
-      ProductNameController = TextEditingController(text: ProductName);
-      QuantityController = TextEditingController(text: InvoiceQuantity);
-      UnitPriceController = TextEditingController(text: InvoiceUnitPrice);
-      TotalPriceController = TextEditingController(text: InvoiceTotalPrice);
-      AddressController = TextEditingController(text: InvoiceAddress);
-      FaxNumberController = TextEditingController(text: InvoiceFax);
-      PaidAmountController = TextEditingController(text: InvoicePaidAmount);
-      clientController1 = TextEditingController(text: client_name);
-      DateController = TextEditingController(text: InvDATE);
-      DueDateController = TextEditingController(text: dUE_DATE);
-      PaymentDateContoller = TextEditingController(text: PayDATE);
+      // ProductNameController1 = TextEditingController(text: ProductName);
+      // QuantityController = TextEditingController(text: InvoiceQuantity);
+      // UnitPriceController = TextEditingController(text: InvoiceUnitPrice);
+      // TotalPriceController = TextEditingController(text: InvoiceTotalPrice);
+      // AddressController = TextEditingController(text: billAddress);
+      // FaxNumberController = TextEditingController(text: InvoiceFax);
+      // PaidAmountController = TextEditingController(text: InvoicePaidAmount);
+      // clientController1 = TextEditingController(text: client_name);
+      // DateController = TextEditingController(text: InvDATE);
+      // DueDateController = TextEditingController(text: dUE_DATE);
+      // PaymentDateContoller = TextEditingController(text: PayDATE);
     });
     getDataApi();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(productOnchange);
+    print("PRoductName $PRoductName");
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -331,27 +333,28 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                         ),
 
                         Text(
-                          PRoductName,
+                          // productOnchange ? PRoductName :
+                          ProductName,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          Qty,
+                          Quantity,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          UNitPrice,
+                          UniTprice,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          TotalsPRICE,
+                          Totalprice,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          addRess,
+                          Addresss,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          faxnuM,
+                          FAXnum,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(

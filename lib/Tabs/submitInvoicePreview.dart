@@ -96,15 +96,15 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
     // Create the body for the HTTP request
     final Map<String, dynamic> body = {
       "client": clientID,
-      "quantity": quantity,
-      "product_name": productName,
-      "unit_price": unitPrice,
+      "quantity": Qty,
+      "product_name": PRoductName,
+      "unit_price": UNitPrice,
       "invoice_date": selectedDate,
-      "address": billAddress,
+      "address": addRess,
       "due_date": dueDateSelected,
-      "fax_number": faxNumber,
+      "fax_number": faxnuM,
       "payment_date": paymentDateSelected,
-      "paid_amount": paidAmount
+      "paid_amount": paidVALUE
     };
     print(body);
 
@@ -278,27 +278,27 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          productName,
+                          PRoductName,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          quantity,
+                          Qty,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          unitPrice,
+                          UNitPrice,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          totalPrice,
+                          TotalsPRICE,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          billAddress,
+                          addRess,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          faxNumber,
+                          faxnuM,
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
@@ -310,7 +310,7 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
                         //   style: TextStyle(fontSize: 15),
                         // ),
                         Text(
-                          paidAmount,
+                          paidVALUE,
                           style: TextStyle(fontSize: 15),
                         ),
                         // Text(

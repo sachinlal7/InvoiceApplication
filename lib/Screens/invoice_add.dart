@@ -16,6 +16,8 @@ import '../Tabs/dropdown.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
+bool productOnchange = false;
+
 class InvoiceAdd extends StatefulWidget {
   final String? InvoiceId;
   final isEdit;
@@ -50,6 +52,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   String _selectedValue = '';
   XFile? _image;
   bool dataFetched = false;
+
   List<String> customerNames = [];
   List<String> customerIDs = [];
   Map<String, String> customerNamesWithIds = {};
@@ -173,7 +176,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
       DateController = TextEditingController(text: InvDATE);
       DueDateController = TextEditingController(text: dUE_DATE);
       PaymentDateContoller = TextEditingController(text: PayDATE);
-      print("prdouct controller ${PaidAmountController.text.toString()}");
+      print("prdouct controller ${ProductNameController.text.toString()}");
     }
   }
 
@@ -271,7 +274,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
     // TODO: implement initState
     super.initState();
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     // _selectedValue = customerNames.isNotEmpty ? customerNames[0] : '';
     fetchInvocieDetails();
     if (widget.isEdit == false) {
@@ -293,7 +296,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   Widget build(BuildContext context) {
     return SafeArea(
         child: DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 69, 150, 216),
@@ -329,7 +332,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
                 text: widget.isEdit ? "EDIT" : "NEW",
               ),
               Tab(text: 'PREVIEW'),
-              Tab(text: 'HISTORY')
+              // Tab(text: 'HISTORY')
             ],
             unselectedLabelColor: Colors.white,
             labelColor: Colors.white,
@@ -486,6 +489,8 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                         color: Colors.white,
                                         child: widget.isEdit
                                             ? TextFormField(
+                                                style: TextStyle(
+                                                    color: Colors.black),
                                                 enabled: false,
                                                 controller: clientController1,
                                                 onChanged: (value) {
@@ -551,6 +556,11 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                           ProductNameController.text = value;
                                           PRoductName =
                                               ProductNameController.text;
+                                          print("PRoductName $PRoductName");
+
+                                          setState(() {
+                                            productOnchange = true;
+                                          });
                                         },
                                         decoration: InputDecoration(
                                             hintText: "Product",
@@ -913,7 +923,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
               ],
             ),
             PreviewInvoice(),
-            PreviewInvoice()
+            // PreviewInvoice()
           ],
         ),
       ),

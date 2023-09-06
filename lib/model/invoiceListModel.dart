@@ -1,11 +1,11 @@
-class InvoiceList_model {
+class invoice_models {
   String? status;
   String? message;
   List<Data>? data;
 
-  InvoiceList_model({this.status, this.message, this.data});
+  invoice_models({this.status, this.message, this.data});
 
-  InvoiceList_model.fromJson(Map<String, dynamic> json) {
+  invoice_models.fromJson(Map<String, dynamic> json) {
     status = json['Status'];
     message = json['Message'];
     if (json['data'] != null) {
@@ -29,6 +29,7 @@ class InvoiceList_model {
 
 class Data {
   int? id;
+  int? clientId;
   String? clientName;
   Null? logo;
   String? invoiceNumber;
@@ -47,6 +48,7 @@ class Data {
 
   Data(
       {this.id,
+      this.clientId,
       this.clientName,
       this.logo,
       this.invoiceNumber,
@@ -65,6 +67,7 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    clientId = json['client_id'];
     clientName = json['client_name'];
     logo = json['logo'];
     invoiceNumber = json['invoice_number'];
@@ -85,6 +88,7 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['client_id'] = this.clientId;
     data['client_name'] = this.clientName;
     data['logo'] = this.logo;
     data['invoice_number'] = this.invoiceNumber;

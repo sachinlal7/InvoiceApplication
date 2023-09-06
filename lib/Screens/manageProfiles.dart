@@ -23,7 +23,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
   TextEditingController NameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
+  // TextEditingController imageController = TextEditingController();
 
   XFile? _image;
   String message = '';

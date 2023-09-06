@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:invoice_app/Screens/dashboardInvoice.dart';
 import 'package:invoice_app/Screens/invoice_add.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice_app/model/custName_mdoels.dart';
+import 'package:invoice_app/model/invoiceListModel.dart';
 import 'package:invoice_app/subscreens/webView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,9 +13,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class InvoiceList extends StatefulWidget {
-  final TextEditingController searchController;
+  // final TextEditingController searchController;
+  final String searchQuery;
 
-  const InvoiceList({super.key, required this.searchController});
+  const InvoiceList({
+    super.key,
+    required this.searchQuery,
+  });
 
   @override
   State<InvoiceList> createState() => _InvoiceListState();
@@ -25,6 +30,8 @@ class _InvoiceListState extends State<InvoiceList> {
   List newData = [];
   bool isLoading = true;
   WebViewController controller = WebViewController();
+
+  get searchQuery => null;
 
   Future<void> fetchInvoice() async {
     final url = "http://192.168.1.35:8000/api/invoice-list/";
@@ -44,20 +51,56 @@ class _InvoiceListState extends State<InvoiceList> {
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
-      setState(() {
-        AllInvoices = results;
-        foundUsers = AllInvoices;
-      });
+      if (mounted) {
+        setState(() {
+          AllInvoices = results;
+          foundUsers = AllInvoices;
+        });
+      }
     } else {
       print("error");
     }
-    setState(() {
-      isLoading = false;
-      // void getdata(int index) {
-      //   var custNum = custResults[index][index];
-      //   print("numbr of cust $custNum");
-      // }
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        // void getdata(int index) {
+        //   var custNum = custResults[index][index];
+        //   print("numbr of cust $custNum");
+        // }
+      });
+    }
+  }
+
+  List<invoice_models> get filteredItems {
+    // Create a list to store filtered results
+    List<invoice_models> filteredList = [];
+
+    // Iterate through each invoice_models object
+    for (var invoiceModel in data) {
+      // Filter the data list within the current invoice_models object
+      var filteredData = invoiceModel.data!
+          .where((item) =>
+              item.clientName != null &&
+              item.clientName!
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()))
+          .toList();
+
+      // If the filtered data list is not empty, add it to the filteredList
+      if (filteredData.isNotEmpty) {
+        // Create a new invoice_models object with the filtered data
+        invoice_models filteredInvoiceModel = invoice_models(
+          status: invoiceModel.status,
+          message: invoiceModel.message,
+          data: filteredData,
+        );
+
+        // Add the filtered invoice_models object to the result list
+        filteredList.add(filteredInvoiceModel);
+      }
+    }
+
+    return filteredList;
   }
 
   Future<void> deleteInvoice(String InvoiceId) async {
@@ -162,7 +205,7 @@ class _InvoiceListState extends State<InvoiceList> {
                           var invoiceDATE = dataItem['invoice_date'];
                           var dueDATE = dataItem['due_date'];
 
-                          print(clientid);
+                          print(productName);
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: GestureDetector(
@@ -249,7 +292,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                               child: GestureDetector(
                                                   onTap: () async {
                                                     print(
-                                                        "edit pressed $invoiceID");
+                                                        "edit pressed $ProductName");
                                                     INV_ID = invoiceID;
                                                     client_name = clientName;
                                                     ProductName = productName;

@@ -26,6 +26,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
   String search = " ";
   bool isLoading = true;
   List AllInvoices = [];
+  String _searchQuery = "";
 
   void _createNewInvoice() {
     Navigator.push(
@@ -55,26 +56,24 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
 
       // print("customer id result $custres");
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
-      setState(() {
-        AllInvoices = results;
-        foundUsers = AllInvoices;
-      });
+      if (mounted) {
+        setState(() {
+          AllInvoices = results;
+          foundUsers = AllInvoices;
+        });
+      }
     } else {
       print("error");
     }
-    setState(() {
-      isLoading = false;
-      // void getdata(int index) {
-      //   var custNum = custResults[index][index];
-      //   print("numbr of cust $custNum");
-      // }
-    });
-  }
-
-  void handleSearch(String searchText) {
-    setState(() {
-      searchController.text = searchText;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        // void getdata(int index) {
+        //   var custNum = custResults[index][index];
+        //   print("numbr of cust $custNum");
+        // }
+      });
+    }
   }
 
   @override
@@ -112,8 +111,8 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
             title: isSearching
                 ? TextField(
                     controller: searchController,
-                    onChanged: (text) {
-                      handleSearch(text);
+                    onChanged: (value) {
+                      _searchQuery = value;
                     },
                     // onChanged: (value) => _runFilter(value),
                     decoration: InputDecoration(
@@ -171,7 +170,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
           ),
           body: TabBarView(
             children: [
-              InvoiceList(searchController: searchController),
+              InvoiceList(searchQuery: _searchQuery),
               OutStandingInvoices(),
               PaidInvoices(),
             ],

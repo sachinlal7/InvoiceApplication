@@ -40,11 +40,11 @@ class _NavBarState extends State<NavBar> {
     prefs.reload();
   }
 
-  Future<void> setImageUrl() async {
-    print("four");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(PROFILE_IMAGE, profileImageUrlss);
-  }
+  // Future<void> setImageUrl() async {
+  //   print("four");
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setString(PROFILE_IMAGE, profileImageUrlss);
+  // }
 
   // Future<void> fetchDataAndImage() async {
   //   try {
@@ -75,7 +75,7 @@ class _NavBarState extends State<NavBar> {
     print(response.body);
     var data = jsonDecode(response.body);
     print(data);
-    phoneNumber = data['data']['phone_number'] ?? " ";
+
     businessEmail = data['data']['email'] ?? "";
     UserName = data['data']['username'];
 

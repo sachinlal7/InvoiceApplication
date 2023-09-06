@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:invoice_app/subscreens/client.dart';
@@ -25,19 +26,18 @@ class _AddClientsState extends State<AddClients> {
   List data = [];
 
   bool isLoading = true;
-  String ClientImageUrl = "";
 
-  void setClientImage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(CLIENT_IMAGE, ClientImageUrl);
-    // print("set client");
-  }
+  // void setClientImage() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setString(CLIENT_IMAGE, ClientImageUrl);
+  //   // print("set client");
+  // }
 
-  void getClientImage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    clientImage = prefs.getString(CLIENT_IMAGE) ?? "";
-    // print("get client");
-  }
+  // void getClientImage() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   clientImage = prefs.getString(CLIENT_IMAGE) ?? "";
+  //   // print("get client");
+  // }
 
   // Future<void> EditClientDetails() async {
   //   print("three");
@@ -115,18 +115,19 @@ class _AddClientsState extends State<AddClients> {
                     child: ListView.builder(
                         itemCount: data.length,
                         itemBuilder: (context, index) {
-                          // print("ten");
                           final dataItem = data[index] as Map;
                           var custIDnew = dataItem['id'].toString();
                           print("custIDnew1 $custIDnew");
 
-                          var ClientImagePic = dataItem['profile_pic'] ?? " ";
+                          custimg = dataItem['profile_pic'] ?? " ";
                           // print(ClientImagePic);
 
-                          ClientImageUrl = Url_image + ClientImagePic;
+                          ClientImageUrl = Url_image + custimg;
+                          print("image11");
+                          print(ClientImageUrl);
                           // print(ClientImageUrl);
-                          setClientImage();
-                          getClientImage();
+                          // setClientImage();
+                          // getClientImage();
                           // SharedPreferences prefs = await SharedPreferences.getInstance();
                           // prefs.setString(CLIENT_IMAGE, ClientImageUrl);
 
@@ -160,10 +161,11 @@ class _AddClientsState extends State<AddClients> {
                                             Row(
                                               children: [
                                                 CircleAvatar(
-                                                    backgroundImage: image
-                                                            .isNotEmpty
+                                                    backgroundImage: custimg !=
+                                                                null &&
+                                                            custimg.isNotEmpty
                                                         ? NetworkImage(
-                                                            ClientImage)
+                                                            ClientImageUrl)
                                                         : NetworkImage(
                                                             "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
                                               ],
@@ -228,17 +230,10 @@ class _AddClientsState extends State<AddClients> {
                                         Padding(
                                           padding: const EdgeInsets.all(12.0),
                                           child: GestureDetector(
-                                              onTap: () async {
-                                                // SharedPreferences prefs =
-                                                //     await SharedPreferences
-                                                //         .getInstance();
-                                                // var keyuser = prefs.setString(
-                                                //     getUser, personId);
-                                                // print(getUser);
-                                                // print("twelve $keyuser");
-
-                                                // fetchEditDetails();
-                                                // print("edit pressed");
+                                              onTap: () {
+                                                IMAGE_URL = ClientImageUrl;
+                                                print("image");
+                                                print(IMAGE_URL);
 
                                                 Navigator.push(
                                                     context,
@@ -358,6 +353,14 @@ class _AddClientsState extends State<AddClients> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var json = jsonDecode(response.body);
       var results = json['data'];
+      // custimg = json['data']['profile_pic'];
+      print(custimg);
+      print(json);
+      print(results);
+
+      // namess = json['data']['name'];
+      // CustomerProfileURL = Url_image + CustImage;
+
       // print(results);
       // ClientName = json['data']['name'].toString();
       // ClientEmail = json['data']['email'];
@@ -371,9 +374,9 @@ class _AddClientsState extends State<AddClients> {
       // prefs.setString(CLIENT_IMAGE, ClientImageUrl);
 
       final circleAvatar = CircleAvatar(
-        // backgroundImage: NetworkImage(profileImageUrl),
-        backgroundImage: NetworkImage(
-            "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
+        backgroundImage: NetworkImage(CustomerProfileURL),
+        // backgroundImage: NetworkImage(
+        //     "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
         radius: 40.0,
       );
 
