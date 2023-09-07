@@ -15,10 +15,11 @@ import 'package:webview_flutter/webview_flutter.dart';
 class InvoiceList extends StatefulWidget {
   // final TextEditingController searchController;
   final String searchQuery;
-
+  final List<dynamic> filteredInvoices;
   const InvoiceList({
     super.key,
     required this.searchQuery,
+    required this.filteredInvoices,
   });
 
   @override
@@ -167,6 +168,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
   @override
   Widget build(BuildContext context) {
+    // final List<dynamic> items = filteredInvoices;
     return Scaffold(
         body: Visibility(
       visible: isLoading,
@@ -204,8 +206,11 @@ class _InvoiceListState extends State<InvoiceList> {
                           var paydate = dataItem['payment_date'];
                           var invoiceDATE = dataItem['invoice_date'];
                           var dueDATE = dataItem['due_date'];
+                          var logO = dataItem['logo'];
 
-                          print(productName);
+                          InvoicelogoURL = "http://192.168.1.35:8000$logO";
+
+                          print("logo $InvoicelogoURL");
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: GestureDetector(
@@ -307,6 +312,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                                     InvDATE = invoiceDATE;
                                                     dUE_DATE = dueDATE;
                                                     ClienTiD = clieNtId;
+                                                    lOGO = logO;
 
                                                     // print(getUser);
                                                     // print("twelve $keyuser");

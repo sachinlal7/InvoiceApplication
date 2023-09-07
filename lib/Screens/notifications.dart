@@ -16,7 +16,7 @@ class _NotificationsState extends State<Notifications> {
   List data = [];
   bool isLoading = true;
   Future<void> getNotifications() async {
-    final url = "http://192.168.1.31:8000/api/notifications/";
+    final url = "http://192.168.1.35:8000/api/notifications/";
 
     final uri = Uri.parse(url);
     print(authorizationValues);

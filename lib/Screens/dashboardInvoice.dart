@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/createInvoice.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Tabs/editTabBar.dart';
 import 'package:invoice_app/constants_colors.dart';
+import 'package:invoice_app/model/custName_mdoels.dart';
 import 'package:invoice_app/subscreens/invoiceList.dart';
 
 import '../subscreens/outstandingInvoices.dart';
@@ -27,6 +29,35 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
   bool isLoading = true;
   List AllInvoices = [];
   String _searchQuery = "";
+  List<dynamic> filteredData = [];
+  List<dynamic> _listData = [];
+  String searchValue = '';
+
+  Future<List<String>> _fetchSuggestions(String searchValue) async {
+    await Future.delayed(const Duration(milliseconds: 750));
+
+    final suggestions = _listData
+        .where((element) => element["client_name"]
+            .toString()
+            .toLowerCase()
+            .contains(searchValue.toLowerCase()))
+        .map((element) => element["client_name"].toString())
+        .toList();
+
+    return suggestions;
+  }
+
+  void _updateFilteredData(String query) {
+    setState(() {
+      _searchQuery = query;
+      filteredData = _listData.where((element) {
+        return element["client_name"]
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase());
+      }).toList();
+    });
+  }
 
   void _createNewInvoice() {
     Navigator.push(
@@ -50,7 +81,9 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
     print(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      var json = jsonDecode(response.body) as Map;
+      var json = jsonDecode(response.body);
+      final listData = json['data'] as List<dynamic>;
+      print("listData $listData");
       var results = json['data'] as List;
       print(results);
 
@@ -58,8 +91,8 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
       // var setTheCustId = prefs.setInt(CUST_ID, custResults);
       if (mounted) {
         setState(() {
-          AllInvoices = results;
-          foundUsers = AllInvoices;
+          AllInvoices = listData;
+          _listData = AllInvoices;
         });
       }
     } else {
@@ -68,6 +101,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
     if (mounted) {
       setState(() {
         isLoading = false;
+
         // void getdata(int index) {
         //   var custNum = custResults[index][index];
         //   print("numbr of cust $custNum");
@@ -81,6 +115,7 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
     // TODO: implement initState
     super.initState();
     fetchInvoice();
+    filteredData = _listData;
   }
 
   @override
@@ -106,6 +141,15 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
+          // appBar: EasySearchBar(
+          //     title: const Text('Example'),
+          //     onSearch: _updateFilteredData,
+
+          //     // actions: [
+          //     //   IconButton(icon: const Icon(Icons.person), onPressed: () {})
+          //     // ],
+          //     asyncSuggestions: (value) async =>
+          //         await _fetchSuggestions(value)),
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 69, 150, 216),
             title: isSearching
@@ -170,7 +214,10 @@ class _dashboardInvoicesState extends State<dashboardInvoices> {
           ),
           body: TabBarView(
             children: [
-              InvoiceList(searchQuery: _searchQuery),
+              InvoiceList(
+                searchQuery: _searchQuery,
+                filteredInvoices: filteredData,
+              ),
               OutStandingInvoices(),
               PaidInvoices(),
             ],

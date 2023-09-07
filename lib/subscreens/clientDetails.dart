@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:invoice_app/model/custModels.dart';
 import 'package:invoice_app/model/cust_list_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ClientDetails extends StatefulWidget {
   final String clientId;
@@ -18,6 +20,7 @@ class ClientDetails extends StatefulWidget {
 class _ClientDetailsState extends State<ClientDetails> {
   bool isLoading = true;
   String clientId = "";
+  XFile? _images;
 
   List data = [];
 
@@ -183,10 +186,17 @@ class _ClientDetailsState extends State<ClientDetails> {
           Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: AssetImage("assets/images/person.jpg"),
-              ),
+              child: _images != null
+                  ? CircleAvatar(
+                      radius: 70,
+                      backgroundImage: FileImage(File(_images!.path)),
+                    )
+                  : CircleAvatar(
+                      radius: 70,
+                      backgroundImage: custimg.isEmpty
+                          ? NetworkImage("http://192.168.1.35:8000$CustIMG")
+                          : NetworkImage(
+                              "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
             ),
           ),
           Row(

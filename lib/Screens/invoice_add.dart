@@ -59,6 +59,7 @@ class _InvoiceAddState extends State<InvoiceAdd>
   String selectedCustomerId = '';
   late TabController _tabController;
   bool isEdit = false;
+  XFile? _images;
 
   Future<void> fetchCustomerNames() async {
     final url = "http://192.168.1.35:8000/api/customer-list/";
@@ -375,11 +376,19 @@ class _InvoiceAddState extends State<InvoiceAdd>
                                 : SizedBox(
                                     height: 80,
                                     width: 80,
-                                    child: CircleAvatar(
-                                        radius: 40,
-                                        backgroundImage: AssetImage(
-                                          "assets/images/order_history.png",
-                                        )),
+                                    child: _images != null
+                                        ? CircleAvatar(
+                                            radius: 70,
+                                            backgroundImage:
+                                                FileImage(File(_images!.path)),
+                                          )
+                                        : CircleAvatar(
+                                            radius: 70,
+                                            backgroundImage: logO.isEmpty
+                                                ? NetworkImage(
+                                                    "http://192.168.1.35:8000$lOGO")
+                                                : NetworkImage(
+                                                    "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
                                   ),
                           ),
                           SizedBox(

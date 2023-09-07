@@ -28,15 +28,17 @@ class _RegistrationState extends State<Registration> {
   void signup(
       String email, password, number, business, username, address) async {
     var url = Uri.parse(Base_URL + userRegistration);
-
-    var response = await http.post(url, body: {
+    final body = {
       "business_name": business,
       "email": email,
-      "username": business,
+      "username": username,
       "password": password,
       "phone_number": number,
       "address": address
-    });
+    };
+    print(body);
+
+    var response = await http.post(url, body: body);
     print(response.statusCode);
     print(businessController.text);
 
@@ -216,8 +218,8 @@ class _RegistrationState extends State<Registration> {
                 GestureDetector(
                   onTap: () {
                     if (_formkey.currentState!.validate()) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => DashBoard()));
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Login()));
 
                       Fluttertoast.showToast(
                           msg: "registered Successfully",

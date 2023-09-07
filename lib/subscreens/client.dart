@@ -100,6 +100,7 @@ class _NewClientsState extends State<NewClients> {
 
   @override
   Widget build(BuildContext context) {
+    print(CustIMG);
     print("ClientImageUrl $ClientImageUrl");
     print(clientIMAGE_URL);
     print("build");
@@ -123,8 +124,8 @@ class _NewClientsState extends State<NewClients> {
                     )
                   : CircleAvatar(
                       radius: 70,
-                      backgroundImage: custimg != null && custimg.isNotEmpty
-                          ? NetworkImage(clientIMAGE_URL)
+                      backgroundImage: custimg.isEmpty
+                          ? NetworkImage("http://192.168.1.35:8000$CustIMG")
                           : NetworkImage(
                               "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg")),
             ),

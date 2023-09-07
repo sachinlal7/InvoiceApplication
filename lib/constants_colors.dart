@@ -62,6 +62,8 @@ var custimg = "";
 var client_image = "";
 var CustImage = "";
 String ClientImageUrl = "";
+String InvoicelogoURL = "";
+var logO = "";
 
 var businessEmail = "";
 var UserName = "";
@@ -228,9 +230,21 @@ String _fxnum = "";
 set faxnuM(String val) => _fxnum = val;
 String get faxnuM => _fxnum;
 
-String _imgValue = "";
-set clientIMAGE_URL(String val) => _imagValue = val;
-String get clientIMAGE_URL => _imgValue;
+String? _imgValue;
+set clientIMAGE_URL(String? val) => _imgValue = val;
+String get clientIMAGE_URL => _imgValue ?? " ";
+
+String? _loGo;
+set lOGO(String? val) => _loGo = val;
+String get lOGO => _loGo ?? " ";
+
+String _cstimg = "";
+set CustIMG(String val) => _cstimg = val;
+String get CustIMG => _cstimg;
+
+String _prsnid = "";
+set PersONid(String val) => _prsnid = val;
+String get PersONid => _prsnid;
 
 final PROFILE_IMAGE = "";
 final CLIENT_IMAGE = "";

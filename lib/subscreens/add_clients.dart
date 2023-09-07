@@ -119,11 +119,12 @@ class _AddClientsState extends State<AddClients> {
                           var custIDnew = dataItem['id'].toString();
                           print("custIDnew1 $custIDnew");
 
-                          custimg = dataItem['profile_pic'] ?? " ";
+                          var custimg = dataItem['profile_pic'] ?? " ";
                           // print(ClientImagePic);
 
-                          ClientImageUrl = Url_image + custimg;
+                          ClientImageUrl = "http://192.168.1.35:8000$custimg";
                           print("image11");
+                          print(custimg);
                           print(ClientImageUrl);
                           // print(ClientImageUrl);
                           // setClientImage();
@@ -231,7 +232,9 @@ class _AddClientsState extends State<AddClients> {
                                           padding: const EdgeInsets.all(12.0),
                                           child: GestureDetector(
                                               onTap: () {
-                                                IMAGE_URL = ClientImageUrl;
+                                                clientIMAGE_URL =
+                                                    ClientImageUrl;
+                                                CustIMG = custimg;
                                                 print("image");
                                                 print(IMAGE_URL);
 
@@ -256,10 +259,10 @@ class _AddClientsState extends State<AddClients> {
                                               SharedPreferences prefs =
                                                   await SharedPreferences
                                                       .getInstance();
-                                              var keyuser = prefs.setString(
+                                              prefs.setString(
                                                   getUser, personId);
                                               // print("eighteen");
-                                              print(keyuser);
+
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {

@@ -235,9 +235,10 @@ class _PreviewInvoiceState extends State<PreviewInvoice> {
                         SizedBox(
                           width: 25,
                         ),
-                        Image(
-                          image: AssetImage("assets/images/order_history.png"),
-                          height: 80,
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage:
+                              NetworkImage("http://192.168.1.35:8000$lOGO"),
                         ),
                         SizedBox(
                           width: 25,

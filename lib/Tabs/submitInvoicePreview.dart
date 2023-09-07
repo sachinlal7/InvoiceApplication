@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboardInvoice.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../model/custName_mdoels.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +25,7 @@ class SubmitPreviewInvoice extends StatefulWidget {
 
 class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
   bool isEdit = false;
+  XFile? _image;
   TextEditingController idController = TextEditingController();
   TextEditingController clientController = TextEditingController();
   TextEditingController ProductNameController = TextEditingController();
@@ -181,10 +183,20 @@ class _SubmitPreviewInvoiceState extends State<SubmitPreviewInvoice> {
                         SizedBox(
                           width: 25,
                         ),
-                        Image(
-                          image: AssetImage("assets/images/order_history.png"),
-                          height: 80,
-                        ),
+                        _image != null
+                            ? CircleAvatar(
+                                radius: 40,
+                                backgroundImage: FileImage(File(_image!.path)),
+                              )
+                            : SizedBox(
+                                height: 80,
+                                width: 80,
+                                child: CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: AssetImage(
+                                      "assets/images/order_history.png",
+                                    )),
+                              ),
                         SizedBox(
                           width: 25,
                         ),
