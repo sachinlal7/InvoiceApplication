@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:invoice_app/subscreens/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:invoice_app/subscreens/clientDetails.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../constants_colors.dart';
@@ -26,59 +25,6 @@ class _AddClientsState extends State<AddClients> {
   List data = [];
 
   bool isLoading = true;
-
-  // void setClientImage() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setString(CLIENT_IMAGE, ClientImageUrl);
-  //   // print("set client");
-  // }
-
-  // void getClientImage() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   clientImage = prefs.getString(CLIENT_IMAGE) ?? "";
-  //   // print("get client");
-  // }
-
-  // Future<void> EditClientDetails() async {
-  //   print("three");
-
-  //   final url = Base_URL + custlistendpoint;
-  //   final uri = Uri.parse(url);
-
-  //   final response = await http.get(uri, headers: {
-  //     'Authorization': 'Bearer $authorizationValues',
-  //   });
-
-  //   if (response.statusCode == 201) {
-  //     final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-  //     print(jsonData);
-
-  //     for (final clientData in jsonData['data']) {
-  //       print(clientData);
-  //       final id = clientData['id'].toString();
-  //       print(id);
-
-  //       if (id == clientIdVal) {
-  //         final clientName = clientData['name'] as String;
-  //         final clientNumber = clientData['phone_number'] as String;
-  //         final clienEmail = clientData['email'] as String;
-  //         print("name of client $clientName");
-
-  //         // Now you have the clientName for the given clientId
-  //         setState(() {
-  //           userrname = clientName;
-  //           userrNumber = clientNumber;
-  //           userrEmail = clienEmail;
-  //           print("value fetched");
-  //         });
-  //         break; // No need to continue searching
-  //       }
-  //     }
-  //   } else {
-  //     // Handle error case
-  //   }
-  //   setState(() {});
-  // }
 
   @override
   void initState() {
@@ -126,11 +72,6 @@ class _AddClientsState extends State<AddClients> {
                           print("image11");
                           print(custimg);
                           print(ClientImageUrl);
-                          // print(ClientImageUrl);
-                          // setClientImage();
-                          // getClientImage();
-                          // SharedPreferences prefs = await SharedPreferences.getInstance();
-                          // prefs.setString(CLIENT_IMAGE, ClientImageUrl);
 
                           final person = data[index];
                           personId = person["id"].toString();
@@ -138,8 +79,6 @@ class _AddClientsState extends State<AddClients> {
 
                           print("id of prsnn $personId");
                           print("name of prsnn $personName");
-                          // print("eleven");
-                          idOfUser();
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
@@ -234,6 +173,7 @@ class _AddClientsState extends State<AddClients> {
                                               onTap: () {
                                                 clientIMAGE_URL =
                                                     ClientImageUrl;
+                                                CustIDNeww = custIDnew;
                                                 CustIMG = custimg;
                                                 print("image");
                                                 print(IMAGE_URL);
@@ -256,12 +196,7 @@ class _AddClientsState extends State<AddClients> {
                                         IconButton(
                                             onPressed: () async {
                                               print(custIDnew);
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              prefs.setString(
-                                                  getUser, personId);
-                                              // print("eighteen");
+                                              CustIDNeww = custIDnew;
 
                                               showDialog(
                                                   context: context,
@@ -274,17 +209,15 @@ class _AddClientsState extends State<AddClients> {
                                             icon: Icon(Icons.delete)),
                                         IconButton(
                                             onPressed: () async {
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              prefs.setString(
-                                                  clientID, custIDnew);
+                                              CustIDNeww = custIDnew;
+
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           ClientDetails(
-                                                            clientId: custIDnew,
+                                                            clientId:
+                                                                CustIDNeww,
                                                           )));
                                             },
                                             icon: Icon(Icons.info_outline))
@@ -309,11 +242,7 @@ class _AddClientsState extends State<AddClients> {
                                   builder: (context) => NewClients(
                                         isEdit: false,
                                       )));
-
-                          // setState(() {
-                          //   fetchCust();
-                          //   isLoading = true;
-                          // });
+                          ;
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
@@ -347,9 +276,6 @@ class _AddClientsState extends State<AddClients> {
     final uri = Uri.parse(url);
     // print("seven");
 
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var getTheKey = prefs.getString(ACCESS_KEY);
-    // print(authorizationValue);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
@@ -361,30 +287,11 @@ class _AddClientsState extends State<AddClients> {
       print(json);
       print(results);
 
-      // namess = json['data']['name'];
-      // CustomerProfileURL = Url_image + CustImage;
-
-      // print(results);
-      // ClientName = json['data']['name'].toString();
-      // ClientEmail = json['data']['email'];
-      // ClientNumber = json['data']['phone_number'];
-
-      // ClientImage = json['data']['profile_pic'] ?? "";
-
-      // ClientImageUrl = Url_image + ClientImage;
-      // print(ClientImageUrl);
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // prefs.setString(CLIENT_IMAGE, ClientImageUrl);
-
       final circleAvatar = CircleAvatar(
         backgroundImage: NetworkImage(CustomerProfileURL),
-        // backgroundImage: NetworkImage(
-        //     "http://192.168.1.35:8000/media/sergio-de-paula-c_GmwfHBDzk-unsplash_fMxB4zq.jpg"),
         radius: 40.0,
       );
 
-      // print("customer id result $custres");
-      // var setTheCustId = prefs.setInt(CUST_ID, custResults);
       setState(() {
         data = results;
       });
@@ -397,13 +304,7 @@ class _AddClientsState extends State<AddClients> {
   }
 
   Future<void> deletById(String personId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var CustKey = prefs.get(getUser);
-    // print(" get user id $CustKey");
-    // print("SEVENTEEN");
-    // print(CustKey);
-
-    final url = Base_URL + customerDeleteApi + "$CustKey";
+    final url = Base_URL + customerDeleteApi + "$CustIDNeww";
 
     final uri = Uri.parse(url);
 
@@ -414,7 +315,6 @@ class _AddClientsState extends State<AddClients> {
 
       setState(() {
         data = filtered;
-        // print("filtered data $data");
       });
     } else {}
     fetchCust();
@@ -424,15 +324,11 @@ class _AddClientsState extends State<AddClients> {
     final url = Base_URL + custlistendpoint;
 
     final uri = Uri.parse(url);
-    // print("seven");
 
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var getTheKey = prefs.getString(ACCESS_KEY);
     print(authorizationValues);
     final response = await http
         .get(uri, headers: {'Authorization': 'Bearer $authorizationValues'});
 
-    // print(response.body);
     var dataRes = response.body;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -445,20 +341,10 @@ class _AddClientsState extends State<AddClients> {
 
       setState(() {
         data = results;
-        // print("final data $data");
       });
     } else {
       print("error");
     }
-  }
-
-  void idOfUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(CUST_ID, personId);
-    print("person id $personId");
-    // print("nine");
-
-    getIdOfUser();
   }
 
   Widget customDialog(String text, warning) {
@@ -530,10 +416,4 @@ class _AddClientsState extends State<AddClients> {
       ),
     );
   }
-}
-
-void getIdOfUser() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  newCustId = prefs.getString(CUST_ID) ?? " ";
-  print("newCustId $newCustId");
 }

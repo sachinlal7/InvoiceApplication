@@ -246,6 +246,10 @@ String _prsnid = "";
 set PersONid(String val) => _prsnid = val;
 String get PersONid => _prsnid;
 
+String _cstidnew = "";
+set CustIDNeww(String val) => _cstidnew = val;
+String get CustIDNeww => _cstidnew;
+
 final PROFILE_IMAGE = "";
 final CLIENT_IMAGE = "";
 

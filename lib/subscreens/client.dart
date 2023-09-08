@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:invoice_app/constants_colors.dart';
 import 'package:invoice_app/subscreens/add_clients.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import '../constants_colors.dart';
 import 'package:image_picker/image_picker.dart';
 
 //  final bool isEdit;
@@ -485,11 +485,11 @@ class _NewClientsState extends State<NewClients> {
       "phone_number": custNumController.text
     };
     print(body);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var customerIdValue = prefs.get(getUser);
-    print(" get user id $CustKey");
-
-    final url = "http://192.168.1.35:8000/api/customer-edit/$customerIdValue";
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var customerIdValue = prefs.get(getUser);
+    // print(" get user id $customerIdValue");
+    print(CustIDNeww);
+    final url = "http://192.168.1.35:8000/api/customer-edit/$CustIDNeww";
     final uri = Uri.parse(url);
     print(authorizationValues);
     print(customerIdValue);
