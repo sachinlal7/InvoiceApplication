@@ -7,8 +7,15 @@ import 'package:invoice_app/Screens/manageProfiles.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:invoice_app/provider/google_signin_provider.dart';
 import 'package:invoice_app/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+
+enum LoginMethod {
+  API,
+  Google,
+}
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,6 +25,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  LoginMethod loginMethod = LoginMethod.API;
   bool isLogin = false;
   final _formkey = GlobalKey<FormState>();
   TextEditingController userNameController = TextEditingController();
@@ -65,57 +73,63 @@ class _LoginState extends State<Login> {
   // }
 
   void login(String username, password) async {
-    try {
-      var url = Uri.parse(Base_URL + userLogin);
-      var response = await http
-          .post(url, body: {'username': username, 'password': password});
+    if (loginMethod == LoginMethod.API) {
+      try {
+        var url = Uri.parse(Base_URL + userLogin);
+        var response = await http
+            .post(url, body: {'username': username, 'password': password});
 
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        print(data);
-        final token = data['access'];
-        final userId = data['user_id'].toString();
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          print(data);
+          final token = data['access'];
+          final userId = data['user_id'].toString();
 
-        var prefs = await SharedPreferences.getInstance();
-        var setToken = prefs.setString(ACCESS_KEY, token);
-        prefs.setString(USER_ID, userId);
+          var prefs = await SharedPreferences.getInstance();
+          var setToken = prefs.setString(ACCESS_KEY, token);
+          prefs.setString(USER_ID, userId);
 
-        print("access ID : $setToken");
+          print("access ID : $setToken");
 
-        if (mounted) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: ((context) => DashBoard())));
+          if (mounted) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: ((context) => DashBoard())));
+            isLogin = true;
+            // profileGet();
+          }
+
           isLogin = true;
-          // profileGet();
-        }
 
-        isLogin = true;
-
-        Fluttertoast.showToast(
-            msg: "Login Sucessfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-
-        print("Login Successfully");
-      } else {
-        if (mounted) {
-          print("Login Failed");
           Fluttertoast.showToast(
-              msg: "Login failed",
+              msg: "Login Sucessfully",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
+
+          print("Login Successfully");
+        } else {
+          if (mounted) {
+            print("Login Failed");
+            Fluttertoast.showToast(
+                msg: "Login failed",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
         }
+      } catch (e) {
+        print(e.toString());
       }
-    } catch (e) {
-      print(e.toString());
+    } else if (loginMethod == LoginMethod.Google) {
+      final provider =
+          Provider.of<GoogleSignInProvider>(context, listen: false);
+      provider.googleLogin();
     }
   }
 
@@ -245,7 +259,9 @@ class _LoginState extends State<Login> {
                       login(userNameController.text.toString(),
                           passwordController.text.toString());
                     }
-                    ManageProfiles();
+                    ManageProfiles(
+                      loginMethod: LoginMethod.API,
+                    );
                     // Navigator.push(context,
                     //     MaterialPageRoute(builder: (context) => DashBoard()));
                   },
@@ -316,20 +332,31 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: 15,
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.059,
-                  width: MediaQuery.of(context).size.height * 0.432,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: Center(
-                      child: Text(
-                    "Login with Google",
-                    style: TextStyle(
-                        color: Color_orange,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15),
-                  )),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      loginMethod =
+                          LoginMethod.Google; // Update the login method
+                    });
+                    final provider = Provider.of<GoogleSignInProvider>(context,
+                        listen: false);
+                    provider.googleLogin();
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.059,
+                    width: MediaQuery.of(context).size.height * 0.432,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    child: Center(
+                        child: Text(
+                      "Login with Google",
+                      style: TextStyle(
+                          color: Color_orange,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15),
+                    )),
+                  ),
                 ),
                 SizedBox(
                   height: 15,
@@ -349,6 +376,14 @@ class _LoginState extends State<Login> {
                         fontSize: 15),
                   )),
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      final provider = Provider.of<GoogleSignInProvider>(
+                          context,
+                          listen: false);
+                      provider.googleLogout();
+                    },
+                    child: Text("Logout"))
               ],
             ),
           ),

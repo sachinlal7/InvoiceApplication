@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
+import 'package:invoice_app/Screens/login.dart';
 import 'package:invoice_app/constants_colors.dart';
 import '../widgets/navBar.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +11,8 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ManageProfiles extends StatefulWidget {
-  const ManageProfiles({super.key});
+  final LoginMethod loginMethod;
+  const ManageProfiles({super.key, required this.loginMethod});
 
   @override
   State<ManageProfiles> createState() => _ManageProfilesState();
@@ -186,6 +188,7 @@ class _ManageProfilesState extends State<ManageProfiles> {
                       },
                     ),
                   ),
+                  Text("data"),
                   SizedBox(height: 20),
                   Container(
                     height: 55,

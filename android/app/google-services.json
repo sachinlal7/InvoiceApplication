@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "672757735978",
+    "project_id": "quick-bill-a49e1",
+    "storage_bucket": "quick-bill-a49e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672757735978:android:8f8b202e3d706f47e31953",
+        "android_client_info": {
+          "package_name": "com.example.invoice_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672757735978-a3kojtmp8krphekdik3298ooupg8r4ta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0SSgfNPGQyd2gzga7U7p7EQO4qwAcneo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672757735978-a3kojtmp8krphekdik3298ooupg8r4ta.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

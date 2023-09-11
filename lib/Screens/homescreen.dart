@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:invoice_app/Screens/home_google.dart';
 import 'package:invoice_app/Screens/registration.dart';
 import 'package:invoice_app/constants_colors.dart';
+import 'package:provider/provider.dart';
 
+import '../provider/google_signin_provider.dart';
 import 'login.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
               GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
+                      MaterialPageRoute(builder: (context) => HomeGoogle()));
                 },
                 child: Text(
                   "Login",
@@ -86,9 +89,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     decorationThickness: 1.8,
                   ),
                 ),
-              )
+              ),
             ],
-          )
+          ),
+          ElevatedButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.googleLogout();
+              },
+              child: Text("Logout"))
         ],
       ),
     );

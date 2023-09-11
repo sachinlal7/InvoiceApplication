@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:invoice_app/Screens/dashboard.dart';
 import 'package:invoice_app/Screens/homescreen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:invoice_app/Screens/login.dart';
 import 'package:invoice_app/constants_colors.dart';
 import 'package:invoice_app/webview/aboutus.dart';
 import 'package:invoice_app/webview/contactUs.dart';
@@ -175,8 +176,12 @@ class _NavBarState extends State<NavBar> {
               onTap: () {
                 print("authorizationValues6 $authorizationValues");
                 _scaffoldKey.currentState?.openEndDrawer();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ManageProfiles()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ManageProfiles(
+                              loginMethod: LoginMethod.API,
+                            )));
                 setState(() {});
               },
               child: ListTile(
